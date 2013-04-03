@@ -227,13 +227,26 @@ int MOAITextBox::_nextPage ( lua_State* L ) {
     @text	Advances to the next page of text (if any) or wraps to the start of the text (if at end).
  
     @in		MOAITextBox self
+	@in		string s			The string to consider
+	@in		number rectXmin		The minimum x value of the rect to render the string in
+	@in		number rectYmin		
+	@in		number rectXmax
+	@in		number rectYmax
+	@in		boolean multiLine	(optional default false) whether to allow the use of multiple lines
 	@out	number optFontSize
 */
 int MOAITextBox::_optimalFontSize ( lua_State* L ) {
     MOAI_LUA_SETUP ( MOAITextBox, "U" )
     
+	cc8 * str = state.GetValue < cc8* >( 2, "" );;
     
-    
+    float left		= state.GetValue < float >( 3, 0.0f );
+	float top		= state.GetValue < float >( 4, 0.0f );
+	float right		= state.GetValue < float >( 5, 0.0f );
+	float bottom	= state.GetValue < float >( 6, 0.0f );
+	
+	bool multiLine  = state.GetValue < bool >(7, false);
+	
     lua_pushnumber ( L, 42); // shall return 42 when testing it
     
     return 1;
@@ -1289,6 +1302,7 @@ void MOAITextBox::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getStringBounds",		_getStringBounds },
 		{ "getStyle",				_getStyle },
 		{ "more",					_more },
+		{ "optimalFontSize",		_optimalFontSize }, // Added entry by Isaac D. Barrett
 		{ "nextPage",				_nextPage },
 		{ "reserveCurves",			_reserveCurves },
 		{ "revealAll",				_revealAll },
