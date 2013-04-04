@@ -224,7 +224,7 @@ int MOAITextBox::_nextPage ( lua_State* L ) {
 }
 //----------------------------------------------------------------//
 /**	@name	optimalFontSize
-    @text	Advances to the next page of text (if any) or wraps to the start of the text (if at end).
+    @text	Figures out the font size that makes it work.
  
     @in		MOAITextBox self
 	@in		string s			The string to consider
@@ -232,11 +232,11 @@ int MOAITextBox::_nextPage ( lua_State* L ) {
 	@in		number rectYmin		
 	@in		number rectXmax
 	@in		number rectYmax
-	@in		boolean multiLine	(optional default false) whether to allow the use of multiple lines
-	@out	number optFontSize
+	@opt	boolean multiLine	(optional default false) whether to allow the use of multiple lines
+	@out	number optFontSize	Returns nil when there's no default style. Else returns optimal font size.
 */
 int MOAITextBox::_optimalFontSize ( lua_State* L ) {
-    MOAI_LUA_SETUP ( MOAITextBox, "U" )
+    MOAI_LUA_SETUP ( MOAITextBox, "USNNNN" )
     
 	cc8 * str = state.GetValue < cc8* >( 2, "" );;
     
@@ -247,7 +247,25 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 	
 	bool multiLine  = state.GetValue < bool >(7, false);
 	
-    lua_pushnumber ( L, 42); // shall return 42 when testing it
+	MOAITextStyle * currentStyle = self->mStyleSet[DEFAULT_STYLE_NAME].mStyle;
+	float strHeight = 1.0f;
+	
+	if (currentStyle){
+		strHeight = currentStyle->GetSize();
+	}
+	else{
+		//lua_pushnumber(L, 0.0);
+		return 0; // return nil if there is no current style
+	}
+	float boxHeight = top - bottom;
+	if (boxHeight < 0.0f) {
+		boxHeight = -boxHeight;
+	}
+	
+	// find out the width of the sting if it were rendered on one line
+	float strWidth = 1.0f;
+	
+    lua_pushnumber ( L, boxHeight); // return boxHeight
     
     return 1;
 }
