@@ -293,6 +293,8 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 	//}
 	testBox->SetText(str); // set the text to the string to render
 	testBox->SetStyle(currentStyle); // set the style to the style of the receiver
+	testBox->ResetStyleMap();
+	testBox->ScheduleLayout();
 	
 	USRect testRect;
 	testRect.Init(0.0f,0.0f,0.0f,0.0f);
@@ -315,8 +317,8 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 	}
 	
 	
-	float wRatio = testWidth / boxWidth;
-	float hRatio = testHeight / boxHeight;
+	float wRatio = boxWidth / testWidth;
+	float hRatio = boxHeight / testHeight;
 	float minRatio = wRatio;
 	if (hRatio < wRatio) {
 		minRatio = hRatio;
@@ -324,9 +326,17 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 	
 	delete testBox;
 	
-    lua_pushnumber ( L, strHeight * hRatio); // return boxHeight
-    
-    return 1;
+	/*
+	// testing to see the ratios
+    lua_pushnumber ( L,  wRatio); // return boxHeight
+    lua_pushnumber(L, hRatio);
+	
+	
+    return 2;
+	 */
+	// the proper return value
+	lua_pushnumber(L, strHeight * minRatio);
+	return 1;
 }
 
 //----------------------------------------------------------------//
