@@ -245,7 +245,7 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 	float right		= state.GetValue < float >( 5, 0.0f );
 	float bottom	= state.GetValue < float >( 6, 0.0f );
 	
-	bool multiLine  = state.GetValue < bool >(7, false);
+	bool multiLine  = state.GetValue < bool >( 7, false );
 	
 	MOAITextStyle * currentStyle = self->mStyleSet[DEFAULT_STYLE_NAME].mStyle;
 	float strHeight = 1.0f;
@@ -262,10 +262,69 @@ int MOAITextBox::_optimalFontSize ( lua_State* L ) {
 		boxHeight = -boxHeight;
 	}
 	
-	// find out the width of the sting if it were rendered on one line
-	float strWidth = 1.0f;
+	float boxWidth = right - left;
+	if (boxWidth < 0.0f) {
+		boxWidth = -boxWidth;
+	}
+	if (boxWidth == 0 || boxHeight == 0) {
+		return 0; // return 'nil' if either dimension of the rect is zero.
+	}
 	
-    lua_pushnumber ( L, boxHeight); // return boxHeight
+	// find out the width of the sting if it were rendered on one line
+	//float strWidth = 1.0f;
+	int idx = 0;
+	while (str [idx]) {
+		++idx;
+	}
+	
+	if (!idx) {
+		return 0; // return 'nil' in case of zero-length string argument.
+	}
+	// right now idx == strLength;
+	
+	// make a new TextBox object with this box height and a width wide enough to contain the entire string on one line.
+	MOAITextBox *testBox = new MOAITextBox ();
+	//if (multiLine) {
+		
+		//testBox->SetRect(0.0f, 0.0f, boxWidth, strHeight * 2);
+	//}
+	//else{
+		testBox->SetRect(0.0f, 0.0f, idx * strHeight * 2, strHeight * 2);
+	//}
+	testBox->SetText(str); // set the text to the string to render
+	testBox->SetStyle(currentStyle); // set the style to the style of the receiver
+	
+	USRect testRect;
+	testRect.Init(0.0f,0.0f,0.0f,0.0f);
+	if (! testBox->GetBoundsForRange(0, idx, testRect)){// get the rectangle
+		delete testBox;
+		lua_pushnumber(L, -3.0f);
+		return 1; // return -3.0 if the method GetBoundsForRange failed on testBox.
+	}
+	// calculate width and height of testRect
+	float testWidth = testRect.Width(), testHeight = testRect.Height();
+	if (testWidth == 0.0f) {
+		delete testBox;
+		lua_pushnumber(L, -1.0f);
+		return 1;  // return -1.0 if the width is zero.
+	}
+	if (testHeight == 0.0f) {
+		delete testBox;
+		lua_pushnumber(L, -2.0f);
+		return 1; // return -2.0 if the height of the rendered rect is zero.
+	}
+	
+	
+	float wRatio = testWidth / boxWidth;
+	float hRatio = testHeight / boxHeight;
+	float minRatio = wRatio;
+	if (hRatio < wRatio) {
+		minRatio = hRatio;
+	}
+	
+	delete testBox;
+	
+    lua_pushnumber ( L, strHeight * hRatio); // return boxHeight
     
     return 1;
 }
