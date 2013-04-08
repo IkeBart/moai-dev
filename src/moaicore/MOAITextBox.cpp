@@ -75,6 +75,19 @@ int MOAITextBox::_clearHighlights ( lua_State* L ) {
 	
 	return 0;
 }
+//----------------------------------------------------------------//
+/**	@name	getDynamicResizeFont
+ @text	Returns whether the text box uses dynamic font resizing
+ 
+ @in		MOAITextBox self
+ @out	boolean dynamicResizeFont
+ */
+int MOAITextBox::_getDynamicResizeFont( lua_State *L){
+	MOAI_LUA_SETUP ( MOAITextBox, "U" )
+	state.Push( self->mDynamicResizeFont );
+	return 1;
+}
+
 
 //----------------------------------------------------------------//
 /**	@name	getGlyphScale
@@ -191,6 +204,56 @@ int MOAITextBox::_getStyle ( lua_State* L ) {
 	}
 	return 0;
 }
+//----------------------------------------------------------------//
+/**	@name	initialize
+	@text	Initializes a text box with a given witdh, height, text, font name, minimum font size and desired font size.
+	@in		width
+	@in		height
+	@in		text
+	@in		fontName
+	@in		minFontSize
+	@in		desiredFontSize
+	@opt	allowMultiline
+	@out	nil
+ */
+int MOAITextBox::_initialize(lua_State *L) {
+	MOAI_LUA_SETUP( MOAITextBox, "UNNSSNN")
+	
+	float width = state.GetValue < float >( 2, 0.0f );
+	float height = state.GetValue < float > (3, 0.0f );
+	cc8 * text = state.GetValue < cc8* >( 4, "" );
+	cc8 * fontName = state.GetValue < cc8* >(5 , "");
+	float minFontSize = state.GetValue <float> (6, 0.0f);
+	float desiredFontSize = state.GetValue <float> (7, 0.0f);
+	bool allowMultiline = state.GetValue <bool> (8, false);
+	
+	// set bounds to 0, 0, width, height
+	//self->SetRect(0, 0, width, height);
+	
+	
+	// create a new style with fontName and desiredFontSize
+	MOAITextStyle * theStyle = new MOAITextStyle();
+	
+	// create a new font with fontName
+	MOAIFont * theFont = new MOAIFont();
+	theFont->Init(fontName);
+	
+	theStyle->SetFont(theFont);
+	theStyle->SetSize(desiredFontSize);
+	//self->SetText(text);
+	self->SetStyle(theStyle);
+	
+	//self->ResetStyleMap ();
+	//self->ScheduleLayout ();
+	
+	self->Initialize(width, height, text, minFontSize, desiredFontSize, allowMultiline);
+	
+	self->ResetStyleMap ();
+	self->ScheduleLayout ();
+	
+	return 0;
+}
+
 
 //----------------------------------------------------------------//
 /**	@name	more
@@ -224,7 +287,7 @@ int MOAITextBox::_nextPage ( lua_State* L ) {
 }
 //----------------------------------------------------------------//
 /**	@name	optimalFontSize
-    @text	Figures out the font size that makes it work.
+    @text	Figures out the largest font size that makes the text fit within the bounds.
  
     @in		MOAITextBox self
 	@in		string s			The string to consider
@@ -424,6 +487,22 @@ int MOAITextBox::_setCurve ( lua_State* L ) {
 	}
 	return 0;
 }
+//----------------------------------------------------------------//
+/** @name   setDynamicResizeFont
+ 
+	@text   Sets the boolean value that controls whether the font gets dynamically resized.
+	
+	@in		MOAITextBox self
+	@in		boolean	dynamicResize
+	@out	nil
+*/
+int MOAITextBox::_setDynamicResizeFont(lua_State *L){
+	MOAI_LUA_SETUP ( MOAITextBox, "U" );
+	bool dynamicResize = state.GetValue < bool > (2, true);
+	self->mDynamicResizeFont = dynamicResize;
+	return 0;
+}
+
 
 //----------------------------------------------------------------//
 /**	@name	setGlyphScale
@@ -562,17 +641,19 @@ int MOAITextBox::_setSpeed ( lua_State* L ) {
 
 //----------------------------------------------------------------//
 /**	@name	setString
-	@text	Sets the text string to be displayed by this textbox.
+	@text	Sets the text string to be displayed by this textbox.  Extended by Isaac D. Barrett to accept an optional boolean argument
 
 	@in		MOAITextBox self
 	@in		string newStr				The new text string to be displayed.
+	@opt	boolean multiLine			Whether to put text on multiple lines when using dynamic sizing.  Default = true
 	@out	nil
 */
 int MOAITextBox::_setString ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITextBox, "US" )
 
 	cc8* text = state.GetValue < cc8* >( 2, "" );
-	self->SetText ( text );
+	bool multiLine = state.GetValue <bool> (3, true);
+	self->SetText ( text , multiLine);
 	
 	self->ResetStyleMap ();
 	self->ScheduleLayout ();
@@ -1145,6 +1226,31 @@ MOAITextStyle* MOAITextBox::GetStyle ( cc8* styleName ) {
 	}
 	return this->mStyleSet [ DEFAULT_STYLE_NAME ].mStyle;
 }
+//----------------------------------------------------------------//
+void MOAITextBox::Initialize(float width, float height, cc8* text, float minFontSize, float desiredFontSize, bool allowMultiline){
+	
+	this->SetRect(0, 0, width, height);
+	this->mMinimumFontSize = minFontSize;
+	this->mDynamicResizeFont = true;
+	this->mMaximumFontSize = desiredFontSize;
+	
+	float optimalSize = this->OptimalFontSize(text, allowMultiline);
+	
+	if (optimalSize < 0.0f) {
+		MOAIPrint("in MOAITextBox::Initialize(), this->OptimalFontSize() returned %.1f", optimalSize );
+	}
+	
+	// change the font size of the default style
+	if (optimalSize < this->mMaximumFontSize) {
+		MOAITextStyle *currentStyle = this->GetStyle();
+		
+		float newFontSize = (optimalSize > this->mMinimumFontSize)? optimalSize : this->mMinimumFontSize;
+		currentStyle->SetSize(newFontSize);
+	}
+	
+	// set the text
+	this->SetText(text);
+}
 
 //----------------------------------------------------------------//
 bool MOAITextBox::IsDone () {
@@ -1197,9 +1303,14 @@ MOAITextBox::MOAITextBox () :
 	mCurrentPageIdx ( 0 ),
 	mNextPageIdx ( 0 ),
 	mNeedsLayout ( false ),
+	mMinimumFontSize( 0.0f ), // added
+	mDynamicResizeFont( false ), // added
+	mMaximumFontSize( 0.0f ), // added
 	mMore ( false ),
 	mHighlights ( 0 ),
-	mWordBreak ( WORD_BREAK_NONE ) {
+	mWordBreak ( WORD_BREAK_NONE )
+	
+	{
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAIProp )
@@ -1284,6 +1395,82 @@ void MOAITextBox::OnUpdate ( float step ) {
 	
 	this->mSpool += ( this->mSpeed * step );
 	this->mReveal = ( u32 )this->mSpool;
+}
+
+//----------------------------------------------------------------//
+// Added by Isaac D. Barrett.
+// Returns the font size for the given text that best fits greater than  or equal to mMinimumFontSize. Returns a negative number for an error.
+float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
+	
+	
+	float optimumSize = 0.0f;
+	
+	USRect boxRect = this->mFrame;
+	float boxHeight = boxRect.Height();
+	float boxWidth = boxRect.Width();
+	if (boxHeight == 0.0f || boxWidth == 0.0f) {
+		return -1.0f;
+	}
+	
+	int textLength = strlen(text); // try the old method
+	if (textLength == 0) {
+		return -2.0f;
+	}
+	
+	MOAITextStyle * currentStyle = this->GetStyle(); //this->mStyleSet[DEFAULT_STYLE_NAME].mStyle;
+	float currentFontSize = 0.0f;
+	if (currentStyle) {
+		currentFontSize = currentStyle->GetSize();
+	}
+	else{
+		return -3.0f;
+	}
+	
+	// create temporary text box
+	MOAITextBox *testBox = new MOAITextBox ();
+	testBox -> SetRect(0.0f, 0.0f, textLength * currentFontSize * 2, currentFontSize * 2);
+	testBox -> SetText(text);
+	testBox -> SetStyle(currentStyle);
+	testBox -> ResetStyleMap();
+	testBox -> ScheduleLayout();
+	
+	USRect testRect;
+	testRect.Init(0.0f, 0.0f, 0.0f, 0.0f);
+	if (! testBox->GetBoundsForRange(0, textLength, testRect)) {
+		delete testBox;
+		return -4.0f;
+	}
+	float testWidth = testRect.Width();
+	float testHeight = testRect.Height();
+	
+	if (testWidth == 0.0f) {
+		delete testBox;
+		return -5.0f;
+	}
+	if (testHeight == 0.0f) {
+		delete testBox;
+		return -6.0f;
+	}
+	
+	float wRatio = boxWidth / testWidth;
+	float hRatio = boxHeight / testHeight;
+	float minRatio = (wRatio < hRatio )? wRatio : hRatio;
+	
+	optimumSize = currentFontSize * minRatio;
+	delete testBox;
+	
+	// will change once multi-line functionality is added
+	if (allowMultiLine) {
+		
+	}
+	
+	
+	//optimumSize = (optimumSize < this->mMinimumFontSize) ? this->mMinimumFontSize : optimumSize;
+	//optimumSize = (optimumSize > this->mMaximumFontSize) ? this->mMaximumFontSize : optimumSize;
+	
+	
+	
+	return optimumSize;
 }
 
 //----------------------------------------------------------------//
@@ -1383,11 +1570,13 @@ void MOAITextBox::RegisterLuaFuncs ( MOAILuaState& state ) {
 	
 	luaL_Reg regTable [] = {
 		{ "clearHighlights",		_clearHighlights },
+		{ "getDynamicResizeFont",	_getDynamicResizeFont }, // Added entry by Isaac D. Barrett
 		{ "getGlyphScale",			_getGlyphScale },
 		{ "getLineSpacing",			_getLineSpacing },
 		{ "getRect",				_getRect },
 		{ "getStringBounds",		_getStringBounds },
 		{ "getStyle",				_getStyle },
+		{ "initialize",				_initialize }, // Added entry by Isaac D. Barrett
 		{ "more",					_more },
 		{ "optimalFontSize",		_optimalFontSize }, // Added entry by Isaac D. Barrett
 		{ "nextPage",				_nextPage },
@@ -1395,6 +1584,7 @@ void MOAITextBox::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "revealAll",				_revealAll },
 		{ "setAlignment",			_setAlignment },
 		{ "setCurve",				_setCurve },
+		{ "setDynamicResizeFont",	_setDynamicResizeFont }, // Added entry by Isaac D. Barrett
 		{ "setGlyphScale",			_setGlyphScale },
 		{ "setHighlight",			_setHighlight },
 		{ "setLineSpacing",			_setLineSpacing },
@@ -1591,8 +1781,10 @@ void MOAITextBox::SetStyle ( cc8* styleName, MOAITextStyle* style ) {
 }
 
 //----------------------------------------------------------------//
+// Changed by Isaac D. Barrett to call the version with two arguments.
 void MOAITextBox::SetText ( cc8* text ) {
-
+	this->SetText(text, true);
+/*
 	this->mText = text;
 	this->mTextLength = ( u32 )this->mText.length ();
 	
@@ -1601,6 +1793,57 @@ void MOAITextBox::SetText ( cc8* text ) {
 	
 	this->mCurrentPageIdx = 0;
 	this->mNextPageIdx = 0;
+	
+	// modified with mDynamicResizeFont
+	if (this->mDynamicResizeFont) {
+		float newFontSize = this->OptimalFontSize(text, false);
+		if (newFontSize > this->mMaximumFontSize) {
+			newFontSize = this->mMaximumFontSize;
+		}
+		if (newFontSize < this->mMinimumFontSize) {
+			newFontSize = this->mMinimumFontSize;
+		}
+		
+		MOAITextStyle *currentStyle = this->GetStyle();
+		if (currentStyle) {
+			currentStyle->SetSize(newFontSize);
+		}
+		
+	}
+	
+	this->ResetStyleMap ();
+	this->ClearHighlights ();
+ */
+}
+
+//----------------------------------------------------------------//
+// New overloaded version by Isaac D. Barrett.  Accepts two arguments.  The first changes the text.  The second boolean argument affects the result of OptimalFontSize on whether to use multiple lines.
+void MOAITextBox::SetText ( cc8* text, bool multiLine ) {
+	this->mText = text;
+	this->mTextLength = ( u32 )this->mText.length ();
+	
+	this->mReveal = REVEAL_ALL;
+	this->mSpool = 0.0f;
+	
+	this->mCurrentPageIdx = 0;
+	this->mNextPageIdx = 0;
+	
+	// modified with mDynamicResizeFont
+	if (this->mDynamicResizeFont) {
+		float newFontSize = this->OptimalFontSize(text, multiLine);
+		if (newFontSize > this->mMaximumFontSize) {
+			newFontSize = this->mMaximumFontSize;
+		}
+		if (newFontSize < this->mMinimumFontSize) {
+			newFontSize = this->mMinimumFontSize;
+		}
+		
+		MOAITextStyle *currentStyle = this->GetStyle();
+		if (currentStyle) {
+			currentStyle->SetSize(newFontSize);
+		}
+		
+	}
 	
 	this->ResetStyleMap ();
 	this->ClearHighlights ();
