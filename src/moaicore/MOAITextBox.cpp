@@ -238,9 +238,20 @@ int MOAITextBox::_initialize(lua_State *L) {
 	MOAIFont * theFont = new MOAIFont();
 	theFont->Init(fontName);
 	
+	// preload the font that was initialized
+	/*
+	cc8 * charCodes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?;'- ";
+	int idx = 0;
+	while (charCodes [idx]) {
+		u32 c = u8_nextchar( charCodes, &idx);
+		theFont->AffirmGlyph(desiredFontSize, c);
+	}
+	theFont->ProcessGlyphs();
+	 */
+	
 	theStyle->SetFont(theFont);
 	theStyle->SetSize(desiredFontSize);
-	//self->SetText(text);
+	self->SetText(text);
 	self->SetStyle(theStyle);
 	
 	//self->ResetStyleMap ();
@@ -652,8 +663,15 @@ int MOAITextBox::_setString ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITextBox, "US" )
 
 	cc8* text = state.GetValue < cc8* >( 2, "" );
-	bool multiLine = state.GetValue <bool> (3, true);
-	self->SetText ( text , multiLine);
+	
+	if (state.GetTop() > 2) {
+		bool multiLine = state.GetValue <bool> (3, true);
+		self->SetText ( text , multiLine);
+	}
+	else{
+		self->SetText(text);
+	}
+	
 	
 	self->ResetStyleMap ();
 	self->ScheduleLayout ();
@@ -1237,15 +1255,17 @@ void MOAITextBox::Initialize(float width, float height, cc8* text, float minFont
 	float optimalSize = this->OptimalFontSize(text, allowMultiline);
 	
 	if (optimalSize < 0.0f) {
-		MOAIPrint("in MOAITextBox::Initialize(), this->OptimalFontSize() returned %.1f", optimalSize );
+		//MOAIPrint("in MOAITextBox::Initialize(), this->OptimalFontSize() returned %.1f", optimalSize );
 	}
 	
 	// change the font size of the default style
 	if (optimalSize < this->mMaximumFontSize) {
 		MOAITextStyle *currentStyle = this->GetStyle();
+		if (currentStyle) {
+			float newFontSize = (optimalSize > this->mMinimumFontSize)? optimalSize : this->mMinimumFontSize;
+			currentStyle->SetSize(newFontSize);
+		}
 		
-		float newFontSize = (optimalSize > this->mMinimumFontSize)? optimalSize : this->mMinimumFontSize;
-		currentStyle->SetSize(newFontSize);
 	}
 	
 	// set the text
@@ -1431,11 +1451,12 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	testBox -> SetRect(0.0f, 0.0f, textLength * currentFontSize * 2, currentFontSize * 2);
 	testBox -> SetText(text);
 	testBox -> SetStyle(currentStyle);
-	testBox -> ResetStyleMap();
-	testBox -> ScheduleLayout();
+	//testBox -> ResetStyleMap();
+	//testBox -> ScheduleLayout();
 	
 	USRect testRect;
 	testRect.Init(0.0f, 0.0f, 0.0f, 0.0f);
+	// TODO: Get the temporary text box set up correctly so it doesn't crash when calling GetBoundsForRange()
 	if (! testBox->GetBoundsForRange(0, textLength, testRect)) {
 		delete testBox;
 		return -4.0f;
@@ -1783,8 +1804,8 @@ void MOAITextBox::SetStyle ( cc8* styleName, MOAITextStyle* style ) {
 //----------------------------------------------------------------//
 // Changed by Isaac D. Barrett to call the version with two arguments.
 void MOAITextBox::SetText ( cc8* text ) {
-	this->SetText(text, true);
-/*
+	//this->SetText(text, true);
+
 	this->mText = text;
 	this->mTextLength = ( u32 )this->mText.length ();
 	
@@ -1795,6 +1816,7 @@ void MOAITextBox::SetText ( cc8* text ) {
 	this->mNextPageIdx = 0;
 	
 	// modified with mDynamicResizeFont
+	/*
 	if (this->mDynamicResizeFont) {
 		float newFontSize = this->OptimalFontSize(text, false);
 		if (newFontSize > this->mMaximumFontSize) {
@@ -1810,10 +1832,11 @@ void MOAITextBox::SetText ( cc8* text ) {
 		}
 		
 	}
+	*/
 	
 	this->ResetStyleMap ();
 	this->ClearHighlights ();
- */
+ 
 }
 
 //----------------------------------------------------------------//

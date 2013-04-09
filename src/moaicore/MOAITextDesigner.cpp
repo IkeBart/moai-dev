@@ -173,6 +173,8 @@ void MOAITextDesigner::BuildLayout () {
 			}
 		}
 		else {
+			// Added an assert to make sure the next line won't fail. --Isaac D. Barrett
+			assert(this->mDeck);
 			
 			MOAIGlyph* glyph = this->mDeck->GetGlyph ( c );
 			if ( !glyph ) continue;
