@@ -217,12 +217,15 @@ int MOAITextBox::_getStyle ( lua_State* L ) {
 	@out	nil
  */
 int MOAITextBox::_initialize(lua_State *L) {
-	MOAI_LUA_SETUP( MOAITextBox, "UNNSSNN")
+	MOAI_LUA_SETUP( MOAITextBox, "UNNSUNN")
 	
 	float width = state.GetValue < float >( 2, 0.0f );
 	float height = state.GetValue < float > (3, 0.0f );
 	cc8 * text = state.GetValue < cc8* >( 4, "" );
-	cc8 * fontName = state.GetValue < cc8* >(5 , "");
+	//cc8 * fontName = state.GetValue < cc8* >(5 , "");
+	MOAIFont *aFont = state.GetLuaObject<MOAIFont >(5, true); // It works, but it randomly crashes with bad access...
+	//MOAITextStyle *aStyle = state.GetLuaObject<MOAITextStyle>(5, true); // This needs the style to already have a size and a font.  It also randomly crashes with bad access.
+	
 	float minFontSize = state.GetValue <float> (6, 0.0f);
 	float desiredFontSize = state.GetValue <float> (7, 0.0f);
 	bool allowMultiline = state.GetValue <bool> (8, false);
@@ -235,11 +238,12 @@ int MOAITextBox::_initialize(lua_State *L) {
 	MOAITextStyle * theStyle = new MOAITextStyle();
 	
 	// create a new font with fontName
+	/*
 	MOAIFont * theFont = new MOAIFont();
 	theFont->Init(fontName);
 	
 	// preload the font that was initialized
-	/*
+	
 	cc8 * charCodes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?;'- ";
 	int idx = 0;
 	while (charCodes [idx]) {
@@ -249,13 +253,15 @@ int MOAITextBox::_initialize(lua_State *L) {
 	theFont->ProcessGlyphs();
 	 */
 	
-	theStyle->SetFont(theFont);
+	theStyle->SetFont(aFont);
 	theStyle->SetSize(desiredFontSize);
+	theStyle->ScheduleUpdate();
 	self->SetText(text);
 	self->SetStyle(theStyle);
+	//self->SetStyle(aStyle);
 	
-	//self->ResetStyleMap ();
-	//self->ScheduleLayout ();
+	self->ResetStyleMap ();
+	self->ScheduleLayout ();
 	
 	self->Initialize(width, height, text, minFontSize, desiredFontSize, allowMultiline);
 	
@@ -1451,25 +1457,25 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	testBox -> SetRect(0.0f, 0.0f, textLength * currentFontSize * 2, currentFontSize * 2);
 	testBox -> SetText(text);
 	testBox -> SetStyle(currentStyle);
-	//testBox -> ResetStyleMap();
-	//testBox -> ScheduleLayout();
+	testBox -> ResetStyleMap();
+	testBox -> ScheduleLayout();
 	
 	USRect testRect;
 	testRect.Init(0.0f, 0.0f, 0.0f, 0.0f);
 	// TODO: Get the temporary text box set up correctly so it doesn't crash when calling GetBoundsForRange()
 	if (! testBox->GetBoundsForRange(0, textLength, testRect)) {
-		delete testBox;
+		//delete testBox;
 		return -4.0f;
 	}
 	float testWidth = testRect.Width();
 	float testHeight = testRect.Height();
 	
 	if (testWidth == 0.0f) {
-		delete testBox;
+		//delete testBox;
 		return -5.0f;
 	}
 	if (testHeight == 0.0f) {
-		delete testBox;
+		//delete testBox;
 		return -6.0f;
 	}
 	
@@ -1478,7 +1484,8 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	float minRatio = (wRatio < hRatio )? wRatio : hRatio;
 	
 	optimumSize = currentFontSize * minRatio;
-	delete testBox;
+	//delete testBox; // This might be the culprit for the EXC_BAD_ACCESS errors that randomly occur.
+	// Not deleting the temporary object probably would cause a memory leak.
 	
 	// will change once multi-line functionality is added
 	if (allowMultiLine) {
@@ -1491,7 +1498,7 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	
 	
 	
-	return optimumSize;
+	return optimumSize * 0.985; // Make it one-and-a-half percent smaller than it should be to accomodate those error cases where it would render on two lines otherwise.
 }
 
 //----------------------------------------------------------------//
