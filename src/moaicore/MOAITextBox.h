@@ -237,13 +237,11 @@ private:
 	int					mCurrentPageIdx;
 	int					mNextPageIdx;
 	bool				mNeedsLayout;
-		
-		// properties added by Isaac D. Barrett
-		float mMinimumFontSize;
-		bool	mDynamicResizeFont;
-		float mMaximumFontSize;
-		
 	
+	float				mMinimumFontSize;
+	bool				mDynamicResizeFont;
+	float				mMaximumFontSize;
+		
 	USLeanArray < MOAIAnimCurve* > mCurves;
 	
 	// style set - these are the styles the texbox knows about
@@ -273,24 +271,28 @@ private:
 	
 	//----------------------------------------------------------------//
 	static int			_clearHighlights		( lua_State* L );
-	static int			_getDynamicResizeFont	( lua_State* L ); // method added by Isaac D. Barrett
+	static int			_getDynamicResizeFont	( lua_State* L );
 	static int			_getGlyphScale			( lua_State* L );
 	static int			_getLineSpacing			( lua_State* L );
+	static int			_getMaximumFontSize		( lua_State* L );
+	static int			_getMinimumFontSize		( lua_State* L );
 	static int			_getRect				( lua_State* L );
 	static int			_getStringBounds		( lua_State* L );
 	static int			_getStyle				( lua_State* L );
-	static int			_initialize				( lua_State* L ); // method added by Isaac D. Barrett
+	static int			_initialize				( lua_State* L );
 	static int			_more					( lua_State* L );
 	static int			_nextPage				( lua_State* L );
-    static int          _optimalFontSize        ( lua_State* L ); // method added by Isaac D. Barrett
+    static int          _optimalFontSize        ( lua_State* L );
 	static int			_revealAll				( lua_State* L );
 	static int			_reserveCurves			( lua_State* L );
 	static int			_setAlignment			( lua_State* L );
 	static int			_setCurve				( lua_State* L );
-	static int			_setDynamicResizeFont   ( lua_State* L ); // method added by Isaac D. Barrett
+	static int			_setDynamicResizeFont   ( lua_State* L );
 	static int			_setGlyphScale			( lua_State* L );
 	static int			_setHighlight			( lua_State* L );
 	static int			_setLineSpacing			( lua_State* L );
+	static int			_setMaximumFontSize		( lua_State* L );
+	static int			_setMinimumFontSize		( lua_State* L );
 	static int			_setRect				( lua_State* L );
 	static int			_setReveal				( lua_State* L );
 	static int			_setSpeed				( lua_State* L );
@@ -316,10 +318,10 @@ private:
 	bool				CheckStylesChanged		();
 	void				CompactHighlights		();
 	void				FindSpriteSpan			( u32 idx, u32 size, u32& spanIdx, u32& spanSize );
-	void				Initialize				( float width, float height, cc8* text, float minFontSize, float desiredFontSize, bool allowMultiline ); // Helper method added by Isaac D. Barrett
+	void				Initialize				( float width, float height, cc8* text, float minFontSize, float desiredFontSize, bool allowMultiline );
 	void				Layout					();
 	void				OnDepNodeUpdate			();
-	float				OptimalFontSize			(cc8 *text, bool allowMultiline = false, float adjustmentFactor = 0.98f); // Helper method added by Isaac D. Barrett
+	float				OptimalFontSize			(cc8 *text, bool allowMultiline = false, float adjustmentFactor = 0.98f);
 	void				PushLine				( u32 start, u32 size, const USRect& rect, float ascent );
 	void				PushSprite				( u32 idx, MOAIGlyph& glyph, MOAITextStyle& style, float x, float y, float scale );
 	void				PushStyleSpan			( int base, int top, MOAITextStyle& style );
