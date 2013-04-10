@@ -1425,8 +1425,8 @@ void MOAITextBox::OnUpdate ( float step ) {
 
 //----------------------------------------------------------------//
 // Added by Isaac D. Barrett.
-// Returns the font size for the given text that best fits greater than  or equal to mMinimumFontSize. Returns a negative number for an error.
-float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
+// Returns the font size for the given text that best fits greater than  or equal to mMinimumFontSize. Returns a negative number for an error.  Works best for large initial font sizes
+float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine, float adjustmentFactor){
 	
 	
 	float optimumSize = 0.0f;
@@ -1462,7 +1462,6 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	
 	USRect testRect;
 	testRect.Init(0.0f, 0.0f, 0.0f, 0.0f);
-	// TODO: Get the temporary text box set up correctly so it doesn't crash when calling GetBoundsForRange()
 	if (! testBox->GetBoundsForRange(0, textLength, testRect)) {
 		//delete testBox;
 		return -4.0f;
@@ -1490,6 +1489,7 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	// will change once multi-line functionality is added
 	if (allowMultiLine) {
 		
+		
 	}
 	
 	
@@ -1497,8 +1497,8 @@ float MOAITextBox::OptimalFontSize(cc8 *text, bool allowMultiLine = false){
 	//optimumSize = (optimumSize > this->mMaximumFontSize) ? this->mMaximumFontSize : optimumSize;
 	
 	
-	
-	return optimumSize * 0.985; // Make it one-and-a-half percent smaller than it should be to accomodate those error cases where it would render on two lines otherwise.
+	// Make it two percent smaller than it should be to accomodate those error cases where it would render on two lines otherwise.
+	return optimumSize * adjustmentFactor; 
 }
 
 //----------------------------------------------------------------//
@@ -1812,6 +1812,11 @@ void MOAITextBox::SetStyle ( cc8* styleName, MOAITextStyle* style ) {
 // Changed by Isaac D. Barrett to call the version with two arguments.
 void MOAITextBox::SetText ( cc8* text ) {
 	//this->SetText(text, true);
+	
+	if (this->mDynamicResizeFont) {
+		this->SetText(text, true);
+		return;
+	}
 
 	this->mText = text;
 	this->mTextLength = ( u32 )this->mText.length ();
@@ -1860,6 +1865,12 @@ void MOAITextBox::SetText ( cc8* text, bool multiLine ) {
 	
 	// modified with mDynamicResizeFont
 	if (this->mDynamicResizeFont) {
+		MOAITextStyle *currentStyle = this->GetStyle();
+		if (currentStyle) {
+			// set the style's font size to mMaximumFontSize determined with Initialize before calling OptimalFontSize()
+			currentStyle->SetSize(this->mMaximumFontSize);
+		}
+		
 		float newFontSize = this->OptimalFontSize(text, multiLine);
 		if (newFontSize > this->mMaximumFontSize) {
 			newFontSize = this->mMaximumFontSize;
@@ -1868,9 +1879,9 @@ void MOAITextBox::SetText ( cc8* text, bool multiLine ) {
 			newFontSize = this->mMinimumFontSize;
 		}
 		
-		MOAITextStyle *currentStyle = this->GetStyle();
 		if (currentStyle) {
 			currentStyle->SetSize(newFontSize);
+			currentStyle->ScheduleUpdate();
 		}
 		
 	}

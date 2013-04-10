@@ -319,7 +319,7 @@ private:
 	void				Initialize				( float width, float height, cc8* text, float minFontSize, float desiredFontSize, bool allowMultiline ); // Helper method added by Isaac D. Barrett
 	void				Layout					();
 	void				OnDepNodeUpdate			();
-	float				OptimalFontSize			(cc8 *text, bool allowMultiline ); // Helper method added by Isaac D. Barrett
+	float				OptimalFontSize			(cc8 *text, bool allowMultiline = false, float adjustmentFactor = 0.98f); // Helper method added by Isaac D. Barrett
 	void				PushLine				( u32 start, u32 size, const USRect& rect, float ascent );
 	void				PushSprite				( u32 idx, MOAIGlyph& glyph, MOAITextStyle& style, float x, float y, float scale );
 	void				PushStyleSpan			( int base, int top, MOAITextStyle& style );
