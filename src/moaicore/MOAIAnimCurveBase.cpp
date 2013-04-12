@@ -26,6 +26,22 @@ int MOAIAnimCurveBase::_getLength ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	setCallback
+ @text	Sets or clears the interpolation callback to be issued when .
+ 
+ @in		MOAITouchSensor self
+ @opt	function callback		Default value is nil.
+ @out	nil
+ */
+int MOAIAnimCurveBase::_setCallback ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIAnimCurveBase, "U" )
+	
+	self->mCallback.SetStrongRef ( state, 2 );
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	reserveKeys
 	@text	Reserve key frames.
 	
@@ -94,7 +110,7 @@ void MOAIAnimCurveBase::Clear () {
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurveBase::Draw ( u32 resolution ) const {
+void MOAIAnimCurveBase::Draw ( u32 resolution ) {  // removed const declaration
 	UNUSED ( resolution );
 }
 
@@ -186,7 +202,7 @@ void MOAIAnimCurveBase::GetValue ( MOAIAttrOp& attrOp, float time ) {
 //----------------------------------------------------------------//
 MOAIAnimCurveBase::MOAIAnimCurveBase () :
 	mTime ( 0.0f ),
-	mWrapMode ( CLAMP ) {
+	mWrapMode ( CLAMP ){
 	
 	RTTI_SINGLE ( MOAINode )
 }
@@ -219,6 +235,7 @@ void MOAIAnimCurveBase::RegisterLuaFuncs ( MOAILuaState& state ) {
 	luaL_Reg regTable [] = {
 		{ "getLength",			_getLength },
 		{ "reserveKeys",		_reserveKeys },
+		{ "setCallback",		_setCallback },
 		{ "setWrapMode",		_setWrapMode },
 		{ NULL, NULL }
 	};

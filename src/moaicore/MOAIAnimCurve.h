@@ -28,7 +28,7 @@ private:
 
 	//----------------------------------------------------------------//
 	float			GetCurveDelta		() const;
-	float			GetValue			( const MOAIAnimKeySpan& span ) const;
+	float			GetValue			( const MOAIAnimKeySpan& span ) ; // removed const declaration
 
 public:
 	
@@ -36,12 +36,14 @@ public:
 	
 	//----------------------------------------------------------------//
 	void			ApplyValueAttrOp	( MOAIAttrOp& attrOp, u32 op );
-	void			Draw				( u32 resolution ) const;
-	void			GetDelta			( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 ) const;
+	void			Draw				( u32 resolution ) ;  // removed const declaration
+	void			GetDelta			( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 ) ; // removed const declaration
 	float			GetSample			( u32 id );
-	float			GetValue			( float time ) const;
-	void			GetValue			( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span ) const;
+	float			GetValue			( float time )  ; // removed const declaration
+	void			GetValue			( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span ) ; // removed const declaration
 	void			GetZero				( MOAIAttrOp& attrOp ) const;
+	//float			InterpolateCustom	( float x0, float x1, float t);
+	float			InterpolateCustom	( float x0, float x1, float t, float weight);
 					MOAIAnimCurve		();
 					~MOAIAnimCurve		();
 	void			OnDepNodeUpdate		();

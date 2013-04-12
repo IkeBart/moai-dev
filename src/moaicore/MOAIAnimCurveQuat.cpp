@@ -99,7 +99,7 @@ USQuaternion MOAIAnimCurveQuat::GetCurveDelta () const {
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurveQuat::GetDelta ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 ) const {
+void MOAIAnimCurveQuat::GetDelta ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 )  { // removed const declaration
 
 	USQuaternion v0 = this->GetValue ( span0 );
 	USQuaternion v1 = this->GetValue ( span1 );
@@ -110,14 +110,14 @@ void MOAIAnimCurveQuat::GetDelta ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& sp
 }
 
 //----------------------------------------------------------------//
-USQuaternion MOAIAnimCurveQuat::GetValue ( float time ) const {
+USQuaternion MOAIAnimCurveQuat::GetValue ( float time )  { // removed const declaration
 
 	MOAIAnimKeySpan span = this->GetSpan ( time );
 	return this->GetValue ( span );
 }
 
 //----------------------------------------------------------------//
-USQuaternion MOAIAnimCurveQuat::GetValue ( const MOAIAnimKeySpan& span ) const {
+USQuaternion MOAIAnimCurveQuat::GetValue ( const MOAIAnimKeySpan& span )  { // removed const declaration
 
 	MOAIAnimKey& key = this->mKeys [ span.mKeyID ];
 	USQuaternion v0 = this->mSamples [ span.mKeyID ];
@@ -138,7 +138,7 @@ USQuaternion MOAIAnimCurveQuat::GetValue ( const MOAIAnimKeySpan& span ) const {
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurveQuat::GetValue ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span ) const {
+void MOAIAnimCurveQuat::GetValue ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span )  { // removed const declaration
 
 	attrOp.SetValue < USQuaternion >( this->GetValue ( span ));
 }

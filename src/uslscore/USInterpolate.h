@@ -21,6 +21,7 @@ namespace USInterpolate {
 		kSoftEaseIn,
 		kSoftEaseOut,
 		kSoftSmooth,
+		kCustom, // added to allow custom interpolation functions
 	};
 	
 	//----------------------------------------------------------------//

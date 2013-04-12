@@ -52,7 +52,7 @@ public:
 	//----------------------------------------------------------------//
 	static void			BeginDrawString			( float scale, MOAIFont& font, float fontSize, float shadowOffsetX, float shadowOffsetY );
 	static void			Bind					();
-	static void			DrawAnimCurve			( const MOAIAnimCurve& curve, u32 resolution );
+	static void			DrawAnimCurve			( MOAIAnimCurve& curve, u32 resolution );  // removed const declaration from first parameter
 	static void			DrawAxisGrid			( USVec2D loc, USVec2D vec, float size );
 	static void			DrawBoxOutline			( const USBox& box );
 	static void			DrawEllipseFill			( const USRect& rect, u32 steps );

@@ -71,7 +71,7 @@ void MOAIAnimCurve::ApplyValueAttrOp ( MOAIAttrOp& attrOp, u32 op ) {
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurve::Draw ( u32 resolution ) const {
+void MOAIAnimCurve::Draw ( u32 resolution )  {  // removed const declaration
 
 	// TODO: this isn't entirely correct. the value of each key frame should be drawn
 	// and then the spans between keys should be filled in with an approximation of
@@ -113,7 +113,7 @@ float MOAIAnimCurve::GetCurveDelta () const {
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurve::GetDelta ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 ) const {
+void MOAIAnimCurve::GetDelta ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span0, const MOAIAnimKeySpan& span1 )  { // removed const declaration
 
 	float v0 = this->GetValue ( span0 );
 	float v1 = this->GetValue ( span1 );
@@ -131,26 +131,31 @@ float MOAIAnimCurve::GetSample ( u32 id ) {
 }
 
 //----------------------------------------------------------------//
-float MOAIAnimCurve::GetValue ( float time ) const {
+float MOAIAnimCurve::GetValue ( float time )  { // removed const declaration
 
 	MOAIAnimKeySpan span = this->GetSpan ( time );
 	return this->GetValue ( span );
 }
 
 //----------------------------------------------------------------//
-float MOAIAnimCurve::GetValue ( const MOAIAnimKeySpan& span ) const {
+float MOAIAnimCurve::GetValue ( const MOAIAnimKeySpan& span )  { // removed const declaration
 
 	MOAIAnimKey& key = this->mKeys [ span.mKeyID ];
 	float v0 = this->mSamples [ span.mKeyID ];
 	
 	if ( span.mTime > 0.0f ) {
-		v0 = USInterpolate::Interpolate ( key.mMode, v0, this->mSamples [ span.mKeyID + 1 ], span.mTime, key.mWeight );
+		if (key.mMode == USInterpolate::kCustom) {
+			v0 = MOAIAnimCurve::InterpolateCustom(v0, this->mSamples[span.mKeyID + 1], span.mTime, key.mWeight);
+		}
+		else{
+			v0 = USInterpolate::Interpolate ( key.mMode, v0, this->mSamples [ span.mKeyID + 1 ], span.mTime, key.mWeight );
+		}
 	}
 	return v0 + ( this->GetCurveDelta () * span.mCycle );
 }
 
 //----------------------------------------------------------------//
-void MOAIAnimCurve::GetValue ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span ) const {
+void MOAIAnimCurve::GetValue ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span )  { // removed const declaration
 
 	attrOp.SetValue < float >( this->GetValue ( span ));
 }
@@ -159,6 +164,34 @@ void MOAIAnimCurve::GetValue ( MOAIAttrOp& attrOp, const MOAIAnimKeySpan& span )
 void MOAIAnimCurve::GetZero ( MOAIAttrOp& attrOp ) const {
 
 	attrOp.SetValue < float >( 0.0f );
+}
+
+//----------------------------------------------------------------//
+/*
+float MOAIAnimCurve::InterpolateCustom(float x0, float x1, float t){
+	float s = 0; // use custom function
+	return x0 = ((x1 - x0) * s);
+}
+*/
+//----------------------------------------------------------------//
+// TODO: find a way to restore all of the lost const declarations and add one here
+float MOAIAnimCurve::InterpolateCustom(float x0, float x1, float t, float weight) {
+	
+	float v0 = t; // quicker way of doing: USInterpolate::Curve( USInterpolate::kLinear, t);
+	float v1 = 0.0f; // use custom function
+	
+	if (this->mCallback) {
+		MOAILuaStateHandle state = this->mCallback.GetSelf();
+		lua_pushnumber(state, t); // add parameter variable t to stack
+		state.DebugCall(1, 1); // the function should take one argument and return one number
+		
+		int top = state.GetTop();
+		v1 = state.GetValue < float >( top, 0.0f); // store the return value of the function in v1
+	}
+	
+	float s = USInterpolate::Interpolate(USInterpolate::kLinear, v0, v1, weight);
+	
+	return x0 + ((x1 - x0) * s);
 }
 
 //----------------------------------------------------------------//

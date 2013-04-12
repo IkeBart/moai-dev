@@ -598,7 +598,7 @@ void MOAIDraw::Bind () {
 }
 
 //----------------------------------------------------------------//
-void MOAIDraw::DrawAnimCurve ( const MOAIAnimCurve& curve, u32 resolution ) {
+void MOAIDraw::DrawAnimCurve ( MOAIAnimCurve& curve, u32 resolution ) { // removed const declaration from first parameter
 
 	curve.Draw ( resolution );
 }

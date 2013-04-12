@@ -23,6 +23,7 @@
 	@const	SOFT_EASE_IN	Quadratic ease in.
 	@const	SOFT_EASE_OUT	Quadratic ease out.
 	@const	SOFT_SMOOTH		Quadratic smooth.
+	@const  CUSTOM			Use a custom interpolation function.
 */
 class MOAIEaseType :
 	public MOAILuaObject {
