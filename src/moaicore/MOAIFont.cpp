@@ -59,6 +59,18 @@ int MOAIFont::_getFlags ( lua_State* L ) {
 	state.Push ( self->mFlags );
 	return 1;
 }
+//----------------------------------------------------------------//
+/**	@name	getGlyphScale
+	@text	Returns the glyph scale of the font.  Used for calculations in optimalSize method.
+ 
+	@in		MOAIFont self
+	@out	glyphScale
+ */
+int MOAIFont::_getGlyphScale ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIFont, "U" )
+	state.Push ( self->mGlyphScale );
+	return 1;
+}
 
 //----------------------------------------------------------------//
 /**	@name	getImage
@@ -311,6 +323,19 @@ int MOAIFont::_setDefaultSize ( lua_State* L ) {
 int MOAIFont::_setFlags ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIFont, "U" )
 	self->mFlags = state.GetValue < u32 >( 2, DEFAULT_FLAGS );
+	return 0;
+}
+//----------------------------------------------------------------//
+/**	@name	setGlyphScale
+	@text	Set the glyph scale member variable used in calculations for optimalSize.
+	@in		MOAIFont self
+	@opt	number scale			Default value of 1.0.
+	@out	nil
+ 
+ */
+int MOAIFont::_setGlyphScale( lua_State *L ) {
+	MOAI_LUA_SETUP ( MOAIFont, "U" )
+	self->mGlyphScale = state.GetValue < float >(2, 1.0f);
 	return 0;
 }
 
@@ -1122,6 +1147,7 @@ void MOAIFont::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getDefaultSize",				_getDefaultSize },
 		{ "getFlags",					_getFlags },
 		{ "getFilename",				_getFilename },
+		{ "getGlyphScale",				_getGlyphScale }, // added
 		{ "getImage",					_getImage },
 		{ "load",						_load },
 		{ "loadFromBMFont",				_loadFromBMFont },
@@ -1131,6 +1157,7 @@ void MOAIFont::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setCache",					_setCache },
 		{ "setDefaultSize",				_setDefaultSize },
 		{ "setFlags",					_setFlags },
+		{ "setGlyphScale",				_setGlyphScale }, // added
 		{ "setImage",					_setImage },
 		{ "setReader",					_setReader },
 		{ NULL, NULL }

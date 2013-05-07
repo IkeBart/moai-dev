@@ -85,6 +85,7 @@ protected:
 	 static int			_getDefaultSize         ( lua_State* L );
 	static int			_getFilename			( lua_State* L );
 	static int			_getFlags				( lua_State* L );
+	static int			_getGlyphScale			( lua_State* L ); // added
 	static int			_getImage				( lua_State* L );
 	static int			_load					( lua_State* L );
 	static int			_loadFromBMFont			( lua_State* L );
@@ -95,6 +96,7 @@ protected:
 	static int			_setDefaultSize			( lua_State* L );
 	static int			_setFlags				( lua_State* L );
 	static int			_setImage				( lua_State* L );
+	static int			_setGlyphScale			( lua_State* L ); // added
 	static int			_setReader				( lua_State* L );
 
 	//----------------------------------------------------------------//
