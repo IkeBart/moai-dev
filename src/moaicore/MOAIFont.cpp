@@ -607,9 +607,10 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		mGlyphScale *= -1.0f;
 	}
 	
-	// divide width, height, minSize and maxSize parameters by mGlyphScale.  This saves the author of Lua code from having to do this manually for each parameter, or dividing the result of this function by the glyph scale when setting the font size.
-	width /= mGlyphScale;
-	height /= mGlyphScale;
+	// divide minSize and maxSize parameters by mGlyphScale.  This saves the author of Lua code from having to do this manually for each parameter, or dividing the result of this function by the glyph scale when setting the font size.
+	
+	//width /= mGlyphScale;
+	//height /= mGlyphScale;
 	minSize /= mGlyphScale;
 	maxSize /= mGlyphScale;
 	
@@ -654,6 +655,8 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 	const float FONT_SIZE_MULTIPLIER = 20.0f;
 	textBox -> SetRect(0.0f, 0.0f, textLength * maxSize * FONT_SIZE_MULTIPLIER, maxSize * FONT_SIZE_MULTIPLIER);
 	
+	// set the glyph scale of the temporary text box to the glyph scale of this font.
+	textBox -> mGlyphScale = this -> mGlyphScale;
 	
 	textBox -> SetText(text);
 	textBox -> SetStyle(style);
