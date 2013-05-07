@@ -559,7 +559,8 @@ bool MOAIFont::IsWhitespace ( u32 c ) {
 //----------------------------------------------------------------//
 MOAIFont::MOAIFont () :
 	mFlags ( DEFAULT_FLAGS ),
-	mDefaultSize ( 0.0f ) {
+	mDefaultSize ( 0.0f ),
+	mGlyphScale( 1.0f ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAILuaObject )

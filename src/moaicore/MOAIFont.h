@@ -77,6 +77,9 @@ protected:
 	STLMap < float, MOAIGlyphSet > mGlyphSets;
 
 	float mDefaultSize;
+		
+	// added to simplify calculations for optimalSize method
+	float mGlyphScale;
 
 	//----------------------------------------------------------------//
 	 static int			_getDefaultSize         ( lua_State* L );
