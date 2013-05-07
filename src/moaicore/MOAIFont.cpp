@@ -803,6 +803,9 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		float oldBoxHeight = boxHeight;
 		float decrement = 0.01 * optimumSize;
 		
+		bool lastCharacterDidRender = false;
+		USRect testRect;
+		
 		do {
 			style->SetFont(this);
 			style->SetSize(optimumSize);
@@ -823,8 +826,11 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			boxWidth = boxRect.Width();
 			boxHeight = boxRect.Height();
 			
-			// if the new box height is the same or smaller than the one-line height, exit the loop
-			if (boxHeight <= oldBoxHeight) {
+			// find out if the last character has a defined boundary
+			lastCharacterDidRender = textBox -> GetBoundsForRange(textLength - 1, 1, testRect);
+			
+			// if the new box height is the same or smaller than the one-line height AND the last character rendered, exit the loop
+			if (boxHeight <= oldBoxHeight && lastCharacterDidRender) {
 				break;
 			}
 			
