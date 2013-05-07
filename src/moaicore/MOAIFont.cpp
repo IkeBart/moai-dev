@@ -602,6 +602,20 @@ MOAIFont::~MOAIFont () {
 float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance){
 	float optimumSize = 0.0f;
 	
+	// make sure mGlyphScale is positive
+	if (mGlyphScale < 0.0f) {
+		mGlyphScale *= -1.0f;
+	}
+	
+	// divide width, height, minSize and maxSize parameters by mGlyphScale.  This saves the author of Lua code from having to do this manually for each parameter, or dividing the result of this function by the glyph scale when setting the font size.
+	width /= mGlyphScale;
+	height /= mGlyphScale;
+	minSize /= mGlyphScale;
+	maxSize /= mGlyphScale;
+	
+	// The return value will be affected by mGlyphScale.  If mGlyphScale is 0.5, the return value should be approximately twice as big as it would if mGlyphScale were 1.0.
+	
+	
 	// if either width or height are negative, multiply by -1
 	if (width < 0.0f) {
 		width *= -1.0f;
