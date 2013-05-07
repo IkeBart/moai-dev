@@ -876,6 +876,9 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		float minDiff = tolerance * testSize;
 		
 		float oldBoxHeight = boxHeight;
+		bool lastCharacterDidRender = false;
+		
+		USRect testRect;
 		
 		while (upperBound - lowerBound > minDiff) {
 			style->SetFont(this);
@@ -897,8 +900,11 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			boxWidth = boxRect.Width();
 			boxHeight = boxRect.Height();
 			
+			// find out if the last character in the string has a bounding box
+			lastCharacterDidRender = textBox -> GetBoundsForRange(textLength - 1, 1, testRect);
+			
 			// adjust the bounds depending on whether the new box height is the same or smaller than the one-line height
-			if (boxHeight <= oldBoxHeight) {
+			if (boxHeight <= oldBoxHeight && lastCharacterDidRender) {
 				// adjust lower bound
 				lowerBound = testSize;
 			}
