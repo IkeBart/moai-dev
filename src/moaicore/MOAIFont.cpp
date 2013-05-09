@@ -730,23 +730,104 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			textBox -> ResetStyleMap(); // private methods that I called in previous implementation
 			textBox -> ScheduleLayout();
 			
-			if (! textBox -> GetBoundsForRange(0, textLength, boxRect)) {
-				return -7.0f;
+			// do a binary search between minSize and the size just used in case the method returns false
+			// copied from below
+			// TODO: DRY out the binary search by using a helper method with signature:
+			// float MOAIFont::OptimalSizeBinarySearch(MOAITextBox &textBox, MOAITextStyle &style, float upperBound, float lowerBound, float minimumDifference)
+			do{
+				if (! textBox -> GetBoundsForRange(0, textLength, boxRect)) {
+					float upperBound = ceilf(optimumSize);
+					
+					// the minimum for testing, assumed to succeed.
+					float lowerBound = floorf(minSize);
+					
+					// the font size to test. the floor of the arithmetic mean between the bounds.
+					float testSize = floorf( (upperBound + lowerBound) / 2.0f );
+					
+					// When the difference between the upper bound and the lower bound is less than or equal to minDiff, the binary search stops and returns the lower bound as a result.  The search continues as long as the difference is above the minimum.
+					float minDiff = ceilf(tolerance);
+					// make sure the difference is at least one.
+					if (minDiff < 1.0f) {
+						minDiff = 1.0f;
+					}
+					bool lastCharacterDidRender = false;
+					bool allCharactersDidRender = true;
+					USRect testRect, lastRect;
+					
+					while (upperBound - lowerBound > minDiff) {
+						// set up style and text box
+						style -> SetSize(testSize);
+						style -> ScheduleUpdate();
+						
+						textBox -> ResetStyleMap();
+						textBox -> ScheduleLayout();
+						
+						// find out if last character renders
+						lastCharacterDidRender = textBox->GetBoundsForRange(textLength - 1, 1, testRect);
+						if (lastCharacterDidRender) {
+							// check the other characters in the string too starting with the second to last character
+							allCharactersDidRender = true;
+							int charIdx = textLength - 2;
+							while (charIdx >= 0 && allCharactersDidRender) {
+								// set lastRect's members to those of testRect
+								lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
+								
+								// get the character at charIdx
+								cc8 ch = text[charIdx];
+								
+								// get the bounds for the character at charIdx
+								allCharactersDidRender = textBox->GetBoundsForRange(charIdx, 1, testRect);
+								
+								// test to make sure the character is not whitespace, control character, or part of Unicode sequence
+								// the
+								bool isPrintChar = !MOAIFont::IsControl(ch) && !MOAIFont::IsWhitespace(ch) && ch < 0x80;
+								
+								// if it passes the above condition, the character rendered if at least one member of testRect is different from the corresponding member of lastRect
+								if (isPrintChar && allCharactersDidRender) {
+									allCharactersDidRender = !(testRect.mXMin == lastRect.mXMin &&
+															   testRect.mXMax == lastRect.mXMax &&
+															   testRect.mYMin == lastRect.mYMin &&
+															   testRect.mYMax == lastRect.mYMax);
+								}
+								
+								
+								charIdx -= 1;
+							}
+						}
+						
+						// readjust the bounds
+						if (lastCharacterDidRender && allCharactersDidRender) {
+							// raise lower bound to testSize if the string rendered sucessfully at testSize
+							lowerBound = testSize;
+						}
+						else{
+							// lower upper bound to testSize if the string didn't render completely.
+							upperBound = testSize;
+						}
+						// calculate the new testSize
+						testSize = floorf( (upperBound + lowerBound) / 2.0f );
+						
+					}
+					
+					optimumSize = lowerBound;
+					break;
+				}
+				boxWidth = boxRect.Width();
+				boxHeight = boxRect.Height();
+				if (boxWidth == 0.0f) {
+					return -8.0f;
+				}
+				if (boxHeight == 0.0f) {
+					return -9.0f;
+				}
+				
+				wRatio = width / boxWidth;
+				hRatio = height / boxHeight;
+				float minRatio = (wRatio < hRatio) ? wRatio : hRatio;
+				
+				optimumSize = minRatio * optimumSize;
 			}
-			boxWidth = boxRect.Width();
-			boxHeight = boxRect.Height();
-			if (boxWidth == 0.0f) {
-				return -8.0f;
-			}
-			if (boxHeight == 0.0f) {
-				return -9.0f;
-			}
-			
-			wRatio = width / boxWidth;
-			hRatio = height / boxHeight;
-			float minRatio = (wRatio < hRatio) ? wRatio : hRatio;
-			
-			optimumSize = minRatio * optimumSize;
+			while( false );
 		}
 		else {
 			// else, try finding a new calculated size that fits
@@ -953,8 +1034,12 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			textBox -> ResetStyleMap(); // private methods that I called in previous implementation
 			textBox -> ScheduleLayout();
 			
+			// if the GetBoundsForRange method returns false, adjust upper bound, recalculate testSize and continue
 			if (! textBox -> GetBoundsForRange(0, textLength, boxRect)) {
-				return -7.0f;
+				upperBound = testSize;
+				testSize = floorf( (upperBound + lowerBound) / 2.0f );
+				continue;
+				//return -7.0f;
 			}
 			boxWidth = boxRect.Width();
 			boxHeight = boxRect.Height();
