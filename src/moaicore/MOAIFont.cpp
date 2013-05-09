@@ -163,7 +163,7 @@ int	MOAIFont::_loadFromBMFont ( lua_State* L ) {
 	@opt	number minSize				The minimum font size to allow (default zero)
 	@opt	number maxSize				The maximum font size to allow (default to min(width, height) * 2.0)
 	@opt	boolean allowMultiline		Whether to allow the text to span multiple lines (default true)
-	@opt	number tolerance			The number that controls how deep the binary search will go.  Relative to arithmetic mean of minSize and maxSize.  Default 0.01.
+	@opt	number tolerance			The number that controls how deep the binary search will go. The search ends when the difference between the bounds is equal to this number.  Default 1.0.
 	@out    number optimalSize			nil when unable to determine.
  */
 int MOAIFont::_optimalSize(lua_State *L){
@@ -175,7 +175,7 @@ int MOAIFont::_optimalSize(lua_State *L){
 	float minSize = 0.0f;
 	float maxSize = (width > height)? width * 2 : height * 2;
 	bool allowMultiline = true;
-	float tolerance = 0.01f;
+	float tolerance = 1.0f;
 	
 	if (state.GetTop() >= 5) {
 		minSize = state.GetValue < float >(5, 0.0f);
@@ -187,7 +187,7 @@ int MOAIFont::_optimalSize(lua_State *L){
 		allowMultiline = state.GetValue < bool > (7, true);
 	}
 	if (state.GetTop() >= 8) {
-		tolerance = state.GetValue < float > (8, 0.01f);
+		tolerance = state.GetValue < float > (8, 1.0f);
 	}
 	
 	
@@ -754,11 +754,23 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			// start at calcSize and go down by 1% or one font size, whichever is greater
 			textBox -> SetRect(0.0f, 0.0f, width, height);
 			
-			float upperBound = calcSize;
-			float lowerBound = minSize;
-			float testSize = (upperBound + lowerBound) / 2.0f;
+			// convert to integers using floor function.
+			// the maximum for testing, assumed to fail.
+			float upperBound = ceilf(calcSize);
 			
-			float minDiff = tolerance * testSize;
+			// the minimum for testing, assumed to succeed.
+			float lowerBound = floorf(minSize);
+			
+			// the font size to test. the floor of the arithmetic mean between the bounds.
+			float testSize = floorf( (upperBound + lowerBound) / 2.0f );
+			
+			// When the difference between the upper bound and the lower bound is less than or equal to minDiff, the binary search stops and returns the lower bound as a result.  The search continues as long as the difference is above the minimum.
+			float minDiff = ceilf(tolerance);
+			// make sure the difference is at least one.
+			if (minDiff < 1.0f) {
+				minDiff = 1.0f;
+			}
+			
 			
 			bool lastCharacterDidRender = false;
 			bool allCharactersDidRender = true;
@@ -815,7 +827,7 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 					upperBound = testSize;
 				}
 				// calculate the new testSize
-				testSize = (upperBound + lowerBound) / 2.0f;
+				testSize = floorf( (upperBound + lowerBound) / 2.0f );
 				
 			}
 			
@@ -912,11 +924,15 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		boxWidth = boxRect.Width();
 		boxHeight = boxRect.Height(); // one-line height
 		
-		float upperBound = optimumSize;
-		float lowerBound = minSize;
-		float testSize = (upperBound + lowerBound) / 2.0f;
+		// see the binary search example above for explanation of variables
+		float upperBound = ceilf(optimumSize);
+		float lowerBound = floorf(minSize);
+		float testSize = floorf( (upperBound + lowerBound) / 2.0f );
 		
-		float minDiff = tolerance * testSize;
+		float minDiff = ceilf(tolerance);
+		if (minDiff < 1.0f) {
+			minDiff = 1.0f;
+		}
 		
 		float oldBoxHeight = boxHeight;
 		bool lastCharacterDidRender = false;
@@ -955,7 +971,7 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 				// adjust upper bound
 				upperBound = testSize;
 			}
-			testSize = (upperBound + lowerBound) / 2.0f;
+			testSize = floorf( (upperBound + lowerBound) / 2.0f );
 			
 		}
 		
