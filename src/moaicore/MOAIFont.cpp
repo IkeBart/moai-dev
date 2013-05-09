@@ -732,84 +732,21 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			
 			// do a binary search between minSize and the size just used in case the method returns false
 			// copied from below
-			// TODO: DRY out the binary search by using a helper method with signature:
-			// float MOAIFont::OptimalSizeBinarySearch(MOAITextBox &textBox, MOAITextStyle &style, float upperBound, float lowerBound, float minimumDifference)
 			do{
 				if (! textBox -> GetBoundsForRange(0, textLength, boxRect)) {
+					
 					float upperBound = ceilf(optimumSize);
 					
 					// the minimum for testing, assumed to succeed.
 					float lowerBound = floorf(minSize);
 					
-					// the font size to test. the floor of the arithmetic mean between the bounds.
-					float testSize = floorf( (upperBound + lowerBound) / 2.0f );
-					
 					// When the difference between the upper bound and the lower bound is less than or equal to minDiff, the binary search stops and returns the lower bound as a result.  The search continues as long as the difference is above the minimum.
 					float minDiff = ceilf(tolerance);
-					// make sure the difference is at least one.
-					if (minDiff < 1.0f) {
-						minDiff = 1.0f;
-					}
-					bool lastCharacterDidRender = false;
-					bool allCharactersDidRender = true;
-					USRect testRect, lastRect;
 					
-					while (upperBound - lowerBound > minDiff) {
-						// set up style and text box
-						style -> SetSize(testSize);
-						style -> ScheduleUpdate();
-						
-						textBox -> ResetStyleMap();
-						textBox -> ScheduleLayout();
-						
-						// find out if last character renders
-						lastCharacterDidRender = textBox->GetBoundsForRange(textLength - 1, 1, testRect);
-						if (lastCharacterDidRender) {
-							// check the other characters in the string too starting with the second to last character
-							allCharactersDidRender = true;
-							int charIdx = textLength - 2;
-							while (charIdx >= 0 && allCharactersDidRender) {
-								// set lastRect's members to those of testRect
-								lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
-								
-								// get the character at charIdx
-								cc8 ch = text[charIdx];
-								
-								// get the bounds for the character at charIdx
-								allCharactersDidRender = textBox->GetBoundsForRange(charIdx, 1, testRect);
-								
-								// test to make sure the character is not whitespace, control character, or part of Unicode sequence
-								// the
-								bool isPrintChar = !MOAIFont::IsControl(ch) && !MOAIFont::IsWhitespace(ch) && ch < 0x80;
-								
-								// if it passes the above condition, the character rendered if at least one member of testRect is different from the corresponding member of lastRect
-								if (isPrintChar && allCharactersDidRender) {
-									allCharactersDidRender = !(testRect.mXMin == lastRect.mXMin &&
-															   testRect.mXMax == lastRect.mXMax &&
-															   testRect.mYMin == lastRect.mYMin &&
-															   testRect.mYMax == lastRect.mYMax);
-								}
-								
-								
-								charIdx -= 1;
-							}
-						}
-						
-						// readjust the bounds
-						if (lastCharacterDidRender && allCharactersDidRender) {
-							// raise lower bound to testSize if the string rendered sucessfully at testSize
-							lowerBound = testSize;
-						}
-						else{
-							// lower upper bound to testSize if the string didn't render completely.
-							upperBound = testSize;
-						}
-						// calculate the new testSize
-						testSize = floorf( (upperBound + lowerBound) / 2.0f );
-						
-					}
 					
-					optimumSize = lowerBound;
+					optimumSize = OptimalSizeBinarySearch(textBox, style, upperBound, lowerBound, minDiff, text);
+					
+					
 					break;
 				}
 				boxWidth = boxRect.Width();
@@ -835,6 +772,7 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			// start at calcSize and go down by 1% or one font size, whichever is greater
 			textBox -> SetRect(0.0f, 0.0f, width, height);
 			
+			
 			// convert to integers using floor function.
 			// the maximum for testing, assumed to fail.
 			float upperBound = ceilf(calcSize);
@@ -842,75 +780,11 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			// the minimum for testing, assumed to succeed.
 			float lowerBound = floorf(minSize);
 			
-			// the font size to test. the floor of the arithmetic mean between the bounds.
-			float testSize = floorf( (upperBound + lowerBound) / 2.0f );
-			
 			// When the difference between the upper bound and the lower bound is less than or equal to minDiff, the binary search stops and returns the lower bound as a result.  The search continues as long as the difference is above the minimum.
 			float minDiff = ceilf(tolerance);
-			// make sure the difference is at least one.
-			if (minDiff < 1.0f) {
-				minDiff = 1.0f;
-			}
 			
+			optimumSize = OptimalSizeBinarySearch(textBox, style, upperBound, lowerBound, minDiff, text);
 			
-			bool lastCharacterDidRender = false;
-			bool allCharactersDidRender = true;
-			USRect testRect, lastRect;
-			
-			while (upperBound - lowerBound > minDiff) {
-				// set up style and text box
-				style -> SetSize(testSize);
-				style -> ScheduleUpdate();
-				
-				textBox -> ResetStyleMap();
-				textBox -> ScheduleLayout();
-				
-				// find out if last character renders
-				lastCharacterDidRender = textBox->GetBoundsForRange(textLength - 1, 1, testRect);
-				if (lastCharacterDidRender) {
-					// check the other characters in the string too starting with the second to last character
-					allCharactersDidRender = true;
-					int charIdx = textLength - 2;
-					while (charIdx >= 0 && allCharactersDidRender) {
-						// set lastRect's members to those of testRect
-						lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
-						
-						// get the character at charIdx
-						cc8 ch = text[charIdx];
-						
-						// get the bounds for the character at charIdx
-						allCharactersDidRender = textBox->GetBoundsForRange(charIdx, 1, testRect);
-						
-						// test to make sure the character is not whitespace, control character, or part of Unicode sequence
-						// the
-						bool isPrintChar = !MOAIFont::IsControl(ch) && !MOAIFont::IsWhitespace(ch) && ch < 0x80;
-						
-						// if it passes the above condition, the character rendered if at least one member of testRect is different from the corresponding member of lastRect
-						if (isPrintChar && allCharactersDidRender) {
-							allCharactersDidRender = !(testRect.mXMin == lastRect.mXMin &&
-													   testRect.mXMax == lastRect.mXMax &&
-													   testRect.mYMin == lastRect.mYMin &&
-													   testRect.mYMax == lastRect.mYMax);
-						}
-						
-						
-						charIdx -= 1;
-					}
-				}
-				
-				// readjust the bounds
-				if (lastCharacterDidRender && allCharactersDidRender) {
-					// raise lower bound to testSize if the string rendered sucessfully at testSize
-					lowerBound = testSize;
-				}
-				else{
-					// lower upper bound to testSize if the string didn't render completely.
-					upperBound = testSize;
-				}
-				// calculate the new testSize
-				testSize = floorf( (upperBound + lowerBound) / 2.0f );
-				
-			}
 			
 			/*
 			do {
@@ -966,7 +840,9 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			//optimumSize = testSize;
 			
 			// take the largest size known to render correctly
-			optimumSize = lowerBound;
+			//optimumSize = lowerBound;
+			
+			
 			
 			// remember that cutting font size in half will quadruple text box capacity.
 			
@@ -1123,6 +999,83 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 	
 	
 	return optimumSize;
+}
+
+//----------------------------------------------------------------//
+// helper method where the binary search is implemented for multi-line optimal size.
+float MOAIFont::OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* style, float upperBound, float lowerBound, float minDiff, cc8* text ){
+	float testSize = floorf( (upperBound + lowerBound) / 2.0f );
+	// make sure the difference is at least one.
+	if (minDiff < 1.0f) {
+		minDiff = 1.0f;
+	}
+	int textLength = strlen(text);
+	
+	bool lastCharacterDidRender = false;
+	bool allCharactersDidRender = true;
+	USRect testRect, lastRect;
+	
+	while (upperBound - lowerBound > minDiff) {
+		// set up style and text box
+		style -> SetSize(testSize);
+		style -> ScheduleUpdate();
+		
+		textBox -> ResetStyleMap();
+		textBox -> ScheduleLayout();
+		
+		// find out if last character renders
+		lastCharacterDidRender = textBox->GetBoundsForRange(textLength - 1, 1, testRect);
+		if (lastCharacterDidRender) {
+			// check the other characters in the string too starting with the second to last character
+			allCharactersDidRender = true;
+			int charIdx = textLength - 2;
+			while (charIdx >= 0 && allCharactersDidRender) {
+				// set lastRect's members to those of testRect
+				lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
+				
+				// get the character at charIdx
+				cc8 ch = text[charIdx];
+				
+				// get the bounds for the character at charIdx
+				allCharactersDidRender = textBox->GetBoundsForRange(charIdx, 1, testRect);
+				
+				// test to make sure the character is not whitespace, control character, or part of Unicode sequence
+				// the
+				bool isPrintChar = !MOAIFont::IsControl(ch) && !MOAIFont::IsWhitespace(ch) && ch < 0x80;
+				
+				// if it passes the above condition, the character rendered if at least one member of testRect is different from the corresponding member of lastRect
+				if (isPrintChar && allCharactersDidRender) {
+					allCharactersDidRender = !(testRect.mXMin == lastRect.mXMin &&
+											   testRect.mXMax == lastRect.mXMax &&
+											   testRect.mYMin == lastRect.mYMin &&
+											   testRect.mYMax == lastRect.mYMax);
+				}
+				
+				
+				charIdx -= 1;
+			}
+		}
+		
+		// readjust the bounds
+		if (lastCharacterDidRender && allCharactersDidRender) {
+			// raise lower bound to testSize if the string rendered sucessfully at testSize
+			lowerBound = testSize;
+		}
+		else{
+			// lower upper bound to testSize if the string didn't render completely.
+			upperBound = testSize;
+		}
+		// calculate the new testSize
+		testSize = floorf( (upperBound + lowerBound) / 2.0f );
+		
+	}
+	
+	
+	//optimumSize = testSize;
+	
+	// take the largest size known to render correctly
+	return lowerBound;
+	
 }
 
 //----------------------------------------------------------------//
