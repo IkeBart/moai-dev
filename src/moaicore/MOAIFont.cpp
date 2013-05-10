@@ -694,6 +694,8 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		// make sure the calculated size is less than or equal to maxSize
 		float calcSize = (maxVSize < maxSize)?maxVSize : maxSize;
 		
+		
+		/*
 		const int SHORT_STRING_LENGTH_THRESHOLD = 3;
 		// if the maximum vertical size is greater than or equal to the maxSize parameter and the string length is short enough for problems to occur (usually for single character strings.)
 		if (maxVSize >= maxSize && textLength <= SHORT_STRING_LENGTH_THRESHOLD){
@@ -710,6 +712,7 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			textBox -> ResetStyleMap();
 			textBox -> ScheduleLayout();
 		}
+		 */
 		
 		
 		// calculate the number of lines needed at the maximum font size that can fit in the box's height.
@@ -735,10 +738,12 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			// use this font size as the optimal size
 			optimumSize = calcSize; 
 			
-			
-			style->SetFont(this);
-			style->SetSize(optimumSize);
-			style->ScheduleUpdate();
+			// update style only if it is less maxSize.  Trying to fix rendering errors with single-character strings.
+			if (optimumSize < maxSize) {
+				style->SetFont(this);
+				style->SetSize(optimumSize);
+				style->ScheduleUpdate();
+			}
 			
 			textBox -> SetRect(0.0f, 0.0f, width, height);
 			
