@@ -692,7 +692,24 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		
 		float maxVSize = hRatio * maxSize;
 		// make sure the calculated size is less than or equal to maxSize
-		float calcSize = (maxVSize < maxSize)?maxVSize : maxSize; 
+		float calcSize = (maxVSize < maxSize)?maxVSize : maxSize;
+		
+		const int SHORT_STRING_LENGTH_THRESHOLD = 3;
+		// if the maximum vertical size is greater than or equal to the maxSize parameter and the string length is short enough for problems to occur (usually for single character strings.)
+		if (maxVSize >= maxSize && textLength <= SHORT_STRING_LENGTH_THRESHOLD){
+			// render text at maximum vertical size to try to fix a problem
+			
+			style->SetFont(this);
+			style->SetSize(maxSize);
+			style->ScheduleUpdate();
+			
+			textBox -> SetRect(0.0f, 0.0f, width, height);
+			
+			textBox -> SetText(text);
+			textBox -> SetStyle(style);
+			textBox -> ResetStyleMap();
+			textBox -> ScheduleLayout();
+		}
 		
 		
 		// calculate the number of lines needed at the maximum font size that can fit in the box's height.
