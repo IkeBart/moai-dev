@@ -11,6 +11,8 @@
 class MOAIFontReader;
 class MOAIGlyph;
 class MOAIGlyphCacheBase;
+class MOAITextBox;
+class MOAITextStyle;
 class MOAITextureBase;
 class MOAITexture;
 
@@ -106,6 +108,7 @@ protected:
 
 	//----------------------------------------------------------------//
 	void				BuildKerning			( MOAIGlyph* glyphs, MOAIGlyph* pendingGlyphs );
+	float				OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* style, float upperBound, float lowerBound, float minDiff, cc8* text );
 	void				RebuildKerning			( MOAIGlyphSet& glyphSet );
 
 public:
