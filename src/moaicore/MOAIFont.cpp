@@ -599,6 +599,11 @@ MOAIFont::~MOAIFont () {
 	this->mCache.Set ( *this, 0 );
 }
 //----------------------------------------------------------------//
+float MOAIFont::MultipleLineOptimalSize(cc8 *text, float width, float height, float minSize, float maxSize){
+	return 1.0f;
+}
+
+//----------------------------------------------------------------//
 float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance){
 	float optimumSize = 0.0f;
 	
@@ -1319,4 +1324,8 @@ void MOAIFont::SerializeOut ( MOAILuaState& state, MOAISerializer& serializer ) 
 		lua_settable ( state, -3 );
 	}
 	lua_setfield ( state, -2, "mGlyphSets" );
+}
+//----------------------------------------------------------------//
+float MOAIFont::SingleLineOptimalSize(cc8 *text, float width, float height, float minSize, float maxSize){
+	return 1.0f;
 }
