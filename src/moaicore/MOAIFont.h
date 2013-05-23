@@ -11,6 +11,8 @@
 class MOAIFontReader;
 class MOAIGlyph;
 class MOAIGlyphCacheBase;
+class MOAITextBox;
+class MOAITextStyle;
 class MOAITextureBase;
 class MOAITexture;
 
@@ -77,11 +79,15 @@ protected:
 	STLMap < float, MOAIGlyphSet > mGlyphSets;
 
 	float mDefaultSize;
+		
+	// added to simplify calculations for optimalSize method
+	float mGlyphScale;
 
 	//----------------------------------------------------------------//
 	 static int			_getDefaultSize         ( lua_State* L );
 	static int			_getFilename			( lua_State* L );
 	static int			_getFlags				( lua_State* L );
+	static int			_getGlyphScale			( lua_State* L ); // added
 	static int			_getImage				( lua_State* L );
 	static int			_load					( lua_State* L );
 	static int			_loadFromBMFont			( lua_State* L );
@@ -92,6 +98,7 @@ protected:
 	static int			_setDefaultSize			( lua_State* L );
 	static int			_setFlags				( lua_State* L );
 	static int			_setImage				( lua_State* L );
+	static int			_setGlyphScale			( lua_State* L ); // added
 	static int			_setReader				( lua_State* L );
 
 	//----------------------------------------------------------------//
@@ -101,6 +108,7 @@ protected:
 
 	//----------------------------------------------------------------//
 	void				BuildKerning			( MOAIGlyph* glyphs, MOAIGlyph* pendingGlyphs );
+	float				OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* style, float upperBound, float lowerBound, float minDiff, cc8* text );
 	void				RebuildKerning			( MOAIGlyphSet& glyphSet );
 
 public:
@@ -129,6 +137,7 @@ public:
 	static bool			IsWhitespace			( u32 c );
 						MOAIFont				();
 						~MOAIFont				();
+	float				MultipleLineOptimalSize (cc8* text, float width, float height, float minSize, float maxSize, MOAITextBox *textBox);
 	float				OptimalSize				(cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance);
 	void				ProcessGlyphs			();
 	void				RebuildKerning			();
@@ -138,6 +147,7 @@ public:
 	void				ResizePageList			( u32 size );
 	void				SerializeIn				( MOAILuaState& state, MOAIDeserializer& serializer );
 	void				SerializeOut			( MOAILuaState& state, MOAISerializer& serializer );
+	float				SingleLineOptimalSize   (cc8* text, float width, float height, float minSize, float maxSize, MOAITextBox *textBox);
 };
 
 #endif
