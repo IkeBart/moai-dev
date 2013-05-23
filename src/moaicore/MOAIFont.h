@@ -138,7 +138,7 @@ public:
 						MOAIFont				();
 						~MOAIFont				();
 	float				MultipleLineOptimalSize (cc8* text, float width, float height, float minSize, float maxSize, MOAITextBox *textBox);
-	float				OptimalSize				(cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance);
+	float				OptimalSize				(cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine);
 	void				ProcessGlyphs			();
 	void				RebuildKerning			();
 	void				RebuildKerning			( float size );

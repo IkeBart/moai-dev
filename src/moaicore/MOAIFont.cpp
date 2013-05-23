@@ -163,7 +163,6 @@ int	MOAIFont::_loadFromBMFont ( lua_State* L ) {
 	@opt	number minSize				The minimum font size to allow (default zero)
 	@opt	number maxSize				The maximum font size to allow (default to min(width, height) * 2.0)
 	@opt	boolean allowMultiline		Whether to allow the text to span multiple lines (default true)
-	@opt	number tolerance			The number that controls how deep the binary search will go. The search ends when the difference between the bounds is equal to this number.  Default 1.0.
 	@out    number optimalSize			nil when unable to determine.
  */
 int MOAIFont::_optimalSize(lua_State *L){
@@ -175,7 +174,6 @@ int MOAIFont::_optimalSize(lua_State *L){
 	float minSize = 0.0f;
 	float maxSize = (width > height)? width * 2 : height * 2;
 	bool allowMultiline = true;
-	float tolerance = 1.0f;
 	
 	if (state.GetTop() >= 5) {
 		minSize = state.GetValue < float >(5, 0.0f);
@@ -186,12 +184,9 @@ int MOAIFont::_optimalSize(lua_State *L){
 	if (state.GetTop() >= 7) {
 		allowMultiline = state.GetValue < bool > (7, true);
 	}
-	if (state.GetTop() >= 8) {
-		tolerance = state.GetValue < float > (8, 1.0f);
-	}
 	
 	
-	float optSize = self->OptimalSize(text, width, height, minSize, maxSize, allowMultiline, tolerance);
+	float optSize = self->OptimalSize(text, width, height, minSize, maxSize, allowMultiline);
 	//if (optSize >= 0.0f) {
 		lua_pushnumber(L, optSize);
 		return 1;
@@ -719,9 +714,7 @@ float MOAIFont::MultipleLineOptimalSize(cc8 *text, float width, float height, fl
 }
 
 //----------------------------------------------------------------//
-float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance){
-	
-	UNUSED(tolerance);
+float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine){
 	
 	float optimumSize = 0.0f;
 	
