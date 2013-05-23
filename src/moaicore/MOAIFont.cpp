@@ -1049,12 +1049,27 @@ float MOAIFont::OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* s
 		textBox -> ResetStyleMap();
 		textBox -> ScheduleLayout();
 		
+		// find index of last non-whitespace character
+		int lastPrintCharIndex = textLength - 1;
+		char lastPrintChar = text[lastPrintCharIndex];
+		//for (;lastPrintCharIndex >= 0 && (MOAIFont::IsWhitespace(lastPrintChar) || MOAIFont::IsControl(lastPrintChar) ); lastPrintCharIndex --) {
+		//	lastPrintChar = text[lastPrintCharIndex];
+		//}
+		while (lastPrintCharIndex > 0) {
+			if ( !(MOAIFont::IsWhitespace(lastPrintChar) || MOAIFont::IsControl(lastPrintChar))) {
+				break;
+			}
+			lastPrintCharIndex -= 1;
+			lastPrintChar = text[lastPrintCharIndex];
+		}
+		
+
 		// find out if last character renders
-		lastCharacterDidRender = textBox->GetBoundsForRange(textLength - 1, 1, testRect);
+		lastCharacterDidRender = textBox->GetBoundsForRange(lastPrintCharIndex, 1, testRect);
 		if (lastCharacterDidRender) {
 			// check the other characters in the string too starting with the second to last character
 			allCharactersDidRender = true;
-			int charIdx = textLength - 2;
+			int charIdx = lastPrintCharIndex - 1;
 			while (charIdx >= 0 && allCharactersDidRender) {
 				// set lastRect's members to those of testRect
 				lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
