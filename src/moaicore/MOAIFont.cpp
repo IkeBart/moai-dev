@@ -1308,8 +1308,19 @@ float MOAIFont::SingleLineOptimalSize(cc8 *text, float width, float height, floa
 		boxWidth = boxRect.Width();
 		boxHeight = boxRect.Height();
 		
+		// find index of last non-whitespace character
+		int lastPrintCharIndex = textLength - 1;
+		char lastPrintChar = text[lastPrintCharIndex];
+		while (lastPrintCharIndex > 0) {
+			if ( !(MOAIFont::IsWhitespace(lastPrintChar) || MOAIFont::IsControl(lastPrintChar))) {
+				break;
+			}
+			lastPrintCharIndex -= 1;
+			lastPrintChar = text[lastPrintCharIndex];
+		}
+		
 		// find out if the last character in the string has a bounding box
-		lastCharacterDidRender = textBox -> GetBoundsForRange(textLength - 1, 1, testRect);
+		lastCharacterDidRender = textBox -> GetBoundsForRange(lastPrintCharIndex, 1, testRect);
 		
 		// adjust the bounds depending on whether the new box height is the same or smaller than the one-line height
 		if (boxHeight <= oldBoxHeight && lastCharacterDidRender) {
