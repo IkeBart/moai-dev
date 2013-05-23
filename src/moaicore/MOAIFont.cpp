@@ -738,24 +738,24 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 			// use this font size as the optimal size
 			optimumSize = calcSize;
 			
+			// update style and text box
 			textBox -> SetRect(0.0f, 0.0f, width, height);
 			textBox -> SetText(text);
 			
-			// update style only if it is less maxSize.  Trying to fix rendering errors with single-character strings.
-			if (optimumSize < maxSize) {
-				style->SetFont(this);
-				style->SetSize(optimumSize);
-				style->ScheduleUpdate();
+			
+			style->SetFont(this);
+			style->SetSize(optimumSize);
+			style->ScheduleUpdate();
+		
+		
+			//textBox -> SetRect(0.0f, 0.0f, width, height);
 			
 			
-				//textBox -> SetRect(0.0f, 0.0f, width, height);
-				
-				
-				textBox -> SetStyle(style);
-				textBox -> ResetStyleMap(); // private methods that I called in previous implementation
-				textBox -> ScheduleLayout();
+			textBox -> SetStyle(style);
+			textBox -> ResetStyleMap(); // private methods that I called in previous implementation
+			textBox -> ScheduleLayout();
 			
-			}
+			
 			// do a binary search between minSize and the size just used in case the method returns false
 			// copied from below
 			do{
