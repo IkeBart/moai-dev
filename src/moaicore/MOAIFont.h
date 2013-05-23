@@ -137,7 +137,7 @@ public:
 	static bool			IsWhitespace			( u32 c );
 						MOAIFont				();
 						~MOAIFont				();
-	float				MultipleLineOptimalSize (cc8* text, float width, float height, float minSize, float maxSize);
+	float				MultipleLineOptimalSize (cc8* text, float width, float height, float minSize, float maxSize, MOAITextBox *textBox);
 	float				OptimalSize				(cc8* text, float width, float height, float minSize, float maxSize, bool allowMultiLine, float tolerance);
 	void				ProcessGlyphs			();
 	void				RebuildKerning			();
@@ -147,7 +147,7 @@ public:
 	void				ResizePageList			( u32 size );
 	void				SerializeIn				( MOAILuaState& state, MOAIDeserializer& serializer );
 	void				SerializeOut			( MOAILuaState& state, MOAISerializer& serializer );
-	float				SingleLineOptimalSize   (cc8* text, float width, float height, float minSize, float maxSize);
+	float				SingleLineOptimalSize   (cc8* text, float width, float height, float minSize, float maxSize, MOAITextBox *textBox);
 };
 
 #endif
