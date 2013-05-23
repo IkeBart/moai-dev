@@ -1322,6 +1322,15 @@ float MOAIFont::SingleLineOptimalSize(cc8 *text, float width, float height, floa
 		// find out if the last character in the string has a bounding box
 		lastCharacterDidRender = textBox -> GetBoundsForRange(lastPrintCharIndex, 1, testRect);
 		
+		// next check if the same character would render in a text box with dimensions matching the parameter values.
+		if (lastCharacterDidRender) {
+			textBox -> SetRect(0.0f, 0.0f, width, height);
+			textBox -> ResetStyleMap();
+			textBox -> ScheduleLayout();
+			
+			lastCharacterDidRender = textBox -> GetBoundsForRange(lastPrintCharIndex, 1, testRect);
+		}
+		
 		// adjust the bounds depending on whether the new box height is the same or smaller than the one-line height
 		if (boxHeight <= oldBoxHeight && lastCharacterDidRender) {
 			// adjust lower bound
