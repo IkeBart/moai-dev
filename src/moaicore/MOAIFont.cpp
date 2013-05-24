@@ -568,6 +568,7 @@ bool MOAIFont::IsControl ( u32 c ) {
 	return false;
 }
 //----------------------------------------------------------------//
+// Returns true for any printable character when using an unsigned char as input.  Characters in a UTF-8 string with values in the range (128...191) are continuation characters that appear after characters in the range (194...244) and don't get printed.
 bool MOAIFont::IsPrintCharacter( u32 c ) {
 	
 	return !MOAIFont::IsControl(c) && !MOAIFont::IsWhitespace(c) && (c < 0x80 || c >= 0xC0) ;
@@ -1209,9 +1210,9 @@ float MOAIFont::SingleLineOptimalSize(cc8 *text, float width, float height, floa
 		
 		// find index of last non-whitespace character
 		int lastPrintCharIndex = textLength - 1;
-		char lastPrintChar = text[lastPrintCharIndex];
+		unsigned char lastPrintChar = text[lastPrintCharIndex];
 		while (lastPrintCharIndex > 0) {
-			if ( !(MOAIFont::IsWhitespace(lastPrintChar) || MOAIFont::IsControl(lastPrintChar))) {
+			if ( MOAIFont::IsPrintCharacter( lastPrintChar )) {
 				break;
 			}
 			lastPrintCharIndex -= 1;
