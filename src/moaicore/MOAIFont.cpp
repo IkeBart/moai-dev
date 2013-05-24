@@ -567,6 +567,11 @@ bool MOAIFont::IsControl ( u32 c ) {
 	
 	return false;
 }
+//----------------------------------------------------------------//
+bool MOAIFont::IsPrintCharacter( u32 c ) {
+	
+	return !MOAIFont::IsControl(c) && !MOAIFont::IsWhitespace(c) && (c < 0x80 || c >= 0xC0) ;
+}
 
 //----------------------------------------------------------------//
 bool MOAIFont::IsWhitespace ( u32 c ) {
@@ -854,9 +859,9 @@ float MOAIFont::OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* s
 		
 		// find index of last non-whitespace character
 		int lastPrintCharIndex = textLength - 1;
-		char lastPrintChar = text[lastPrintCharIndex];
+		unsigned char lastPrintChar = text[lastPrintCharIndex];
 		while (lastPrintCharIndex > 0) {
-			if ( !(MOAIFont::IsWhitespace(lastPrintChar) || MOAIFont::IsControl(lastPrintChar))) {
+			if ( MOAIFont::IsPrintCharacter(lastPrintChar) ) {
 				break;
 			}
 			lastPrintCharIndex -= 1;
@@ -875,14 +880,14 @@ float MOAIFont::OptimalSizeBinarySearch ( MOAITextBox* textBox, MOAITextStyle* s
 				lastRect.Init(testRect.mXMin, testRect.mYMin, testRect.mXMax, testRect.mYMax);
 				
 				// get the character at charIdx
-				cc8 ch = text[charIdx];
+				unsigned char ch = text[charIdx];
 				
 				// get the bounds for the character at charIdx
 				allCharactersDidRender = textBox->GetBoundsForRange(charIdx, 1, testRect);
 				
 				// test to make sure the character is not whitespace, control character, or part of Unicode sequence
 				// the
-				bool isPrintChar = !MOAIFont::IsControl(ch) && !MOAIFont::IsWhitespace(ch) && ch < 0x80;
+				bool isPrintChar = MOAIFont::IsPrintCharacter(ch);
 				
 				// if it passes the above condition, the character rendered if at least one member of testRect is different from the corresponding member of lastRect
 				if (isPrintChar && allCharactersDidRender) {
