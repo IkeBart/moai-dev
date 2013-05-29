@@ -16,6 +16,9 @@
 #include <moaicore/MOAITextureBase.h>
 #include <moaicore/MOAITextBox.h>
 #include <moaicore/MOAITextStyle.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 
 //================================================================//
 // local
@@ -761,6 +764,50 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 		maxSize = minSize;
 	}
 	
+	// Create an instance of the FreeType library
+	
+	FT_Library library;
+	FT_Face face;
+	
+	FT_Error error = FT_Init_FreeType(&library);
+	if (error) {
+		return -3.0f;
+	}
+	
+	// initialize a handle for the font face
+	error = FT_New_Face(library, this->mFilename, 0, &face);
+	if (error == FT_Err_Unknown_File_Format) {
+		return -4.0f;
+	}
+	else if (error){
+		return -5.0f;
+	}
+	
+	
+	error = FT_Set_Char_Size(face, // handle to face object
+							 0, // char_width in 1/64th of points
+							 maxSize * 64, // char_height in 1/64th of points
+							 0, // horizontal device resolution
+							 0); // vertical device resolution
+	
+	if (error){
+		return -6.0f;
+	}
+	
+	if (allowMultiLine) {
+		//optimumSize = this->MultipleLineOptimalSize(text, width, height, minSize, maxSize, textBox);
+	}
+	else{
+		//optimumSize = this->SingleLineOptimalSize(text, width, height, minSize, maxSize, textBox);
+		
+	}
+	
+	
+	// determine the dimensions of the string as rendered.
+	FT_BBox boundingBox = face->bbox;
+	
+	
+	/*
 	// create a temporary text box and text style
 	MOAITextStyle *style = new MOAITextStyle();
 	style->SetFont(this);
@@ -832,7 +879,7 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 	//textBox->Release();
 	//style->Release();
 	
-	
+	*/
 	return optimumSize;
 }
 
