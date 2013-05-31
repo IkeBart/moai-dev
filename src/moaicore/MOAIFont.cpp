@@ -762,13 +762,19 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 	}
 	
 	// create a temporary text box and text style
+	
+	
 	MOAITextStyle *style = new MOAITextStyle();
 	style->SetFont(this);
 	style->SetSize(maxSize);
 	style->ScheduleUpdate();
 	
+	MOAILuaSharedPtr < MOAITextBox > textBox;
 	
-	MOAITextBox *textBox = new MOAITextBox ();
+	//MOAITextBox *textBox = new MOAITextBox ();
+	
+	textBox.Set(*this, new MOAITextBox ());
+	
 	
 	// set the dimensions of the text box to have one corner at (0, 0) with dimensions large enough to contain the entire string on one line.  I used 20 to be sure, but I think 2 works as well in most cases.
 	const float FONT_SIZE_MULTIPLIER = 20.0f;
@@ -828,6 +834,8 @@ float MOAIFont::OptimalSize (cc8* text, float width, float height, float minSize
 	// Perhaps it is done automatically for all MOAIObjects or MOAILuaObjects.
 	//delete textBox;
 	//delete style;
+	
+	textBox.Set(*this, NULL);
 	
 	//textBox->Release();
 	//style->Release();
