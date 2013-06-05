@@ -6,6 +6,7 @@
 #include "pch.h"
 #include <contrib/utf8.h>
 #include <moaicore/MOAIFreeTypeFont.h>
+#include <moaicore/MOAIFontReader.h>
 
 
 //================================================================//
