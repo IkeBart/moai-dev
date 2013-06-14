@@ -20,6 +20,7 @@
 #include <moaicore/MOAIAnimCurveBase.h>
 #include <moaicore/MOAIAnimCurveQuat.h>
 #include <moaicore/MOAIAnimCurveVec.h>
+#include <moaicore/MOAIAnimCurveCustom.h>
 #include <moaicore/MOAIAttrOp.h>
 #include <moaicore/MOAIBitmapFontReader.h>
 #include <moaicore/MOAIBlendMode.h>
@@ -162,6 +163,7 @@
 #include <moaicore/MOAITileDeck2D.h>
 #include <moaicore/MOAITileFlags.h>
 #include <moaicore/MOAITimer.h>
+#include <moaicore/MOAITimerCoroutine.h>
 #include <moaicore/MOAITouchSensor.h>
 #include <moaicore/MOAITransform.h>
 #include <moaicore/MOAITransformBase.h>
