@@ -26,7 +26,7 @@ struct MOAIFreeTypeTextLine {
 struct MOAIFreeTypeImageBuffer {
 	u32 width;
 	u32 height;
-	void *data;
+	u8 *data;
 };
 
 /** @name	MOAIFreeTypeTextBox
@@ -46,7 +46,7 @@ private:
 	static MOAIFreeTypeImageBuffer		InitBitmapData			(u32 width, u32 height);
 	static vector<MOAIFreeTypeTextLine> GenerateLines			(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak);
 	static MOAIFreeTypeTextLine			BuildLine				(wchar_t* buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar);
-	static void							RenderLines				(vector<MOAIFreeTypeTextLine> lines, void *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign);
+	static void							RenderLines				(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign);
 	static void							DrawBitmap				(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight);
 	
 public:

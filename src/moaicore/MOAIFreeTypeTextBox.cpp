@@ -370,7 +370,7 @@ MOAIFreeTypeImageBuffer MOAIFreeTypeTextBox::InitBitmapData(u32 width, u32 heigh
 	size_t bmpSize = bmpW * bmpH * BYTES_PER_PIXEL;
 	// initialize mBitmapData to zero
 
-	void *bitmapData = (unsigned char*)calloc( bmpSize, sizeof( unsigned char ) );
+	unsigned char *bitmapData = (unsigned char*)calloc( bmpSize, sizeof( unsigned char ) );
 
 	buffer.width = bmpW;
 	buffer.height = bmpH;
@@ -403,7 +403,7 @@ void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state ){
 
 
 // This is where the characters get rendered to mBitmapData.  Done line by line
-void MOAIFreeTypeTextBox::RenderLines(vector<MOAIFreeTypeTextLine> lines, void *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
+void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
 	FT_Int pen_x, pen_y;
 	
 	FT_Int textHeight = (face->size->metrics.height >> 6);
