@@ -228,6 +228,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 	
 	FT_Error error = 0;
 	FT_Int pen_x;
+	FT_Int last_token_x = 0;
 	
 	int n = 0;
 	
@@ -240,6 +241,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 	
 	pen_x = pen_x_reset; 
 	u32 lastCh = 0;
+	u32 lastTokenCh = 0;
 
 	int lineIdx = 0;
 	int tokenIdx = 0;
@@ -273,6 +275,8 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 		else if (unicode == ' '){ // if ( MOAIFont::IsWhitespace( unicode ) )
 			tokenIdx = n;
 			last_token_len = text_len;
+			last_token_x = pen_x;
+			lastTokenCh = lastCh;
 		}
 		
 		error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
@@ -285,8 +289,9 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 							&& pen_x + ((face->glyph->metrics.width) >> 6) > maxWidth);
 		if (isExceeding) {
 			if (wordBreak == MOAITextBox::WORD_BREAK_CHAR) {
-
-				lines.push_back(BuildLine(text_buffer, text_len, face, pen_x, lastCh));
+				
+				MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+				lines.push_back(line);
 				
 				text_len = 0;
 
@@ -295,7 +300,9 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 				pen_x = pen_x_reset;
 			} else { // the default where words don't get broken up
 				if (tokenIdx != lineIdx) {
-					lines.push_back(BuildLine(text_buffer, last_token_len, face, pen_x, lastCh));
+					
+					MOAIFreeTypeTextLine line = BuildLine(text_buffer, last_token_len, face, last_token_x, lastTokenCh);
+					lines.push_back(line);
 					
 					// set n back to token index
 					n = tokenIdx;
@@ -309,7 +316,8 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 					
 					pen_x = pen_x_reset;
 				} else { // put the rest of the token on the next line
-					lines.push_back(BuildLine(text_buffer, text_len, face, pen_x, lastCh));
+					MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+					lines.push_back(line);
 					text_len = 0;
 					
 					lineIdx = tokenIdx = n;
@@ -327,8 +335,8 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 		
 	}
 	
-
-	lines.push_back(BuildLine(text_buffer, text_len, face, pen_x, lastCh));
+	MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+	lines.push_back(line);
 
 	free(text_buffer);
 	
