@@ -79,7 +79,7 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 	FT_Int imgHeight = (FT_Int)height;
 
 	// create the image data buffer
-	MOAIFreeTypeImageBuffer imageBuffer = InitBitmapData(imgHeight, imgWidth);
+	MOAIFreeTypeImageBuffer imageBuffer = InitBitmapData(imgWidth, imgHeight);
 
 	// create the lines of text
 	vector<MOAIFreeTypeTextLine> lines = GenerateLines(face, imgWidth, text, wordbreak);
