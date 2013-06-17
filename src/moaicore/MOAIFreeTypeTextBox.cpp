@@ -431,7 +431,7 @@ void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state ){
 void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
 	FT_Int pen_x, pen_y;
 	
-	FT_Int textHeight = (face->size->metrics.height >> 6);
+	FT_Int textHeight = (face->size->metrics.height >> 6) * lines.size();
 
 	//pen_y = (face->size->metrics.height >> 6) + 1;
 	pen_y = MOAIFreeTypeTextBox::ComputeLineStartY(face, textHeight, imgHeight, vAlign);
