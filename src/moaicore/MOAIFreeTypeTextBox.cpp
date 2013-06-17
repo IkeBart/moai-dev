@@ -295,7 +295,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 		if (useKerning && previousGlyphIndex && glyphIndex) {
 			FT_Vector delta;
 			FT_Get_Kerning(face, previousGlyphIndex, glyphIndex, FT_KERNING_DEFAULT, &delta);
-			pen_x += delta.x;
+			pen_x += delta.x >> 6;
 		}
 		
 		
@@ -435,6 +435,10 @@ void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines,
 
 	//pen_y = (face->size->metrics.height >> 6) + 1;
 	pen_y = MOAIFreeTypeTextBox::ComputeLineStartY(face, textHeight, imgHeight, vAlign);
+	
+	FT_UInt glyphIndex = 0;
+	FT_UInt previousGlyphIndex = 0;
+	bool useKerning = FT_HAS_KERNING(face);
 
 	for (size_t i = 0; i < lines.size();  i++) {
 
@@ -453,6 +457,14 @@ void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines,
 			
 			FT_Bitmap bitmap = face->glyph->bitmap;
 			
+			glyphIndex = FT_Get_Char_Index(face, text_ptr[i2]);
+			
+			if (useKerning && glyphIndex && previousGlyphIndex) {
+				FT_Vector delta;
+				FT_Get_Kerning(face, previousGlyphIndex, glyphIndex, FT_KERNING_DEFAULT, &delta);
+				pen_x += delta.x >> 6;
+			}
+			
 			int yOffset = pen_y - (face->glyph->metrics.horiBearingY >> 6);
 			int xOffset = pen_x + (face->glyph->metrics.horiBearingX >> 6);
 
@@ -462,6 +474,8 @@ void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines,
 			
 			// step to next glyph
 			pen_x += (face->glyph->metrics.horiAdvance >> 6); // + iInterval;
+			
+			previousGlyphIndex = glyphIndex;
 			
 		}
 		
