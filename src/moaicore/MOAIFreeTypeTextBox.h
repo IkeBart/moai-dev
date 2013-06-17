@@ -1,5 +1,3 @@
-// Copyright (c) 2010-2011 Zipline Games, Inc. All Rights Reserved.
-// http://getmoai.com
 
 #ifndef MOAIFREETYPETEXTBOX_H
 #define MOAIFREETYPETEXTBOX_H
@@ -26,7 +24,7 @@ struct MOAIFreeTypeTextLine {
 struct MOAIFreeTypeImageBuffer {
 	u32 width;
 	u32 height;
-	u8 *data;
+	void *data;
 };
 
 /** @name	MOAIFreeTypeTextBox
@@ -38,22 +36,13 @@ private:
 
 //----------------------------------------------------------------//
 	static int _generateLabelTexture	( lua_State* L );
-
-
-	static int					ComputeLineStart		(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines);
-	static int					ComputeLineStartY		(FT_Face face, int textHeight, FT_Int imgHeight, int vAlign);
-
-	static MOAIFreeTypeImageBuffer		InitBitmapData			(u32 width, u32 height);
-	static vector<MOAIFreeTypeTextLine> GenerateLines			(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak);
-	static MOAIFreeTypeTextLine			BuildLine				(wchar_t* buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar);
-	static void							RenderLines				(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign);
-	static void							DrawBitmap				(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight);
 	
 public:
 
 	DECL_LUA_SINGLETON( MOAIFreeTypeTextBox )
 	
-	static MOAITexture*	GenerateTexture( cc8* text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment );
+	static MOAITexture*	GenerateTexture( cc8* text, MOAIFreeTypeFont *font, int size, int width, int height, int alignment, int wordbreak );
+	
 						MOAIFreeTypeTextBox		();
 						~MOAIFreeTypeTextBox	();
 	void				RegisterLuaClass		( MOAILuaState& state );

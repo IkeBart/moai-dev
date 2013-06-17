@@ -16,9 +16,9 @@
 //#include FT_FREETYPE_H
 #include FT_GLYPH_H
 
+void RenderBitmapToBuffer(FT_Bitmap *bitmap, u8 *target, int x, int y, int bufferPitch);
 
-#define BYTES_PER_PIXEL 4
-
+#define BYTES_PER_PIXEL 1
 
 #define CHECK_ERROR(error) if (error != 0) { printf("freetype fail %d at __LINE__", error); exit(-1); }
 
@@ -30,33 +30,46 @@ int MOAIFreeTypeTextBox::_generateLabelTexture	( lua_State* L )
 
 	cc8* text = state.GetValue<cc8*> (1, "");
 	MOAIFreeTypeFont *f = state.GetLuaObject<MOAIFreeTypeFont>(2, false);
-	float size = state.GetValue < float > (3, 12.0f);
-	float width = state.GetValue < float > (4, 100.0f);
-	float height = state.GetValue < float > (5, 100.0f);
-	int alignment = state.GetValue < int > (6, MOAITextBox::CENTER_JUSTIFY ); // horizontal alignment
+	int size = state.GetValue < int > (3, 12);
+	int width = state.GetValue < int > (4, 100);
+	int height = state.GetValue < int > (5, 100);
+	int alignment = state.GetValue < int > (6, MOAITextBox::CENTER_JUSTIFY );
 	int wordBreak = state.GetValue < int > (7, MOAITextBox::WORD_BREAK_CHAR );
-	int vAlignment = state.GetValue <int> (8, MOAITextBox::CENTER_JUSTIFY ); // vertical alignment
 
-	MOAITexture *texture = MOAIFreeTypeTextBox::GenerateTexture(text, f, size, width, height, alignment, wordBreak, vAlignment);
+	MOAITexture *texture = MOAIFreeTypeTextBox::GenerateTexture(text, f, size, width, height, alignment, wordBreak);
 
 	state.Push(texture);
 	return 1;
 }
 
-MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment  ) {
+void RenderBitmapToBuffer(FT_Bitmap *bitmap, u8 *target, int x, int y, int bufferPitch)
+{
+	size_t offset = y*bufferPitch + x*BYTES_PER_PIXEL;
+	
+	for (int row = 0; row < bitmap->rows; row++)
+	{
+		memcpy(target + offset, bitmap->buffer + row*bitmap->pitch, bitmap->pitch);
+		offset += bufferPitch;
+	}
+}
 
-	int	pen_x, pen_y = 0;
+MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *font, int size, int width, int height, int alignment, int wordbreak ) {
+	UNUSED(alignment);
+	UNUSED(wordbreak);
+
+#define MAX_GLYPHS 100
+	FT_Glyph      glyphs[MAX_GLYPHS];
+	FT_Vector     positions[MAX_GLYPHS];
 	
 	FT_Error error;
-	
 	// initialize library
 	FT_Library library;
-	error = FT_Init_FreeType( &library );
 
+	error = FT_Init_FreeType( &library );
 	CHECK_ERROR(error);
 	
 	// create face object
-	FT_Face face = font->LoadFreeTypeFace( &library );
+	FT_Face face = font->LoadFreeTypeFace( library );
 
 	// set character size
 	error = FT_Set_Char_Size(face,					/* handle to face object           */
@@ -66,340 +79,141 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 							 0);					/* vertical device resolution      */
 	CHECK_ERROR(error);
 
-	FT_Size fontSize = face->size;
-	FT_Size_Metrics sizeMetrics = fontSize->metrics;
+	FT_GlyphSlot  slot = face->glyph;
+	FT_UInt numGlyphs = 0;
+	FT_UInt previousGlyphIndex = 0;
 
-	// initialize pen position
-	FT_Int lineHeight = (sizeMetrics.height >> 6);  // find out line height
-	pen_x = 0;
-	pen_y = lineHeight + 1;
-	
+	bool useKerning = FT_HAS_KERNING(face);
 
-	FT_Int imgWidth = (FT_Int)width;
-	FT_Int imgHeight = (FT_Int)height;
+	FT_Int penX = 0, penY = 0;
+	for (size_t n = 0; n < strlen(text); n++) {
+		FT_UInt glyphIndex;
 
-	// create the image data buffer
-	MOAIFreeTypeImageBuffer imageBuffer = InitBitmapData(imgWidth, imgHeight);
+		glyphIndex = FT_Get_Char_Index(face, text[n]);
 
-	// create the lines of text
-	vector<MOAIFreeTypeTextLine> lines = GenerateLines(face, imgWidth, text, wordbreak);
-
-	// render the lines to the data buffer
-	RenderLines(lines, imageBuffer.data, imgWidth, imgHeight, imageBuffer.width, imageBuffer.height, face, alignment, vAlignment);
-
-	// turn that data buffer into an image
-	MOAIImage bitmapImg;
-	bitmapImg.Init(imageBuffer.data, imageBuffer.width, imageBuffer.height, USColor::RGBA_8888);  // is A_8 the correct color mode?
-
-	/// send that to the GPU
-	MOAITexture *texture = new MOAITexture();
-	texture->Init(bitmapImg, "");
-
-	return texture;
-}
-
-// creates a line in m_vLines
-MOAIFreeTypeTextLine MOAIFreeTypeTextBox::BuildLine(wchar_t *buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar){
-	MOAIFreeTypeTextLine tempLine;
-
-	wchar_t* text = (wchar_t*)malloc(sizeof(wchar_t) * (buf_len+1));
-	memcpy(text, buffer, sizeof(wchar_t) * buf_len);
-	
-	text[buf_len] = '\0';
-	tempLine.text = text;
-	
-	// get last glyph
-	int error = FT_Load_Char(face, lastChar, FT_LOAD_DEFAULT);
-	
-	CHECK_ERROR(error);
-	
-	tempLine.lineWidth = pen_x - ((face->glyph->metrics.horiAdvance - face->glyph->metrics.horiBearingX - face->glyph->metrics.width) >> 6);
-	
-	return tempLine;
-}
-
-int MOAIFreeTypeTextBox::ComputeLineStart(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines){
-	int retValue = 0;
-	int adjustmentX = -((face->glyph->metrics.horiBearingX) >> 6);
-	
-	int maxLineWidth = imgWidth; // * scale;
-	
-	int error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
-	if (error) {
-		return -1;
-	}
-	
-	if ( alignment == MOAITextBox::CENTER_JUSTIFY ){
-		retValue = (maxLineWidth - lines[lineIndex].lineWidth) / 2 + adjustmentX;
-	}
-	else if ( alignment == MOAITextBox::RIGHT_JUSTIFY ){
-		retValue = (maxLineWidth - lines[lineIndex].lineWidth) + adjustmentX;
-	}
-	else{
-		// left or other value
-		retValue = adjustmentX;
-	}
-	
-	
-	return retValue;
-}
-
-int MOAIFreeTypeTextBox::ComputeLineStartY(FT_Face face, int textHeight, FT_Int imgHeight, int vAlign){
-
-	int retValue = 0;
-	int adjustmentY = ((face->size->metrics.ascender) >> 6);
-	
-	if ( vAlign == MOAITextBox::CENTER_JUSTIFY ) {
-		// vertical center
-		retValue = (imgHeight - textHeight)/2 + adjustmentY;
-	}
-	else if( vAlign == MOAITextBox::RIGHT_JUSTIFY ){
-		// vertical bottom
-		retValue = imgHeight - textHeight + adjustmentY;
-	}
-	else{
-		// vertical top or other value
-		retValue = adjustmentY;
-	}
-	
-	
-	return retValue;
-}
-
-
-void MOAIFreeTypeTextBox::DrawBitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight) {
-
-	UNUSED(bitmapHeight);
-	
-	FT_Int i, j, k, p, q;
-	FT_Int x_max = x + bitmap->width;
-	FT_Int y_max = y + bitmap->rows;
-	
-	// create a buffer to use in initializing a MOAIImage 
-	// const int BYTES_PER_PIXEL = 4;
-	
-	//size_t size = bitmap->width * bitmap->rows * BYTES_PER_PIXEL;
-	//unsigned char* imgBuffer = (unsigned char*)malloc(size);
-	int idx = 0;
-	u8 value, formerValue;
-	
-	// fill the values with data from bitmap->buffer
-	for (i = x, p = 0; i < x_max; i++, p++) {
-		for (j = y, q = 0; j < y_max; j++, q++) {
-			// compute index for bitmap data pixel red value.  Uses mBitmapWidth instead of imgWidth
-			idx = (j * bitmapWidth + i) * BYTES_PER_PIXEL;
-			
-			// retrieve value from the character bitmap
-			value = bitmap->buffer[q * bitmap->width + p];
-			// skip this if the location is out of bounds or the value is zero
-			if (i < 0 || j < 0 || i >= imgWidth || j >= imgHeight || value == 0) {
-				continue;
-			}
-			
-			// get the former value
-			formerValue = renderBitmap[idx+3];
-			// set alpha to MAX(value, formerValue)
-			if (value > formerValue) {
-				renderBitmap[idx+3] = value; // alpha
-			}
-			else{
-				continue;
-			}
-			
-			// set RGB to 255
-			for (k = 0; k < BYTES_PER_PIXEL - 1; k++){
-				renderBitmap[idx+k] = value; // RGB
-			}
-			
-			
+		if (useKerning && previousGlyphIndex && glyphIndex)
+		{
+			FT_Vector delta;
+			FT_Get_Kerning(face, previousGlyphIndex, glyphIndex, FT_KERNING_DEFAULT, &delta);
+			penX += delta.x;
 		}
-	}
-	
-	
-	
-}
 
-// Before the rendering, the text gets broken up into lines either ending with a new-line or a space
-vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak) {
+		positions[numGlyphs].x = penX;
+		positions[numGlyphs].y = penY;
 
-	vector<MOAIFreeTypeTextLine> lines;
-	
-	//FT_Int maxHeight = (FT_Int)this->mFrame.Height();
-	
-	FT_Error error = 0;
-	FT_Int pen_x;
-	FT_Int last_token_x = 0;
-	
-	int n = 0;
-	
-	u32 unicode = u8_nextchar(text, &n);
-	
-	error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
-	CHECK_ERROR(error);
-	
-	FT_Int pen_x_reset = 0;//-((face->glyph->metrics.horiBearingX) >> 6);
-	
-	pen_x = pen_x_reset; 
-	u32 lastCh = 0;
-	u32 lastTokenCh = 0;
-
-	int lineIdx = 0;
-	int tokenIdx = 0;
-	
-	// set n back to zero since it was advanced at the call to u8_nextchar()
-	n = 0;
-	
-	// variable that stores the length of the text currently in the buffer
-	size_t text_len = 0;
-	// variable that stores text_len to last white space before final token
-	size_t last_token_len = 0;
-	
-	wchar_t* text_buffer = (wchar_t *) malloc(sizeof(wchar_t) * strlen(text));
-	
-	while ( (unicode = u8_nextchar(text, &n)) ) {
-
-		if (unicode == '\n') {
-
-			MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
-			lines.push_back(line);
-
-			text_len = 0;
-			lineIdx = tokenIdx = n;
-			
-			error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
-			CHECK_ERROR(error);
-
-			pen_x = pen_x_reset; 
-			continue;
-		}
-		else if (unicode == ' '){ // if ( MOAIFont::IsWhitespace( unicode ) )
-			tokenIdx = n;
-			last_token_len = text_len;
-			last_token_x = pen_x;
-			lastTokenCh = lastCh;
-		}
-		
-		error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
-		
+		error = FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
 		CHECK_ERROR(error);
-		
-		// check its width
-		// divide it when exceeding
-		bool isExceeding = (maxWidth > 0
-							&& pen_x + ((face->glyph->metrics.width) >> 6) > maxWidth);
-		if (isExceeding) {
-			if (wordBreak == MOAITextBox::WORD_BREAK_CHAR) {
-				
-				MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
-				lines.push_back(line);
-				
-				text_len = 0;
 
-				lineIdx = tokenIdx = n;
-				
-				pen_x = pen_x_reset;
-			} else { // the default where words don't get broken up
-				if (tokenIdx != lineIdx) {
-					
-					MOAIFreeTypeTextLine line = BuildLine(text_buffer, last_token_len, face, last_token_x, lastTokenCh);
-					lines.push_back(line);
-					
-					// set n back to token index
-					n = tokenIdx;
-					
-					// get the character after token index and update n
-					unicode = u8_nextchar(text, &n);					
-					// reset text_len and last_token_len
-					text_len = last_token_len = 0;
-					
-					lineIdx = tokenIdx = n;
-					
-					pen_x = pen_x_reset;
-				} else { // put the rest of the token on the next line
-					MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
-					lines.push_back(line);
-					text_len = 0;
-					
-					lineIdx = tokenIdx = n;
-					
-					pen_x = pen_x_reset;
-				}
-			}
-			
+		error = FT_Get_Glyph( face->glyph, &glyphs[numGlyphs]);
+		CHECK_ERROR(error);
+
+		penX += slot->advance.x;
+
+		previousGlyphIndex = glyphIndex;
+		numGlyphs++;
+	}
+
+	// compute the bounding box of the glyphs
+	FT_BBox  boundingBox;
+	FT_BBox  glyphBoundingBox;
+
+	boundingBox.yMin = 32000;
+	boundingBox.yMax = -32000;
+
+	for (FT_UInt n = 0; n < strlen(text); n++)
+	{
+		FT_Glyph_Get_CBox( glyphs[n], FT_GLYPH_BBOX_PIXELS, &glyphBoundingBox);
+
+		glyphBoundingBox.xMin += positions[n].x;
+		glyphBoundingBox.xMax += positions[n].x;
+		glyphBoundingBox.yMin += positions[n].y;
+		glyphBoundingBox.yMax += positions[n].y;
+
+		if ( glyphBoundingBox.xMin < boundingBox.xMin )
+		{
+			boundingBox.xMin = glyphBoundingBox.xMin;
 		}
-		
-		lastCh = unicode;
-		text_buffer[text_len] = unicode;
-		++text_len;
-		pen_x += ((face->glyph->metrics.horiAdvance) >> 6);
-		
+
+		if ( glyphBoundingBox.yMin < boundingBox.yMin )
+		{
+			boundingBox.yMin = glyphBoundingBox.yMin;
+		}
+
+		if ( glyphBoundingBox.xMax > boundingBox.xMax )
+		{
+			boundingBox.xMax = glyphBoundingBox.xMax;
+		}
+
+		if ( glyphBoundingBox.yMax > boundingBox.yMax )
+		{
+			boundingBox.yMax = glyphBoundingBox.yMax;
+		}
+
+		if ( boundingBox.xMin > boundingBox.xMax )
+		{
+			boundingBox.xMax = 0;
+			boundingBox.xMin = 0;
+			boundingBox.yMax = 0;
+			boundingBox.yMin = 0;
+		}
+	}
+
+	FT_Pos stringWidth = boundingBox.xMax - boundingBox.xMin;
+	FT_Pos stringHeight = boundingBox.yMax - boundingBox.yMin;
+
+	FT_Pos startX = ((int)width*64 - stringWidth)/2;
+	FT_Pos startY = ((int)height*64 - stringHeight)/2;
+
+	const size_t bufferPitch = (size_t)width * BYTES_PER_PIXEL;
+	u8 *imageBuffer = (u8 *)calloc( (size_t)width * (size_t)height, BYTES_PER_PIXEL);
+
+	for (size_t n = 0; n < strlen(text); n++) {
+		FT_Glyph image;
+		FT_Vector pen;
+
+		image = glyphs[n];
+
+		pen.x = startX + positions[n].x;
+		pen.y = startY + positions[n].y;
+
+		error = FT_Glyph_To_Bitmap(&image, FT_RENDER_MODE_NORMAL, &pen, 0);
+
+		if (!error)
+		{
+			FT_BitmapGlyph bit = (FT_BitmapGlyph)image;
+			RenderBitmapToBuffer(&bit->bitmap, imageBuffer, (int)bit->left, (int)(height - bit->top), bufferPitch);
+			FT_Done_Glyph(image);
+		}
 	}
 	
-	MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
-	lines.push_back(line);
 
-	free(text_buffer);
+	MOAIImage image;
+	image.Init(imageBuffer, (u32)width, (u32)height, USColor::A_8);
+	image.PadToPow2(image);
+
+	USFileStream f;
+	f.Open("/tmp/image.png", USFileStream::READ_WRITE_AFFIRM);
+	image.WritePNG(f);
+	f.Close();
 	
-	return lines;
+	MOAITexture *t = new MOAITexture();
+	t->Init(image, "");
 
+	return t;
 }
-
-MOAIFreeTypeImageBuffer MOAIFreeTypeTextBox::InitBitmapData(u32 width, u32 height) {
-	// initialize the bitmap data
-	// set the width and height of the texture bitmap to the next power of two
-	MOAIFreeTypeImageBuffer buffer;
-
-	u32 bmpW = (u32) width;
-	u32 bmpH = (u32) height;
-
-	u32 n;
-
-	// set width to smallest power of two larger than bitmap's width
-	if (!MOAIImage::IsPow2(bmpW)) {
-		n = 1;
-		// double n until it gets larger than the width of the bitmap
-		while (n < bmpW) {
-			n <<= 1;
-		}
-		bmpW = n;
-	}
-
-	// set height to smallest power of two larger than bitmap's width
-	if (!MOAIImage::IsPow2(bmpH)) {
-		n = 1;
-		// double n until it gets larger than the height of the bitmap
-		while (n < bmpH) {
-			n <<= 1;
-		}
-		bmpH = n;
-	}
-
-	//const int BYTES_PER_PIXEL = 4;
-	size_t bmpSize = bmpW * bmpH * BYTES_PER_PIXEL;
-	// initialize mBitmapData to zero
-
-	unsigned char *bitmapData = (unsigned char*)calloc( bmpSize, sizeof( unsigned char ) );
-
-	buffer.width = bmpW;
-	buffer.height = bmpH;
-	buffer.data = bitmapData;
-
-	return buffer;
-}
-
 
 MOAIFreeTypeTextBox::MOAIFreeTypeTextBox()
 {
-	RTTI_SINGLE(MOAILuaObject)
+
 }
 
+MOAIFreeTypeTextBox::~MOAIFreeTypeTextBox()
+{
 
-MOAIFreeTypeTextBox::~MOAIFreeTypeTextBox(){
-	
 }
 
-
-void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state ){
+void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state )
+{
 
 	luaL_Reg regTable [] = {
 		{ "generateLabelTexture",			_generateLabelTexture },
@@ -410,45 +224,4 @@ void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state ){
 }
 
 
-// This is where the characters get rendered to mBitmapData.  Done line by line
-void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
-	FT_Int pen_x, pen_y;
-	
-	FT_Int textHeight = (face->size->metrics.height >> 6);
 
-	//pen_y = (face->size->metrics.height >> 6) + 1;
-	pen_y = MOAIFreeTypeTextBox::ComputeLineStartY(face, textHeight, imgHeight, vAlign);
-
-	for (size_t i = 0; i < lines.size();  i++) {
-
-		const wchar_t* text_ptr = lines[i].text;
-		
-		// calcluate origin cursor
-		//pen_x = 0; //this->ComputeLineStart(face, alignMask, text_ptr[0], i)
-		pen_x = MOAIFreeTypeTextBox::ComputeLineStart(face, text_ptr[0], i, hAlign, imgWidth, lines);
-		
-		size_t text_len = wcslen(text_ptr);
-		for (size_t i2 = 0; i2 < text_len; ++i2) {
-			int error = FT_Load_Char(face, text_ptr[i2], FT_LOAD_RENDER);
-			if (error) {
-				break;
-			}
-			
-			FT_Bitmap bitmap = face->glyph->bitmap;
-			
-			int yOffset = pen_y - (face->glyph->metrics.horiBearingY >> 6);
-			int xOffset = pen_x + (face->glyph->metrics.horiBearingX >> 6);
-
-			//(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight);
-			DrawBitmap(&bitmap, xOffset, yOffset, (u8 *)renderBitmap, imgWidth, imgHeight, bitmapWidth, bitmapHeight);
-			
-			
-			// step to next glyph
-			pen_x += (face->glyph->metrics.horiAdvance >> 6); // + iInterval;
-			
-		}
-		
-		pen_y += (face->size->metrics.ascender >> 6) - (face->size->metrics.descender >> 6);
-	}
-
-}

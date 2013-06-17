@@ -8,7 +8,6 @@
 #include <moaicore/MOAIFreeTypeFont.h>
 
 
-
 //================================================================//
 // local
 //================================================================//
@@ -133,19 +132,17 @@ int	MOAIFreeTypeFont::_setReader	( lua_State* L ){
 //================================================================//
 
 
-
 void MOAIFreeTypeFont::Init(cc8 *filename) {
 	if ( USFileSys::CheckFileExists ( filename ) ) {
 		this->mFilename = USFileSys::GetAbsoluteFilePath ( filename );
 	}
 }
 
-
-FT_Face MOAIFreeTypeFont::LoadFreeTypeFace ( FT_Library *library )
+FT_Face MOAIFreeTypeFont::LoadFreeTypeFace ( FT_Library library )
 {
 	if (this->mFreeTypeFace) return this->mFreeTypeFace;
 
-	int error = FT_New_Face(*library,
+	int error = FT_New_Face(library,
 						this->GetFilename(),
 						0,
 						&this->mFreeTypeFace);
@@ -153,7 +150,6 @@ FT_Face MOAIFreeTypeFont::LoadFreeTypeFace ( FT_Library *library )
 	if (error) return NULL;
 	else return this->mFreeTypeFace;
 }
-
 
 MOAIFreeTypeFont::MOAIFreeTypeFont():
 	mFlags( DEFAULT_FLAGS ),
