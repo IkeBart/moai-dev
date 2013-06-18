@@ -46,7 +46,6 @@ int MOAIFreeTypeTextBox::_generateLabelTexture	( lua_State* L )
 
 MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment, bool autoFit  ) {
 	
-	UNUSED(autoFit);
 
 	int	pen_x, pen_y = 0;
 	
@@ -60,6 +59,11 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 	
 	// create face object
 	FT_Face face = font->LoadFreeTypeFace( &library );
+	
+	// calculate optimal size if necessary
+	if (autoFit) {
+		size = MOAIFreeTypeTextBox::OptimalSizeForTexture(text, face, size, width, height, wordbreak);
+	}
 
 	// set character size
 	error = FT_Set_Char_Size(face,					/* handle to face object           */
@@ -83,7 +87,7 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 
 	// create the image data buffer
 	MOAIFreeTypeImageBuffer imageBuffer = InitBitmapData(imgWidth, imgHeight);
-
+	
 	// create the lines of text
 	vector<MOAIFreeTypeTextLine> lines = GenerateLines(face, imgWidth, text, wordbreak);
 
@@ -416,6 +420,16 @@ MOAIFreeTypeTextBox::MOAIFreeTypeTextBox()
 
 MOAIFreeTypeTextBox::~MOAIFreeTypeTextBox(){
 	
+}
+
+float MOAIFreeTypeTextBox::OptimalSizeForTexture(cc8 *text, FT_Face face, float initialSize, float width, float height, int wordbreak){
+	UNUSED(text);
+	UNUSED(face);
+	UNUSED(width);
+	UNUSED(height);
+	UNUSED(wordbreak);
+	
+	return initialSize;
 }
 
 
