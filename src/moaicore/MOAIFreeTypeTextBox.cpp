@@ -17,7 +17,7 @@
 #include FT_GLYPH_H
 
 
-#define BYTES_PER_PIXEL 4
+#define BYTES_PER_PIXEL 1
 
 
 #define CHECK_ERROR(error) if (error != 0) { printf("freetype fail %d at __LINE__", error); exit(-1); }
@@ -36,14 +36,17 @@ int MOAIFreeTypeTextBox::_generateLabelTexture	( lua_State* L )
 	int alignment = state.GetValue < int > (6, MOAITextBox::CENTER_JUSTIFY ); // horizontal alignment
 	int wordBreak = state.GetValue < int > (7, MOAITextBox::WORD_BREAK_CHAR );
 	int vAlignment = state.GetValue <int> (8, MOAITextBox::CENTER_JUSTIFY ); // vertical alignment
+	bool autoFit = state.GetValue <bool> ( 9, false );
 
-	MOAITexture *texture = MOAIFreeTypeTextBox::GenerateTexture(text, f, size, width, height, alignment, wordBreak, vAlignment);
+	MOAITexture *texture = MOAIFreeTypeTextBox::GenerateTexture(text, f, size, width, height, alignment, wordBreak, vAlignment, autoFit);
 
 	state.Push(texture);
 	return 1;
 }
 
-MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment  ) {
+MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment, bool autoFit  ) {
+	
+	UNUSED(autoFit);
 
 	int	pen_x, pen_y = 0;
 	
@@ -89,12 +92,12 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 
 	// turn that data buffer into an image
 	MOAIImage bitmapImg;
-	bitmapImg.Init(imageBuffer.data, imageBuffer.width, imageBuffer.height, USColor::RGBA_8888);  // is A_8 the correct color mode?
+	bitmapImg.Init(imageBuffer.data, imageBuffer.width, imageBuffer.height, USColor::A_8);  // is A_8 the correct color mode?
 
 	/// send that to the GPU
 	MOAITexture *texture = new MOAITexture();
 	texture->Init(bitmapImg, "");
-
+	
 	return texture;
 }
 
@@ -197,10 +200,10 @@ void MOAIFreeTypeTextBox::DrawBitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *
 			}
 			
 			// get the former value
-			formerValue = renderBitmap[idx+3];
+			formerValue = renderBitmap[idx];
 			// set alpha to MAX(value, formerValue)
 			if (value > formerValue) {
-				renderBitmap[idx+3] = value; // alpha
+				renderBitmap[idx] = value; // alpha
 			}
 			else{
 				continue;

@@ -35,13 +35,13 @@ struct MOAIFreeTypeImageBuffer {
 
 class MOAIFreeTypeTextBox : public MOAIGlobalClass < MOAIFreeTypeTextBox, MOAILuaObject > {
 private:
-
+	
+	static int					_generateLabelTexture			( lua_State* L );
+	
 //----------------------------------------------------------------//
-	static int _generateLabelTexture	( lua_State* L );
 
-
-	static int					ComputeLineStart		(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines);
-	static int					ComputeLineStartY		(FT_Face face, int textHeight, FT_Int imgHeight, int vAlign);
+	static int							ComputeLineStart		(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines);
+	static int							ComputeLineStartY		(FT_Face face, int textHeight, FT_Int imgHeight, int vAlign);
 
 	static MOAIFreeTypeImageBuffer		InitBitmapData			(u32 width, u32 height);
 	static vector<MOAIFreeTypeTextLine> GenerateLines			(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak);
@@ -53,10 +53,10 @@ public:
 
 	DECL_LUA_SINGLETON( MOAIFreeTypeTextBox )
 	
-	static MOAITexture*	GenerateTexture( cc8* text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment );
-						MOAIFreeTypeTextBox		();
-						~MOAIFreeTypeTextBox	();
-	void				RegisterLuaClass		( MOAILuaState& state );
+	static MOAITexture*					GenerateTexture			( cc8* text, MOAIFreeTypeFont *font, float size, float width, float height, int alignment, int wordbreak, int vAlignment, bool autoFit );
+										MOAIFreeTypeTextBox		();
+										~MOAIFreeTypeTextBox	();
+	void								RegisterLuaClass		( MOAILuaState& state );
 };
 
 #endif /* defined(MOAIFREETYPETEXTBOX_H) */
