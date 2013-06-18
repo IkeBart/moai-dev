@@ -17,7 +17,7 @@
 #include FT_GLYPH_H
 
 
-#define BYTES_PER_PIXEL 1
+#define BYTES_PER_PIXEL 4
 
 
 #define CHECK_ERROR(error) if (error != 0) { printf("freetype fail %d at __LINE__", error); exit(-1); }
@@ -92,7 +92,7 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 
 	// turn that data buffer into an image
 	MOAIImage bitmapImg;
-	bitmapImg.Init(imageBuffer.data, imageBuffer.width, imageBuffer.height, USColor::A_8);  // is A_8 the correct color mode?
+	bitmapImg.Init(imageBuffer.data, imageBuffer.width, imageBuffer.height, USColor::RGBA_8888);  // is A_8 the correct color mode?
 
 	/// send that to the GPU
 	MOAITexture *texture = new MOAITexture();
@@ -200,10 +200,10 @@ void MOAIFreeTypeTextBox::DrawBitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *
 			}
 			
 			// get the former value
-			formerValue = renderBitmap[idx];
+			formerValue = renderBitmap[idx + BYTES_PER_PIXEL - 1];
 			// set alpha to MAX(value, formerValue)
 			if (value > formerValue) {
-				renderBitmap[idx] = value; // alpha
+				renderBitmap[idx + BYTES_PER_PIXEL - 1] = value; // alpha
 			}
 			else{
 				continue;
