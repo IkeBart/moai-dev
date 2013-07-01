@@ -80,6 +80,7 @@ protected:
 	//----------------------------------------------------------------//
 	void				BuildLine				(wchar_t* buffer, size_t buf_len, int pen_x,
 												 u32 lastChar);
+	void				BuildLine				(wchar_t* buffer, size_t bufferLength);
 	USRect				DimensionsOfLine		(cc8* text, float fontSize, FT_Vector **glyphPositions,
 												 FT_Glyph **glyphArray, FT_UInt *glyphNumber, FT_Int *maxDescender);
 	int					ComputeLineStart		(FT_UInt unicode, int lineIndex,
@@ -93,6 +94,7 @@ protected:
 	void				RenderLines				( FT_Int imgWidth, FT_Int imgHeight, int hAlign,
 												 int vAlign);
 	void				ResetBitmapData			();
+	int					WidthOfString			(wchar_t* buffer, size_t bufferLength);
 		
 public:
 		
