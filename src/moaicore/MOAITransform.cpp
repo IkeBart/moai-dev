@@ -1124,7 +1124,8 @@ MOAITransform::MOAITransform () :
 	mPiv ( 0.0f, 0.0f, 0.0f ),
 	mLoc ( 0.0f, 0.0f, 0.0f ),
 	mScale ( 1.0f, 1.0f, 1.0f ),
-	mRot ( 0.0f, 0.0f, 0.0f ) {
+	mRot ( 0.0f, 0.0f, 0.0f ),
+	mPivotMode( PIVOT_MODE_RELATIVE ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAITransformBase )
@@ -1163,6 +1164,9 @@ void MOAITransform::RegisterLuaClass ( MOAILuaState& state ) {
 	
 	state.SetField ( -1, "INHERIT_LOC",			MOAITransformAttr::Pack ( INHERIT_LOC ));
 	state.SetField ( -1, "INHERIT_TRANSFORM",	MOAITransformAttr::Pack ( INHERIT_TRANSFORM ));
+	
+	state.SetField ( -1, "PIVOT_MODE_RELATIVE", ( u32 )PIVOT_MODE_RELATIVE );
+	state.SetField ( -1, "PIVOT_MODE_ABSOLUTE", ( u32 )PIVOT_MODE_ABSOLUTE );
 }
 
 //----------------------------------------------------------------//

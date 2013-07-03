@@ -35,6 +35,9 @@
 	
 	@attr	INHERIT_LOC
 	@attr	INHERIT_TRANSFORM
+ 
+	@const	PIVOT_MODE_RELATIVE
+	@const	PIVOT_MODE_ABSOLUTE
 */
 class MOAITransform :
 	public MOAITransformBase {
@@ -53,6 +56,8 @@ protected:
 	USVec3D			mLoc;
 	USVec3D			mScale;
 	USVec3D			mRot;		// Euler angles, in degrees
+		
+	int				mPivotMode;
 
 	//----------------------------------------------------------------//
 	static int	_addLoc			( lua_State* L );
@@ -117,6 +122,11 @@ public:
 		INHERIT_TRANSFORM,
 		
 		TOTAL_ATTR,
+	};
+		
+	enum{
+		PIVOT_MODE_RELATIVE,
+		PIVOT_MODE_ABSOLUTE,
 	};
 	
 	GET_SET ( USVec3D, Piv, mPiv )
