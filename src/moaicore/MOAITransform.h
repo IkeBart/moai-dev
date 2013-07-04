@@ -66,6 +66,7 @@ protected:
 	static int	_addScl			( lua_State* L );
 	static int	_getLoc			( lua_State* L );
 	static int	_getPiv			( lua_State* L );
+	static int	_getPivotMode	( lua_State* L );
 	static int	_getRot			( lua_State* L );
 	static int	_getScl			( lua_State* L );
 	static int	_modelToWorld	( lua_State* L );
@@ -82,6 +83,7 @@ protected:
 	static int	_setLoc			( lua_State* L );
 	static int	_setParent		( lua_State* L );
 	static int	_setPiv			( lua_State* L );
+	static int	_setPivotMode	( lua_State* L );
 	static int	_setRot			( lua_State* L );
 	static int	_setScl			( lua_State* L );
 	static int	_setShearByX	( lua_State* L );
@@ -151,6 +153,7 @@ public:
 	void					SerializeOut				( MOAILuaState& state, MOAISerializer& serializer );
 	void					SetLoc						( float x, float y, float z );
 	void					SetPiv						( float x, float y, float z );
+	void					SetPivotMode				( int pivotMode );
 	void					SetRot						( float x, float y, float z );
 	void					SetScl						( float x, float y, float z );
 };

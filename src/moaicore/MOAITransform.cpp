@@ -149,6 +149,15 @@ int	MOAITransform::_getPiv ( lua_State* L ) {
 
 	return 3;
 }
+//----------------------------------------------------------------//
+/**	@name	getPivotMode
+ 
+*/
+int MOAITransform::_getPivotMode(lua_State *L){
+	MOAI_LUA_SETUP( MOAITransform, "U")
+	state.Push(self->mPivotMode);
+	return 1;
+}
 
 //----------------------------------------------------------------//
 /**	@name	getRot
@@ -795,9 +804,23 @@ int MOAITransform::_setPiv ( lua_State* L ) {
 	piv.mX = state.GetValue < float >( 2, 0.0f );
 	piv.mY = state.GetValue < float >( 3, 0.0f );
 	piv.mZ = state.GetValue < float >( 4, 0.0f );
+	int pivotMode = state.GetValue < int >( 5, self->mPivotMode );
+	UNUSED( pivotMode );
 	
 	self->SetPiv ( piv );
 	self->ScheduleUpdate ();
+	
+	return 0;
+}
+//----------------------------------------------------------------//
+/** @name	setPivotMode
+	@text	Sets the pivot mode
+ */
+int MOAITransform::_setPivotMode(lua_State *L){
+	MOAI_LUA_SETUP(MOAITransform, "U")
+	
+	int pivotMode = state.GetValue < int > (2, MOAITransform::PIVOT_MODE_RELATIVE);
+	self->SetPivotMode(pivotMode);
 	
 	return 0;
 }
@@ -1181,6 +1204,7 @@ void MOAITransform::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "addScl",				_addScl },
 		{ "getLoc",				_getLoc },
 		{ "getPiv",				_getPiv },
+		{ "getPivotMode",		_getPivotMode },
 		{ "getRot",				_getRot },
 		{ "getScl",				_getScl },
 		{ "modelToWorld",		_modelToWorld },
@@ -1197,6 +1221,7 @@ void MOAITransform::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "seekScl",			_seekScl },
 		{ "setLoc",				_setLoc },
 		{ "setPiv",				_setPiv },
+		{ "setPivotMode",		_setPivotMode },
 		{ "setRot",				_setRot },
 		{ "setScl",				_setScl },
 		{ "setShearByX",		_setShearByX },
@@ -1255,6 +1280,19 @@ void MOAITransform::SetPiv ( float x, float y, float z ) {
 	this->mPiv.mX = x;
 	this->mPiv.mY = y;
 	this->mPiv.mZ = z;
+}
+
+//----------------------------------------------------------------//
+void MOAITransform::SetPivotMode(int pivotMode){
+	switch (pivotMode) {
+		case PIVOT_MODE_ABSOLUTE:
+			this->mPivotMode = PIVOT_MODE_ABSOLUTE;
+			break;
+			
+		default:
+			this->mPivotMode = PIVOT_MODE_RELATIVE;
+			break;
+	}
 }
 
 //----------------------------------------------------------------//
