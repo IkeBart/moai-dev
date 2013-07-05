@@ -153,6 +153,7 @@ public:
 	void					SerializeOut				( MOAILuaState& state, MOAISerializer& serializer );
 	void					SetLoc						( float x, float y, float z );
 	void					SetPiv						( float x, float y, float z );
+	virtual void			SetPiv						( float x, float y, float z, int pivotMode );
 	void					SetPivotMode				( int pivotMode );
 	void					SetRot						( float x, float y, float z );
 	void					SetScl						( float x, float y, float z );

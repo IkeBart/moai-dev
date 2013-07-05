@@ -239,6 +239,7 @@ public:
 	void				SerializeIn				( MOAILuaState& state, MOAIDeserializer& serializer );
 	void				SerializeOut			( MOAILuaState& state, MOAISerializer& serializer );
 	void				SetPartition			( MOAIPartition* partition );
+	virtual void		SetPiv					( float x, float y, float z, int pivotMode );
 	void				SetVisible				( bool visible );
 };
 

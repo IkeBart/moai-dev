@@ -151,7 +151,10 @@ int	MOAITransform::_getPiv ( lua_State* L ) {
 }
 //----------------------------------------------------------------//
 /**	@name	getPivotMode
- 
+	@text	Returns the current pivot mode for the transform.
+	
+	@in		MOAITransform self
+	@out	enum		  pivotMode
 */
 int MOAITransform::_getPivotMode(lua_State *L){
 	MOAI_LUA_SETUP( MOAITransform, "U")
@@ -794,6 +797,7 @@ int MOAITransform::_setParent ( lua_State* L ) {
 	@opt	number xPiv			Default value is 0.
 	@opt	number yPiv			Default value is 0.
 	@opt	number zPiv			Default value is 0.
+	@opt	enum   pivotMode	Default value is current value of pivotMode
 	@out	nil
 */
 int MOAITransform::_setPiv ( lua_State* L ) {
@@ -805,9 +809,8 @@ int MOAITransform::_setPiv ( lua_State* L ) {
 	piv.mY = state.GetValue < float >( 3, 0.0f );
 	piv.mZ = state.GetValue < float >( 4, 0.0f );
 	int pivotMode = state.GetValue < int >( 5, self->mPivotMode );
-	UNUSED( pivotMode );
 	
-	self->SetPiv ( piv );
+	self->SetPiv ( piv.mX, piv.mY, piv.mZ, pivotMode );
 	self->ScheduleUpdate ();
 	
 	return 0;
@@ -815,6 +818,12 @@ int MOAITransform::_setPiv ( lua_State* L ) {
 //----------------------------------------------------------------//
 /** @name	setPivotMode
 	@text	Sets the pivot mode
+ 
+	@in		MOAITransform self
+	@opt	enum	pivotMode	One of MOAITransform.PIVOT_MODE_ABSOLUTE,
+								MOAITransform.PIVOT_MODE_RELATIVE.
+								Default value is MOAITransform.PIVOT_MODE_RELATIVE.
+	@out	nil
  */
 int MOAITransform::_setPivotMode(lua_State *L){
 	MOAI_LUA_SETUP(MOAITransform, "U")
@@ -1277,6 +1286,14 @@ void MOAITransform::SetLoc ( float x, float y, float z ) {
 //----------------------------------------------------------------//
 void MOAITransform::SetPiv ( float x, float y, float z ) {
 
+	this->SetPiv(x, y, z, this->mPivotMode);
+}
+
+//----------------------------------------------------------------//
+// Made virtual so it can be overridden in MOAIProp where pivotMode has some effect
+void MOAITransform::SetPiv ( float x, float y, float z, int pivotMode ){
+	UNUSED(pivotMode);
+	
 	this->mPiv.mX = x;
 	this->mPiv.mY = y;
 	this->mPiv.mZ = z;

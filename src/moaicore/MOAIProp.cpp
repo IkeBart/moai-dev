@@ -1226,6 +1226,26 @@ void MOAIProp::SetPartition ( MOAIPartition* partition ) {
 		}
 	}
 }
+//----------------------------------------------------------------//
+void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
+	if (pivotMode == MOAITransform::PIVOT_MODE_RELATIVE) {
+		USVec3D pivot;
+		USBox bounds;
+		u32 status = this->GetPropBounds ( bounds );
+		if ( status != BOUNDS_OK ){
+			return;
+		}
+		pivot.mX = bounds.mMin.mX + ((bounds.mMax.mX - bounds.mMin.mX) * x);
+		pivot.mY = bounds.mMin.mY + ((bounds.mMax.mY - bounds.mMin.mY) * y);
+		pivot.mZ = bounds.mMin.mZ + ((bounds.mMax.mZ - bounds.mMin.mZ) * z);
+		
+		MOAITransform::SetPiv(pivot.mX, pivot.mY, pivot.mZ, pivotMode);
+	}
+	else{
+		// call superclass method
+		MOAITransform::SetPiv(x, y, z, pivotMode);
+	}
+}
 
 //----------------------------------------------------------------//
 void MOAIProp::SetVisible ( bool visible ) {
