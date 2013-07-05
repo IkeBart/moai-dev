@@ -399,6 +399,25 @@ int MOAIProp::_setDepthTest ( lua_State* L ) {
 	
 	return 0;
 }
+//----------------------------------------------------------------//
+/** @name	setDimensions
+	@text	Resizes the prop to the specified length, width and depth.
+			Updates the pivot point to the relative point set before.
+*/
+int MOAIProp::_setDimensions( lua_State *L ){
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/**	@name	setDimensionsFree
+	@text	Resizes the prop to the specified length, width and depth
+			while keeping it centered around the current pivot point.
+*/
+int MOAIProp::_setDimensionsFree( lua_State *L ){
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	return 0;
+}
 
 //----------------------------------------------------------------//
 /**	@name	setExpandForSort
@@ -1222,6 +1241,8 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setDeck",			_setDeck },
 		{ "setDepthMask",		_setDepthMask },
 		{ "setDepthTest",		_setDepthTest },
+		{ "setDimensions",		_setDimensions },
+		{ "setDimensionsFree",	_setDimensionsFree },
 		{ "setExpandForSort",	_setExpandForSort },
 		{ "setGrid",			_setGrid },
 		{ "setGridScale",		_setGridScale },

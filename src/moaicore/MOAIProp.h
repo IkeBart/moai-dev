@@ -114,6 +114,8 @@ private:
 	static int		_setDeck			( lua_State* L );
 	static int		_setDepthMask		( lua_State* L );
 	static int		_setDepthTest		( lua_State* L );
+	static int		_setDimensions		( lua_State* L );
+	static int		_setDimensionsFree	( lua_State* L );
 	static int		_setExpandForSort	( lua_State* L );
 	static int		_setGrid			( lua_State* L );
 	static int		_setGridScale		( lua_State* L );
