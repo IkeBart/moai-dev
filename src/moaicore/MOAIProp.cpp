@@ -508,6 +508,52 @@ int MOAIProp::_setParent ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	setPivot
+	@text	Sets the prop's pivot point in relative space.  
+			(0, 0) corresponds to the upper left corner of the bounding box.
+			(1, 1) corresponds to the lower right corner of the bounding box.
+ 
+	@in		MOAIProp self
+	@opt	number xPiv			Default value is 0.
+	@opt	number yPiv			Default value is 0.
+	@opt	number zPiv			Default value is 0.
+	@out	nil
+
+*/
+int MOAIProp::_setPivot(lua_State *L){
+	MOAI_LUA_SETUP ( MOAITransform, "U" )
+	
+	
+	float x = state.GetValue < float >( 2, 0.0f );
+	float y = state.GetValue < float >( 3, 0.0f );
+	float z = state.GetValue < float >( 4, 0.0f );
+	
+	self->SetPiv(x, y, z, MOAITransform::PIVOT_MODE_RELATIVE);
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/**	@name	setPivotAbsolute
+	@text	Sets the prop's pivot point in its own coordinate system.
+ 
+	@in		MOAIProp self
+	@opt	number xPiv			Default value is 0.
+	@opt	number yPiv			Default value is 0.
+	@opt	number zPiv			Default value is 0.
+	@out	nil
+ 
+ */
+int MOAIProp::_setPivotAbsolute(lua_State *L){
+	MOAI_LUA_SETUP ( MOAITransform, "U" )
+	
+	float x = state.GetValue < float >( 2, 0.0f );
+	float y = state.GetValue < float >( 3, 0.0f );
+	float z = state.GetValue < float >( 4, 0.0f );
+	
+	self->SetPiv(x, y, z, MOAITransform::PIVOT_MODE_ABSOLUTE);
+	return 0;
+}
+//----------------------------------------------------------------//
 /**	@name	setPriority
 	@text	Sets or clears the node's priority. Clear the priority
 			to have MOAIPartition automatically assign a priority
@@ -1181,6 +1227,8 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setGridScale",		_setGridScale },
 		{ "setIndex",			_setIndex },
 		{ "setParent",			_setParent },
+		{ "setPivot",			_setPivot },
+		{ "setPivotAbsolute",	_setPivotAbsolute },
 		{ "setPriority",		_setPriority },
 		{ "setRemapper",		_setRemapper },
 		{ "setScissorRect",		_setScissorRect },

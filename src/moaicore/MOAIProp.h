@@ -119,6 +119,8 @@ private:
 	static int		_setGridScale		( lua_State* L );
 	static int		_setIndex			( lua_State* L );
 	static int		_setParent			( lua_State* L );
+	static int		_setPivot			( lua_State* L );
+	static int		_setPivotAbsolute	( lua_State* L );
 	static int		_setPriority		( lua_State* L );
 	static int		_setRemapper		( lua_State* L );
 	static int		_setScissorRect		( lua_State* L );
