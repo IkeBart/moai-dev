@@ -411,9 +411,9 @@ int MOAIProp::_setDimensions( lua_State *L ){
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
 	
 	if ( state.CheckParams ( 2, "NN" )){
-		float xMax = state.GetValue < float >(2, 0.0);
-		float yMax = state.GetValue < float >(3, 0.0);
-		float zMax = state.GetValue < float >(4, 0.0);
+		float xMax = state.GetValue < float >(2, 0.0f);
+		float yMax = state.GetValue < float >(3, 0.0f);
+		float zMax = state.GetValue < float >(4, 0.0f);
 		USBox box;
 		box.Init(0.0f, yMax , xMax, 0.0f, 0.0f, zMax);
 		self->SetOverrideBounds(box);
@@ -432,9 +432,40 @@ int MOAIProp::_setDimensions( lua_State *L ){
 /**	@name	setDimensionsFree
 	@text	Resizes the prop to the specified length, width and depth
 			while keeping it centered around the current pivot point.
+	@in		MOAIProp self
+	@in		number length (x direction)
+	@in		number width (y direction)
+	@in		number depth (z direction)
+	@out	nil
 */
 int MOAIProp::_setDimensionsFree( lua_State *L ){
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	
+	if ( state.CheckParams ( 2, "NN" )){
+		float length = state.GetValue < float >(2, 0.0f);
+		float width = state.GetValue < float > (3, 0.0f);
+		float depth = state.GetValue < float > (4, 0.0f);
+		
+		float xRel = self->mRelativePivot.mX;
+		float yRel = self->mRelativePivot.mY;
+		float zRel = self->mRelativePivot.mZ;
+		
+		// calculate the new bounds without moving the pivot
+		USBox box;
+		box.mMin.mX = self->mPiv.mX - (xRel * length);
+		box.mMax.mX = box.mMin.mX + length;
+		
+		box.mMin.mY = self->mPiv.mY - (yRel * width);
+		box.mMax.mY = box.mMin.mY + width;
+		
+		box.mMin.mZ = self->mPiv.mZ - (zRel * depth);
+		box.mMax.mZ = box.mMin.mZ + depth;
+	
+		self->SetOverrideBounds(box);
+	}
+	else{
+		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
+	}
 	return 0;
 }
 
