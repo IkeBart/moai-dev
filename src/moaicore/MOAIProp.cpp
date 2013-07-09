@@ -317,9 +317,7 @@ int MOAIProp::_setBounds ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
 
 	if ( state.CheckParams ( 2, "NNNNNN" )) {
-
-		self->mBoundsOverride = state.GetBox ( 2 );
-		self->mFlags |= FLAGS_OVERRIDE_BOUNDS;
+		self->SetOverrideBounds(state.GetBox ( 2 ));
 	}
 	else {
 		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
@@ -403,9 +401,29 @@ int MOAIProp::_setDepthTest ( lua_State* L ) {
 /** @name	setDimensions
 	@text	Resizes the prop to the specified length, width and depth.
 			Updates the pivot point to the relative point set before.
+	@in		MOAIProp self
+	@in		number xMax
+	@in		number yMax
+	@in		number zMax
+	@out	nil
 */
 int MOAIProp::_setDimensions( lua_State *L ){
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	
+	if ( state.CheckParams ( 2, "NN" )){
+		float xMax = state.GetValue < float >(2, 0.0);
+		float yMax = state.GetValue < float >(3, 0.0);
+		float zMax = state.GetValue < float >(4, 0.0);
+		USBox box;
+		box.Init(0.0f, yMax , xMax, 0.0f, 0.0f, zMax);
+		self->SetOverrideBounds(box);
+		
+		//TODO: Set the pivot to where it should be.
+	}
+	else{
+		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
+	}
+	
 	return 0;
 }
 
@@ -1281,6 +1299,11 @@ void MOAIProp::SerializeOut ( MOAILuaState& state, MOAISerializer& serializer ) 
 	
 	state.SetField ( -1, "mDeck", serializer.AffirmMemberID ( this->mDeck ));
 	state.SetField ( -1, "mGrid", serializer.AffirmMemberID ( this->mGrid ));
+}
+//----------------------------------------------------------------//
+void MOAIProp::SetOverrideBounds(USBox bounds){
+	this->mBoundsOverride = bounds;
+	this->mFlags |= FLAGS_OVERRIDE_BOUNDS;
 }
 
 //----------------------------------------------------------------//
