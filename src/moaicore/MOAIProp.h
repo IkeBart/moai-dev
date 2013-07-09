@@ -158,6 +158,8 @@ protected:
 	MOAIBlendMode							mBlendMode;
 
 	USBox									mBoundsOverride;
+		
+	USVec3D									mRelativePivot;
 
 	//----------------------------------------------------------------//
 	u32				GetFrameFitting			( USBox& bounds, USVec3D& offset, USVec3D& scale );

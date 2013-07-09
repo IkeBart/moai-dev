@@ -418,7 +418,8 @@ int MOAIProp::_setDimensions( lua_State *L ){
 		box.Init(0.0f, yMax , xMax, 0.0f, 0.0f, zMax);
 		self->SetOverrideBounds(box);
 		
-		//TODO: Set the pivot to where it should be.
+		// Set the pivot to where it should be.
+		self->SetPiv(self->mRelativePivot.mX, self->mRelativePivot.mY, self->mRelativePivot.mZ, MOAITransform::PIVOT_MODE_RELATIVE);
 	}
 	else{
 		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
@@ -1146,6 +1147,7 @@ MOAIProp::MOAIProp () :
 	
 	this->mLinkInCell.Data ( this );
 	this->mBounds.Init ( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
+	this->mRelativePivot.Init ( 0.0f, 0.0f, 0.0f );
 }
 
 //----------------------------------------------------------------//
@@ -1321,6 +1323,10 @@ void MOAIProp::SetPartition ( MOAIPartition* partition ) {
 //----------------------------------------------------------------//
 void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
 	if (pivotMode == MOAITransform::PIVOT_MODE_RELATIVE) {
+		// set relative pivot
+		this->mRelativePivot.Init(x, y, z);
+		
+		// set absolute pivot
 		USVec3D pivot;
 		USBox bounds;
 		u32 status = this->GetPropBounds ( bounds );
@@ -1336,6 +1342,22 @@ void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
 	else{
 		// call superclass method
 		MOAITransform::SetPiv(x, y, z, pivotMode);
+		
+		// set relative pivot
+		USVec3D pivot;
+		USBox bounds;
+		u32 status = this->GetPropBounds ( bounds );
+		if ( status != BOUNDS_OK ){
+			return;
+		}
+		
+		pivot.mX = ((bounds.mMax.mX - bounds.mMin.mX) != 0.0f) ?
+			((this->mPiv.mX - bounds.mMin.mX) / (bounds.mMax.mX - bounds.mMin.mX)) : 0.0f;
+		pivot.mY = ((bounds.mMax.mY - bounds.mMin.mY) != 0.0f) ?
+			((this->mPiv.mY - bounds.mMin.mY) / (bounds.mMax.mY - bounds.mMin.mY)) : 0.0f;
+		pivot.mZ = ((bounds.mMax.mZ - bounds.mMin.mZ) != 0.0f) ?
+			((this->mPiv.mZ - bounds.mMin.mY) / (bounds.mMax.mY - bounds.mMin.mY)) : 0.0f;
+		this->mRelativePivot.Init(pivot);
 	}
 }
 
