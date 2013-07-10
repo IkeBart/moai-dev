@@ -425,6 +425,8 @@ int MOAIProp::_setDimensions( lua_State *L ){
 		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
 	}
 	
+	self->ScheduleUpdate ();
+	
 	return 0;
 }
 
@@ -466,6 +468,9 @@ int MOAIProp::_setDimensionsFree( lua_State *L ){
 	else{
 		self->mFlags &= ~FLAGS_OVERRIDE_BOUNDS;
 	}
+	
+	self->ScheduleUpdate ();
+	
 	return 0;
 }
 
@@ -598,6 +603,7 @@ int MOAIProp::_setPivot(lua_State *L){
 	float z = state.GetValue < float >( 4, 0.0f );
 	
 	self->SetPiv(x, y, z, MOAITransform::PIVOT_MODE_RELATIVE);
+	self->ScheduleUpdate ();
 	return 0;
 }
 
@@ -620,6 +626,7 @@ int MOAIProp::_setPivotAbsolute(lua_State *L){
 	float z = state.GetValue < float >( 4, 0.0f );
 	
 	self->SetPiv(x, y, z, MOAITransform::PIVOT_MODE_ABSOLUTE);
+	self->ScheduleUpdate ();
 	return 0;
 }
 //----------------------------------------------------------------//
