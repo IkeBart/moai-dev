@@ -103,6 +103,7 @@ private:
 	static int		_getDims			( lua_State* L );
 	static int		_getGrid			( lua_State* L );
 	static int		_getIndex			( lua_State* L );
+	static int		_getPivot			( lua_State* L );
 	static int		_getPriority		( lua_State* L );
 	static int		_getWorldBounds		( lua_State* L );
 	static int		_inside				( lua_State* L );
@@ -160,6 +161,7 @@ protected:
 	USBox									mBoundsOverride;
 		
 	USVec3D									mRelativePivot;
+	bool									mPivotInitialized;
 
 	//----------------------------------------------------------------//
 	u32				GetFrameFitting			( USBox& bounds, USVec3D& offset, USVec3D& scale );

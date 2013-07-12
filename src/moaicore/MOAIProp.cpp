@@ -167,6 +167,25 @@ int MOAIProp::_getPriority ( lua_State* L ) {
 	}
 	return 0;
 }
+//----------------------------------------------------------------//
+/** @name	getPivot
+	@text	Returns the relative pivot point of the prop.
+ 
+	@in		MOAIProp self
+	@out	xPiv
+	@out	yPiv
+	@out	zPiv
+ */
+
+int	MOAIProp::_getPivot	( lua_State* L ){
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	
+	state.Push( self->mRelativePivot.mX );
+	state.Push( self->mRelativePivot.mY );
+	state.Push( self->mRelativePivot.mZ );
+	
+	return 3;
+}
 
 //----------------------------------------------------------------//
 /**	@name	inside
@@ -358,6 +377,11 @@ int MOAIProp::_setDeck ( lua_State* L ) {
 
 	if ( self->mDeck ) {
 		self->SetMask ( self->mDeck->GetContentMask ());
+		
+		// set the pivot point to the proper location if it has been initialized before adding the deck
+		if (self->mPivotInitialized) {
+			self->SetPiv(self->mRelativePivot.mX, self->mRelativePivot.mY, self->mRelativePivot.mZ, MOAITransform::PIVOT_MODE_RELATIVE);
+		}
 	}
 	else {
 		self->SetMask ( 0 );
@@ -1175,7 +1199,8 @@ MOAIProp::MOAIProp () :
 	mGridScale ( 1.0f, 1.0f ),
 	mCullMode ( 0 ),
 	mDepthTest ( 0 ),
-	mDepthMask ( true ) {
+	mDepthMask ( true ),
+	mPivotInitialized ( false ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAITransform )
@@ -1288,6 +1313,8 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getDims",			_getDims },
 		{ "getGrid",			_getGrid },
 		{ "getIndex",			_getIndex },
+		{ "getPivot",			_getPivot },
+		{ "getPivotAbsolute",	_getPiv },
 		{ "getPriority",		_getPriority },
 		{ "getWorldBounds",		_getWorldBounds },
 		{ "inside",				_inside },
@@ -1363,6 +1390,7 @@ void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
 	if (pivotMode == MOAITransform::PIVOT_MODE_RELATIVE) {
 		// set relative pivot
 		this->mRelativePivot.Init(x, y, z);
+		this->mPivotInitialized = true;
 		
 		// set absolute pivot
 		USVec3D pivot;
@@ -1396,6 +1424,8 @@ void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
 		pivot.mZ = ((bounds.mMax.mZ - bounds.mMin.mZ) != 0.0f) ?
 			((this->mPiv.mZ - bounds.mMin.mY) / (bounds.mMax.mY - bounds.mMin.mY)) : 0.0f;
 		this->mRelativePivot.Init(pivot);
+		
+		this->mPivotInitialized = true;
 	}
 }
 
