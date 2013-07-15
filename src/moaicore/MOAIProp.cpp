@@ -1233,7 +1233,8 @@ MOAIProp::MOAIProp () :
 	mCullMode ( 0 ),
 	mDepthTest ( 0 ),
 	mDepthMask ( true ),
-	mPivotInitialized ( false ){
+	mPivotInitialized ( false),
+	mZOrder( 0 ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAITransform )
