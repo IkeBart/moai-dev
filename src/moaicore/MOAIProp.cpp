@@ -188,6 +188,21 @@ int	MOAIProp::_getPivot	( lua_State* L ){
 }
 
 //----------------------------------------------------------------//
+/** @name	getZOrder
+	@text	Returns the drawing order for this prop within its parent layer.
+ 
+	@in		MOAIProp self
+	@out	zOrder
+ */
+int MOAIProp::_getZOrder( lua_State *L ){
+	MOAI_LUA_SETUP( MOAIProp, "U" )
+	
+	state.Push( self->mZOrder );
+	
+	return 1;
+}
+
+//----------------------------------------------------------------//
 /**	@name	inside
 	@text	Returns true if the given world space point falls inside
 			the prop's bounds.
@@ -785,6 +800,24 @@ int MOAIProp::_setVisible ( lua_State* L ) {
 	bool visible = state.GetValue < bool >( 2, true );
 	self->SetVisible ( visible );
 
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/** @name	setZOrder
+	@text	Sets the drawing order of this prop within its parent layer.  
+			Higher values render later.
+ 
+	@in		MOAIProp self
+	@in		number zOrder		default value is zero.
+	@out	nil
+ 
+ */
+int MOAIProp::_setZOrder( lua_State *L ){
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	
+	int zOrder = state.GetValue < int > ( 2, 0 );
+	self->SetZOrder(zOrder);
 	return 0;
 }
 
@@ -1434,6 +1467,11 @@ void MOAIProp::SetVisible ( bool visible ) {
 
 	this->mFlags = visible ? this->mFlags | FLAGS_LOCAL_VISIBLE : this->mFlags & ~FLAGS_LOCAL_VISIBLE;
 	this->ScheduleUpdate ();
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::SetZOrder( int zOrder ){
+	this->mZOrder = zOrder;
 }
 
 //----------------------------------------------------------------//

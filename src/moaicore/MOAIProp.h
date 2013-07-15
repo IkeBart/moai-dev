@@ -106,6 +106,7 @@ private:
 	static int		_getPivot			( lua_State* L );
 	static int		_getPriority		( lua_State* L );
 	static int		_getWorldBounds		( lua_State* L );
+	static int		_getZOrder			( lua_State* L );
 	static int		_inside				( lua_State* L );
 	static int		_setBillboard		( lua_State* L );
 	static int		_setBlendEquation	( lua_State* L );
@@ -131,6 +132,7 @@ private:
 	static int		_setTexture			( lua_State* L );
 	static int		_setUVTransform		( lua_State* L );
 	static int		_setVisible			( lua_State* L );
+	static int		_setZOrder			( lua_State* L );
 
 	//----------------------------------------------------------------//
 	void			DrawGrid			( int subPrimID );
@@ -162,6 +164,8 @@ protected:
 		
 	USVec3D									mRelativePivot;
 	bool									mPivotInitialized;
+		
+	int										mZOrder;
 
 	//----------------------------------------------------------------//
 	u32				GetFrameFitting			( USBox& bounds, USVec3D& offset, USVec3D& scale );
@@ -250,6 +254,7 @@ public:
 	void				SetPartition			( MOAIPartition* partition );
 	virtual void		SetPiv					( float x, float y, float z, int pivotMode );
 	void				SetVisible				( bool visible );
+	void				SetZOrder				( int zOrder );
 };
 
 #endif
