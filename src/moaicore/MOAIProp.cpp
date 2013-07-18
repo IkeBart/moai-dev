@@ -25,6 +25,26 @@
 //================================================================//
 
 //----------------------------------------------------------------//
+/** @name	addChild
+	@text	Adds the prop to the receiver's children with a given
+			z-Order.
+ 
+	@in		MOAIProp child
+	@opt	number zOrder
+	@out	nil
+ 
+ */
+int MOAIProp::_addChild( lua_State *L ){
+	MOAI_LUA_SETUP( MOAIProp, "UU" )
+	
+	
+	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
+	int zOrder = state.GetValue <int > (3, 0);
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	getBounds
 	@text	Return the prop's local bounds or 'nil' if prop bounds is
 			global or missing. The bounds are in model space and will
@@ -826,6 +846,23 @@ int MOAIProp::_setZOrder( lua_State *L ){
 //================================================================//
 
 //----------------------------------------------------------------//
+void MOAIProp::AddChild(MOAIProp *child, int zOrder){
+	// set zOrder of child
+	child->SetZOrder(zOrder);
+	
+	u32 index = this->mTotalChildren++;
+	
+	if ( index >= this->mChildren.Size() ) {
+		this->mChildren.Grow(index + 1, CHILDREN_BLOCK_SIZE);
+	}
+	// add the child to mChildren
+	this->mChildren[index] = child;
+	
+	// set parent of child
+	child->mParent = this;
+}
+
+//----------------------------------------------------------------//
 void MOAIProp::AddToSortBuffer ( MOAIPartitionResultBuffer& buffer, u32 key ) {
 
 	if (( this->mFlags & FLAGS_EXPAND_FOR_SORT ) && this->mGrid && this->mDeck ) {
@@ -1234,7 +1271,8 @@ MOAIProp::MOAIProp () :
 	mDepthTest ( 0 ),
 	mDepthMask ( true ),
 	mPivotInitialized ( false),
-	mZOrder( 0 ){
+	mZOrder( 0 ),
+	mTotalChildren( 0 ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAITransform )
@@ -1253,6 +1291,8 @@ MOAIProp::~MOAIProp () {
 	if ( this->mCell ) {
 		this->mCell->RemoveProp ( *this );
 	}
+	
+	// TODO: remove all children
 	
 	this->mDeck.Set ( *this, 0 );
 	this->mRemapper.Set ( *this, 0 );
@@ -1343,6 +1383,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 	MOAIColor::RegisterLuaFuncs ( state );
 
 	luaL_Reg regTable [] = {
+		{ "addChild",			_addChild },
 		{ "getBounds",			_getBounds },
 		{ "getDims",			_getDims },
 		{ "getGrid",			_getGrid },
@@ -1380,6 +1421,19 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 	};
 	
 	luaL_register ( state, 0, regTable );
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::RemoveChild(MOAIProp *child){
+	UNUSED(child);
+	// TODO: implement RemoveChild to remove the specified child from mChildren.
+	/*
+	for (u32 index = 0; index < this->mChildren.Size(); index++){
+		if (this->mChildren[index] == child) {
+			
+		}
+	}
+	*/
 }
 
 //----------------------------------------------------------------//

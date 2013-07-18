@@ -85,6 +85,8 @@ private:
 	friend class MOAIPartitionCell;
 	friend class MOAIPartitionLevel;
 
+	static const u32 CHILDREN_BLOCK_SIZE = 128;
+		
 	MOAIPartition*				mPartition;
 	MOAIPartitionCell*			mCell;
 	
@@ -99,6 +101,7 @@ private:
 	s32				mPriority;
 	
 	//----------------------------------------------------------------//
+	static int		_addChild			( lua_State* L );
 	static int		_getBounds			( lua_State* L );
 	static int		_getDims			( lua_State* L );
 	static int		_getGrid			( lua_State* L );
@@ -166,12 +169,17 @@ protected:
 	bool									mPivotInitialized;
 		
 	int										mZOrder;
+	USLeanArray < MOAIProp* >				mChildren;
+	MOAIWeakPtr < MOAIProp >				mParent;
+	u32										mTotalChildren;
 
 	//----------------------------------------------------------------//
+	void			AddChild				( MOAIProp* child, int zOrder );
 	u32				GetFrameFitting			( USBox& bounds, USVec3D& offset, USVec3D& scale );
 	void			GetGridBoundsInView		( MOAICellCoord& c0, MOAICellCoord& c1 );
 	virtual u32		GetPropBounds			( USBox& bounds ); // get the prop bounds in model space
 	void			LoadGfxState			();
+	void			RemoveChild				( MOAIProp* child);
 	void			UpdateBounds			( u32 status );
 	void			UpdateBounds			( const USBox& bounds, u32 status );
 
