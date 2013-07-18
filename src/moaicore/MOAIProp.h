@@ -111,6 +111,8 @@ private:
 	static int		_getWorldBounds		( lua_State* L );
 	static int		_getZOrder			( lua_State* L );
 	static int		_inside				( lua_State* L );
+	static int		_removeChild		( lua_State* L );
+	static int		_removeFromParent	( lua_State* L );
 	static int		_setBillboard		( lua_State* L );
 	static int		_setBlendEquation	( lua_State* L );
 	static int		_setBlendMode		( lua_State* L );

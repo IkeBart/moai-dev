@@ -41,6 +41,8 @@ int MOAIProp::_addChild( lua_State *L ){
 	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
 	int zOrder = state.GetValue <int > (3, 0);
 	
+	self->AddChild(child, zOrder);
+	
 	return 0;
 }
 
@@ -248,6 +250,40 @@ int	MOAIProp::_inside ( lua_State* L ) {
 	lua_pushboolean ( state, result );
 	
 	return 1;
+}
+
+//----------------------------------------------------------------//
+/** @name	removeChild
+	@text	Removes the specified child prop from the receiver's children.
+ 
+	@in		MOAIProp self
+	@in		MOAIProp child
+	@out	nil
+ */
+int MOAIProp::_removeChild(lua_State *L){
+	MOAI_LUA_SETUP( MOAIProp, "UU")
+	
+	MOAIProp *child = state.GetLuaObject<MOAIProp>(2, true);
+	self->RemoveChild(child);
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/** @name	removeFromParent
+	@text	Removes the reciever from its parent's children.
+ 
+	@in		MOAIProp self
+	@out	nil
+ */
+int MOAIProp::_removeFromParent(lua_State *L){
+	MOAI_LUA_SETUP(MOAIProp, "U")
+	
+	if (self->mParent){
+		self->mParent->RemoveChild(self);
+	}
+	
+	return 0;
 }
 
 //----------------------------------------------------------------//
@@ -1393,6 +1429,8 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getPriority",		_getPriority },
 		{ "getWorldBounds",		_getWorldBounds },
 		{ "inside",				_inside },
+		{ "removeChild",		_removeChild },
+		{ "removeFromParent",	_removeFromParent},
 		{ "setBillboard",		_setBillboard },
 		{ "setBlendEquation",		_setBlendEquation },
 		{ "setBlendMode",		_setBlendMode },
@@ -1425,15 +1463,33 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 
 //----------------------------------------------------------------//
 void MOAIProp::RemoveChild(MOAIProp *child){
-	UNUSED(child);
-	// TODO: implement RemoveChild to remove the specified child from mChildren.
-	/*
-	for (u32 index = 0; index < this->mChildren.Size(); index++){
+	
+	if (!child) {
+		return;
+	}
+	
+	// find the index of the first occurrance of child in mChildren and remove it if it exists
+	u32 index;
+	u32 size = this->mChildren.Size();
+	for (index = 0; index < size; index++){
+		
 		if (this->mChildren[index] == child) {
-			
+			this->mChildren[index]->mParent = NULL;
+			this->mChildren[index] = NULL;
+			break;
 		}
 	}
-	*/
+	bool resize = index < size;
+	// move the next one over to the one at index
+	for(; index < size - 1; index++){
+		this->mChildren[index] = this->mChildren[index + 1];
+	}
+	// resize the array if needed
+	if (resize) {
+		this->mChildren.Resize(size - 1);
+	}
+	
+	
 }
 
 //----------------------------------------------------------------//
