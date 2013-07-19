@@ -1474,6 +1474,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getPivotAbsolute",	_getPiv },
 		{ "getPriority",		_getPriority },
 		{ "getWorldBounds",		_getWorldBounds },
+		{ "getZOrder",			_getZOrder },
 		{ "inside",				_inside },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent},
@@ -1501,6 +1502,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setTexture",			_setTexture },
 		{ "setUVTransform",		_setUVTransform },
 		{ "setVisible",			_setVisible },
+		{ "setZOrder",			_setZOrder },
 		{ NULL, NULL }
 	};
 	
