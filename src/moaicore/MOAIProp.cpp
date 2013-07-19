@@ -1634,7 +1634,25 @@ void MOAIProp::SetZOrder( int zOrder ){
 //----------------------------------------------------------------//
 void MOAIProp::SortChildren(){
 	if (this->mChildSortingNeeded) {
-		// TODO: implement the sorting of children by z-Order
+		
+		int i, j;
+		int length = (int) this->mChildren.Size();
+		MOAIProp ** x = (MOAIProp **)this->mChildren.Data();
+		MOAIProp *tempItem;
+		
+		// insertion sort
+		for (i = 1; i < length; i++) {
+			tempItem = x[i];
+			j = i - 1;
+			
+			// continue moving element downward while zOrder is smaller
+			while ( j >= 0 && ( tempItem->mZOrder < x[j]->mZOrder ) ) {
+				x [j + 1] = x[j];
+				j = j - 1;
+			}
+			x[j+1] = tempItem;
+		}
+		
 		this->mChildSortingNeeded = false;
 	}
 }
