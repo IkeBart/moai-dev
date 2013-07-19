@@ -39,7 +39,7 @@ int MOAIProp::_addChild( lua_State *L ){
 	
 	
 	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
-	int zOrder = state.GetValue <int > (3, 0);
+	int zOrder = state.GetValue <int > (3, child->mZOrder);
 	
 	self->AddChild(child, zOrder);
 	
@@ -1007,7 +1007,7 @@ void MOAIProp::Draw ( int subPrimID ) {
 //----------------------------------------------------------------//
 void MOAIProp::DrawChildren (int subPrimID ){
 	// TODO: call DrawItem() on the children with regards to z-Order.
-	u32 numChildren = this->mChildren.Size();
+	u32 numChildren = this->mTotalChildren;
 	u32 index = 0;
 	MOAIProp *child = NULL;
 	
@@ -1535,6 +1535,7 @@ void MOAIProp::RemoveChild(MOAIProp *child){
 	// resize the array if needed
 	if (resize) {
 		this->mChildren.Resize(size - 1);
+		this->mTotalChildren --;
 	}
 	
 	this->mChildSortingNeeded = true;
@@ -1638,7 +1639,7 @@ void MOAIProp::SortChildren(){
 	if (this->mChildSortingNeeded) {
 		
 		int i, j;
-		int length = (int) this->mChildren.Size();
+		int length = (int) this->mTotalChildren;
 		MOAIProp ** x = (MOAIProp **)this->mChildren.Data();
 		MOAIProp *tempItem;
 		
