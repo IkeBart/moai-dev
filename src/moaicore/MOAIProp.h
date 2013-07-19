@@ -140,6 +140,7 @@ private:
 	static int		_setZOrder			( lua_State* L );
 
 	//----------------------------------------------------------------//
+	void			DrawChildren		();
 	void			DrawGrid			( int subPrimID );
 	void			DrawItem			();
 

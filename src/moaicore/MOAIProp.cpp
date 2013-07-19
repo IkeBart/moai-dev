@@ -998,8 +998,14 @@ void MOAIProp::Draw ( int subPrimID ) {
 		this->DrawGrid ( subPrimID );
 	}
 	else {
-		this->DrawItem ();
+		this->DrawChildren ();
 	}
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::DrawChildren (){
+	// TODO: call DrawItem() on the children with regards to z-Order.
+	this->DrawItem();
 }
 
 //----------------------------------------------------------------//
