@@ -175,6 +175,8 @@ protected:
 	USLeanArray < MOAIProp* >				mChildren;
 	MOAIWeakPtr < MOAIProp >				mParent;
 	u32										mTotalChildren;
+		
+	bool									mChildSortingNeeded;
 
 	//----------------------------------------------------------------//
 	void			AddChild				( MOAIProp* child, int zOrder );
@@ -183,6 +185,7 @@ protected:
 	virtual u32		GetPropBounds			( USBox& bounds ); // get the prop bounds in model space
 	void			LoadGfxState			();
 	void			RemoveChild				( MOAIProp* child);
+	void			SortChildren			();
 	void			UpdateBounds			( u32 status );
 	void			UpdateBounds			( const USBox& bounds, u32 status );
 

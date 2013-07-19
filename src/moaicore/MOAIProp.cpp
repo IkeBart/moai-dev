@@ -896,6 +896,8 @@ void MOAIProp::AddChild(MOAIProp *child, int zOrder){
 	
 	// set parent of child
 	child->mParent = this;
+	
+	this->mChildSortingNeeded = true;
 }
 
 //----------------------------------------------------------------//
@@ -1346,9 +1348,10 @@ MOAIProp::MOAIProp () :
 	mCullMode ( 0 ),
 	mDepthTest ( 0 ),
 	mDepthMask ( true ),
-	mPivotInitialized ( false),
+	mPivotInitialized ( false ),
 	mZOrder( 0 ),
-	mTotalChildren( 0 ){
+	mTotalChildren( 0 ),
+	mChildSortingNeeded( false ){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAITransform )
@@ -1393,7 +1396,10 @@ void MOAIProp::OnDepNodeUpdate () {
 	this->UpdateBounds ( propBounds, propBoundsStatus );
 	
 	bool visible = USFloat::ToBoolean ( this->GetLinkedValue ( MOAIPropAttr::Pack ( INHERIT_VISIBLE ), 1.0f ));
-	this->mFlags = visible && ( this->mFlags & FLAGS_LOCAL_VISIBLE ) ? this->mFlags | FLAGS_VISIBLE : this->mFlags & ~FLAGS_VISIBLE ;	
+	this->mFlags = visible && ( this->mFlags & FLAGS_LOCAL_VISIBLE ) ? this->mFlags | FLAGS_VISIBLE : this->mFlags & ~FLAGS_VISIBLE ;
+	
+	// sort the children by Z-Order if necessary
+	this->SortChildren();
 }
 
 //----------------------------------------------------------------//
@@ -1529,7 +1535,7 @@ void MOAIProp::RemoveChild(MOAIProp *child){
 		this->mChildren.Resize(size - 1);
 	}
 	
-	
+	this->mChildSortingNeeded = true;
 }
 
 //----------------------------------------------------------------//
@@ -1623,6 +1629,14 @@ void MOAIProp::SetVisible ( bool visible ) {
 //----------------------------------------------------------------//
 void MOAIProp::SetZOrder( int zOrder ){
 	this->mZOrder = zOrder;
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::SortChildren(){
+	if (this->mChildSortingNeeded) {
+		// TODO: implement the sorting of children by z-Order
+		this->mChildSortingNeeded = false;
+	}
 }
 
 //----------------------------------------------------------------//
