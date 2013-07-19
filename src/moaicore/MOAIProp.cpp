@@ -998,14 +998,48 @@ void MOAIProp::Draw ( int subPrimID ) {
 		this->DrawGrid ( subPrimID );
 	}
 	else {
-		this->DrawChildren ();
+		this->DrawChildren ( subPrimID );
 	}
 }
 
 //----------------------------------------------------------------//
-void MOAIProp::DrawChildren (){
+void MOAIProp::DrawChildren (int subPrimID ){
 	// TODO: call DrawItem() on the children with regards to z-Order.
-	this->DrawItem();
+	u32 numChildren = this->mChildren.Size();
+	u32 index = 0;
+	MOAIProp *child = NULL;
+	
+	if (numChildren > 0) {
+		// draw children with zOrder < 0
+		for (; index < numChildren; index++){
+			
+			child = this->mChildren.Elem(index);
+			
+			if (child && child->mZOrder < 0) {
+				child->Draw(subPrimID);
+			}
+			else{
+				break;
+			}
+			
+		}
+		
+		// draw self
+		this->DrawItem();
+		
+		// draw remaining children
+		for (; index < numChildren; index++ ){
+			child = this->mChildren.Elem(index);
+			if (child) {
+				child->Draw(subPrimID);
+			}
+		}
+		
+		
+	}
+	else{
+		this->DrawItem();
+	}
 }
 
 //----------------------------------------------------------------//
