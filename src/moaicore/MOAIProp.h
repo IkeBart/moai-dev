@@ -252,6 +252,7 @@ public:
 	virtual void		Draw					( int subPrimID );
 	virtual void		DrawDebug				( int subPrimID );
 	virtual void		GatherSurfaces			( MOAISurfaceSampler2D& sampler );
+	USAffine3D			GetLocalToWorldMatrix	();
 	MOAIPartition*		GetPartitionTrait		();
 	bool				GetCellRect				( USRect* cellRect, USRect* paddedRect = 0 );
 	virtual void		GetCollisionShape		( MOAICollisionShape& shape );

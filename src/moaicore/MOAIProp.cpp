@@ -30,7 +30,7 @@
 			z-Order.
  
 	@in		MOAIProp child
-	@opt	number zOrder
+	@opt	number zOrder    Default is zOrder of child
 	@out	nil
  
  */
@@ -1164,7 +1164,8 @@ void MOAIProp::DrawItem () {
 		gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_WORLD_TRANSFORM, billboardMtx );
 	}
 	else {
-		gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_WORLD_TRANSFORM, this->GetLocalToWorldMtx ());
+		//gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_WORLD_TRANSFORM, this->GetLocalToWorldMtx () );
+		gfxDevice.SetVertexTransform(MOAIGfxDevice::VTX_WORLD_TRANSFORM, this->GetLocalToWorldMatrix ());
 	}
 	
 	this->mDeck->Draw ( this->mIndex, this->mRemapper );
@@ -1249,6 +1250,26 @@ void MOAIProp::GetGridBoundsInView ( MOAICellCoord& c0, MOAICellCoord& c1 ) {
 
 		this->mGrid->GetBoundsInRect ( viewRect, c0, c1, deckBounds );
 	}
+}
+
+//----------------------------------------------------------------//
+// a way to do transform matrices relative to the parent.
+USAffine3D MOAIProp::GetLocalToWorldMatrix () {
+	if (this->mParent) {
+		// getReceiver's local-to-world matrix
+		USAffine3D receiverMatrix = MOAITransform::GetLocalToWorldMtx();
+		
+		// get parent's local-to-world matrix
+		USAffine3D parentMatrix = this->mParent->GetLocalToWorldMtx();
+		
+		// transform with receiver's local-to-world matrix
+		//receiverMatrix.Prepend(parentMatrix);
+		receiverMatrix.Append(parentMatrix);
+		
+		// return result
+		return receiverMatrix;
+	}
+	return MOAITransform::GetLocalToWorldMtx();
 }
 
 //----------------------------------------------------------------//
