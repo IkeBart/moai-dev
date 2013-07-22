@@ -984,16 +984,8 @@ void MOAIProp::Draw ( int subPrimID ) {
 	if ( !( this->mFlags & FLAGS_VISIBLE )) return;
 	if ( !this->mDeck ) return;
 
-	this->LoadGfxState ();
-	
-	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
-
-	if ( this->mUVTransform ) {
-		USAffine3D uvMtx = this->mUVTransform->GetLocalToWorldMtx ();
-		gfxDevice.SetUVTransform ( uvMtx );
-	}
-	else {
-		gfxDevice.SetUVTransform ();
+	if (this->mTotalChildren == 0 || this->mGrid) {
+		this->PrepareGfxState();
 	}
 	
 	if ( this->mGrid ) {
@@ -1006,7 +998,6 @@ void MOAIProp::Draw ( int subPrimID ) {
 
 //----------------------------------------------------------------//
 void MOAIProp::DrawChildren (int subPrimID ){
-	// TODO: call DrawItem() on the children with regards to z-Order.
 	u32 numChildren = this->mTotalChildren;
 	u32 index = 0;
 	MOAIProp *child = NULL;
@@ -1027,6 +1018,7 @@ void MOAIProp::DrawChildren (int subPrimID ){
 		}
 		
 		// draw self
+		this->PrepareGfxState();
 		this->DrawItem();
 		
 		// draw remaining children
@@ -1421,6 +1413,21 @@ void MOAIProp::OnDepNodeUpdate () {
 	
 	// sort the children by Z-Order if necessary
 	this->SortChildren();
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::PrepareGfxState(){
+	this->LoadGfxState ();
+	
+	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+	
+	if ( this->mUVTransform ) {
+		USAffine3D uvMtx = this->mUVTransform->GetLocalToWorldMtx ();
+		gfxDevice.SetUVTransform ( uvMtx );
+	}
+	else {
+		gfxDevice.SetUVTransform ();
+	}
 }
 
 //----------------------------------------------------------------//

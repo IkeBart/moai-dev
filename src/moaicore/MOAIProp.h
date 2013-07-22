@@ -184,6 +184,7 @@ protected:
 	void			GetGridBoundsInView		( MOAICellCoord& c0, MOAICellCoord& c1 );
 	virtual u32		GetPropBounds			( USBox& bounds ); // get the prop bounds in model space
 	void			LoadGfxState			();
+	void			PrepareGfxState			();
 	void			RemoveChild				( MOAIProp* child);
 	void			SortChildren			();
 	void			UpdateBounds			( u32 status );
