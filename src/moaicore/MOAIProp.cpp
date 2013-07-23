@@ -287,6 +287,25 @@ int MOAIProp::_removeFromParent(lua_State *L){
 }
 
 //----------------------------------------------------------------//
+/** @name	reorderChild
+	@text	Sets the zOrder of the specified child to the zOrder index.
+ 
+	@in		MOAIProp self
+	@in		MOAIProp child
+	@in		number zOrder
+	@out	nil
+ */
+int MOAIProp::_reorderChild(lua_State *L){
+	MOAI_LUA_SETUP(MOAIProp, "UUN")
+	MOAIProp *child = state.GetLuaObject<MOAIProp>(2, true);
+	int zOrder = state.GetValue < int > (3, 0);
+	
+	self->ReorderChild(child, zOrder);
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setBillboard
 	@text	If set, prop will face camera when rendering.
 	
@@ -1505,7 +1524,8 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getZOrder",			_getZOrder },
 		{ "inside",				_inside },
 		{ "removeChild",		_removeChild },
-		{ "removeFromParent",	_removeFromParent},
+		{ "removeFromParent",	_removeFromParent },
+		{ "reorderChild",		_reorderChild },
 		{ "setBillboard",		_setBillboard },
 		{ "setBlendEquation",		_setBlendEquation },
 		{ "setBlendMode",		_setBlendMode },
@@ -1573,6 +1593,27 @@ void MOAIProp::RemoveChild(MOAIProp *child){
 void MOAIProp::Render () {
 
 	this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::ReorderChild(MOAIProp *child, int zOrder){
+	if (!child) {
+		return;
+	}
+	
+	
+	// find the index of the first occurrance of child in mChildren and change its zOrder property
+	u32 index;
+	u32 size = this->mChildren.Size();
+	for (index = 0; index < size; index++){
+		
+		if (this->mChildren[index] == child) {
+			this->mChildren[index]->mZOrder = zOrder;
+			break;
+		}
+	}
+	this->mChildSortingNeeded = true;
+	
 }
 
 //----------------------------------------------------------------//

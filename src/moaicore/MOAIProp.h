@@ -113,6 +113,7 @@ private:
 	static int		_inside				( lua_State* L );
 	static int		_removeChild		( lua_State* L );
 	static int		_removeFromParent	( lua_State* L );
+	static int		_reorderChild		( lua_State* L );
 	static int		_setBillboard		( lua_State* L );
 	static int		_setBlendEquation	( lua_State* L );
 	static int		_setBlendMode		( lua_State* L );
@@ -186,6 +187,7 @@ protected:
 	void			LoadGfxState			();
 	void			PrepareGfxState			();
 	void			RemoveChild				( MOAIProp* child);
+	void			ReorderChild			( MOAIProp* child, int zOrder);
 	void			SortChildren			();
 	void			UpdateBounds			( u32 status );
 	void			UpdateBounds			( const USBox& bounds, u32 status );
