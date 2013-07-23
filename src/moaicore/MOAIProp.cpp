@@ -253,6 +253,20 @@ int	MOAIProp::_inside ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/** @name	removeAllChildren
+	@text	Removes all props form the receiver's children.
+	
+	@in		MOAIProp self
+	@out	nil
+ */
+int MOAIProp::_removeAllChildren(lua_State *L){
+	MOAI_LUA_SETUP ( MOAIProp, "U" )
+	self->RemoveAllChildren();
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /** @name	removeChild
 	@text	Removes the specified child prop from the receiver's children.
  
@@ -1523,6 +1537,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getWorldBounds",		_getWorldBounds },
 		{ "getZOrder",			_getZOrder },
 		{ "inside",				_inside },
+		{ "removeAllChildren",  _removeAllChildren },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent },
 		{ "reorderChild",		_reorderChild },
@@ -1558,6 +1573,26 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 }
 
 //----------------------------------------------------------------//
+void MOAIProp::RemoveAllChildren(){
+	u32 index;
+	u32 size = this->mTotalChildren;
+	
+	// set the parents of all children to NULL
+	for (index = 0; index < size; index++) {
+		MOAIProp *child = this->mChildren[index];
+		if (child) {
+			this->mChildren[index]->mParent = NULL;
+			this->mChildren[index] = NULL;
+		}
+		
+	}
+	this->mChildren.Resize( 0 );
+	this->mTotalChildren = 0;
+	
+	this->mChildSortingNeeded = true;
+}
+
+//----------------------------------------------------------------//
 void MOAIProp::RemoveChild(MOAIProp *child){
 	
 	if (!child) {
@@ -1566,7 +1601,7 @@ void MOAIProp::RemoveChild(MOAIProp *child){
 	
 	// find the index of the first occurrance of child in mChildren and remove it if it exists
 	u32 index;
-	u32 size = this->mChildren.Size();
+	u32 size = this->mTotalChildren;
 	for (index = 0; index < size; index++){
 		
 		if (this->mChildren[index] == child) {

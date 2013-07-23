@@ -111,6 +111,7 @@ private:
 	static int		_getWorldBounds		( lua_State* L );
 	static int		_getZOrder			( lua_State* L );
 	static int		_inside				( lua_State* L );
+	static int		_removeAllChildren	( lua_State* L );
 	static int		_removeChild		( lua_State* L );
 	static int		_removeFromParent	( lua_State* L );
 	static int		_reorderChild		( lua_State* L );
@@ -186,6 +187,7 @@ protected:
 	virtual u32		GetPropBounds			( USBox& bounds ); // get the prop bounds in model space
 	void			LoadGfxState			();
 	void			PrepareGfxState			();
+	void			RemoveAllChildren		();
 	void			RemoveChild				( MOAIProp* child);
 	void			ReorderChild			( MOAIProp* child, int zOrder);
 	void			SortChildren			();
