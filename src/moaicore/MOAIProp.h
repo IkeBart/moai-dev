@@ -190,6 +190,7 @@ protected:
 	void			RemoveAllChildren		();
 	void			RemoveChild				( MOAIProp* child);
 	void			ReorderChild			( MOAIProp* child, int zOrder);
+	void			SetParent				( MOAIProp* parent);
 	void			SortChildren			();
 	void			UpdateBounds			( u32 status );
 	void			UpdateBounds			( const USBox& bounds, u32 status );

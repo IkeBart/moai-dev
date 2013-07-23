@@ -697,7 +697,10 @@ int MOAIProp::_setIndex ( lua_State* L ) {
 */
 int MOAIProp::_setParent ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
-
+	
+	MOAIProp* parent = state.GetLuaObject < MOAIProp >( 2, true );
+	self->SetParent( parent );
+	/*
 	MOAINode* parent = state.GetLuaObject < MOAINode >( 2, true );
 	
 	self->SetAttrLink ( PACK_ATTR ( MOAIColor, INHERIT_COLOR ), parent, PACK_ATTR ( MOAIColor, COLOR_TRAIT ));
@@ -705,7 +708,7 @@ int MOAIProp::_setParent ( lua_State* L ) {
 	self->SetAttrLink ( PACK_ATTR ( MOAIProp, ATTR_VISIBLE ), parent, PACK_ATTR ( MOAIProp, ATTR_VISIBLE ));
 	
 	//MOAILog ( state, MOAILogMessages::MOAI_FunctionDeprecated_S, "setParent" );
-	
+	*/
 	return 0;
 }
 
@@ -1668,6 +1671,20 @@ void MOAIProp::SerializeOut ( MOAILuaState& state, MOAISerializer& serializer ) 
 void MOAIProp::SetOverrideBounds(USBox bounds){
 	this->mBoundsOverride = bounds;
 	this->mFlags |= FLAGS_OVERRIDE_BOUNDS;
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::SetParent(MOAIProp *parent){
+	// remove from current parent's children if non-nil
+	if (this->mParent) {
+		this->mParent->RemoveChild( this );
+	}
+	
+	// add to children of new parent.
+	if (parent) {
+		int zOrder = 0;
+		parent->AddChild(this, zOrder);
+	}
 }
 
 //----------------------------------------------------------------//
