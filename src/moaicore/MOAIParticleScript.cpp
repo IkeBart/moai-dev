@@ -227,17 +227,19 @@ int MOAIParticleScript::_add ( lua_State* L ) {
 
 //----------------------------------------------------------------//
 /**	@name	angleVec
-	@text	Load two registers with the X and Y components of a unit
-			vector with a given angle.
+	@text	Load two registers with the X and Y components of a
+			vector with a given angle and an optional length, default
+			to unit length.
 	
 	@in		MOAIParticleScript self
 	@in		number r0			Register to store result X.
 	@in		number r1			Register to store result Y.
 	@in		number v0			Angle of vector (in degrees).
+	@opt	number v1			Length of vector.
 	@out	nil
 */
 int MOAIParticleScript::_angleVec ( lua_State* L ) {
-	IMPL_LUA_PARTICLE_OP ( ANGLE_VEC, "RRV" )
+	IMPL_LUA_PARTICLE_OP ( ANGLE_VEC, "RRVV" )
 }
 
 //----------------------------------------------------------------//
@@ -732,16 +734,21 @@ void MOAIParticleScript::Run ( MOAIParticleSystem& system, MOAIParticle& particl
 				}
 				break;
 			
-			case ANGLE_VEC: // RRV
+			case ANGLE_VEC: // RRVV
 				
-				// TODO: should pass in a length as well
 				READ_ADDR ( r0, bytecode );
 				READ_ADDR ( r1, bytecode );
 				READ_VALUE ( v0, bytecode );
+				READ_VALUE ( v1, bytecode );
 
 				if( r0 && r1){
 					*r0 = ( float )( Cos ( v0 * ( float )D2R ));
 					*r1 = ( float )( Sin ( v0 * ( float )D2R ));
+				}
+				// multiply both components by length if it has been passed in and is non-zero
+				if (v1) {
+					*r0 = *r0 * v1;
+					*r1 = *r1 * v1;
 				}
 				break;
 			
