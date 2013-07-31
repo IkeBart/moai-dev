@@ -12,7 +12,12 @@
 #ifndef	MOAIROOTPROP_H
 #define	MOAIROOTPROP_H
 
+
+#include <moaicore/MOAIFrameBuffer.h>
+#include <moaicore/MOAILua.h>
 #include <moaicore/MOAIProp.h>
+#include <moaicore/MOAIViewport.h>
+
 
 class MOAIRootProp :
 	public virtual MOAIProp,
@@ -24,6 +29,7 @@ private:
 	//----------------------------------------------------------------//
 	static int	_insertProp			( lua_State* L );
 	static int	_removeProp			( lua_State* L );
+	static int  _setViewport		( lua_State* L );
 	
 	//----------------------------------------------------------------//
 	
@@ -32,9 +38,11 @@ public:
 	DECL_LUA_FACTORY ( MOAIRootProp )
 
 	//----------------------------------------------------------------//
+	virtual void		Draw					( int subPrimID );
+	void				RegisterLuaClass		( MOAILuaState& state );
+	void				RegisterLuaFuncs		( MOAILuaState& state );
 	
-	
-}
+};
 
 
 #endif

@@ -167,6 +167,7 @@ void moaicore::InitGlobals ( MOAIGlobals* globals ) {
 	REGISTER_LUA_CLASS ( MOAIProfilerReportBox )
 	REGISTER_LUA_CLASS ( MOAIProp )
 	REGISTER_LUA_CLASS ( MOAIRenderMgr )
+	REGISTER_LUA_CLASS ( MOAIRootProp )
 	REGISTER_LUA_CLASS ( MOAIScissorRect )
 	REGISTER_LUA_CLASS ( MOAIScriptDeck )
 	REGISTER_LUA_CLASS ( MOAIScriptNode )

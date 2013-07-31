@@ -9,4 +9,47 @@
 //
 //
 
-#include "MOAIRootProp.h"
+#include "pch.h"
+#include <moaicore/MOAIGfxDevice.h>
+#include <moaicore/MOAIRootProp.h>
+
+
+int MOAIRootProp::_insertProp(lua_State *L){
+	UNUSED(L);
+	return 0;
+}
+
+int MOAIRootProp::_removeProp( lua_State* L ){
+	UNUSED(L);
+	return 0;
+}
+
+int MOAIRootProp::_setViewport( lua_State* L ){
+	UNUSED(L);
+	return 0;
+}
+
+void MOAIRootProp::Draw(int subPrimID){
+	UNUSED( subPrimID );
+}
+
+void MOAIRootProp::RegisterLuaClass( MOAILuaState &state ){
+	MOAIProp::RegisterLuaClass ( state );
+	MOAIClearableView::RegisterLuaClass ( state );
+	
+	
+}
+
+void MOAIRootProp::RegisterLuaFuncs( MOAILuaState& state ){
+	MOAIProp::RegisterLuaFuncs ( state );
+	MOAIClearableView::RegisterLuaFuncs ( state );
+	
+	luaL_Reg regTable [] = {
+		{ "insertProp",				_insertProp},
+		{ "removeProp",				_removeProp },
+		{ "setViewport",			_setViewport },
+		{ NULL, NULL }
+	};
+	
+	luaL_register ( state, 0, regTable );
+}
