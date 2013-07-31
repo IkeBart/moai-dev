@@ -19,6 +19,15 @@
 #include <moaicore/MOAIViewport.h>
 
 
+//================================================================//
+// MOAIRootProp
+//================================================================//
+/**	@name	MOAIRootProp
+	@text	Prop subclass with some features of MOAILayer, but lacking the 
+			partitions.
+ */
+
+
 class MOAIRootProp :
 	public virtual MOAIProp,
 	public MOAIClearableView

@@ -13,9 +13,23 @@
 #include <moaicore/MOAIGfxDevice.h>
 #include <moaicore/MOAIRootProp.h>
 
-
+//----------------------------------------------------------------//
+/**	@name	insertProp
+	@text	Adds a prop the root prop's children.
+ 
+	@in		MOAILayer self
+	@in		MOAIProp prop
+	@opt	number zOrder
+	@out	nil
+ */
 int MOAIRootProp::_insertProp(lua_State *L){
-	UNUSED(L);
+	
+	MOAI_LUA_SETUP( MOAIProp, "UU" )
+	
+	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
+	int zOrder = state.GetValue <int > (3, child->GetZOrder());
+	
+	self->AddChild(child, zOrder);
 	return 0;
 }
 

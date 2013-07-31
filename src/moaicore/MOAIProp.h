@@ -181,7 +181,7 @@ protected:
 	bool									mChildSortingNeeded;
 
 	//----------------------------------------------------------------//
-	void			AddChild				( MOAIProp* child, int zOrder );
+	
 	u32				GetFrameFitting			( USBox& bounds, USVec3D& offset, USVec3D& scale );
 	void			GetGridBoundsInView		( MOAICellCoord& c0, MOAICellCoord& c1 );
 	virtual u32		GetPropBounds			( USBox& bounds ); // get the prop bounds in model space
@@ -251,8 +251,11 @@ public:
 	GET ( USBox, Bounds, mBounds )
 	GET ( USVec3D, BoundsMax, mBounds.mMax )
 	GET ( USVec3D, BoundsMin, mBounds.mMin )
+		
+	GET ( int, ZOrder, mZOrder )
 
 	//----------------------------------------------------------------//
+	void				AddChild				( MOAIProp* child, int zOrder );
 	void				AddToSortBuffer			( MOAIPartitionResultBuffer& buffer, u32 key = 0 );
 	bool				ApplyAttrOp				( u32 attrID, MOAIAttrOp& attrOp, u32 op );
 	virtual void		Draw					( int subPrimID );

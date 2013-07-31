@@ -29,6 +29,7 @@
 	@text	Adds the prop to the receiver's children with a given
 			z-Order.
  
+	@in		MOAIProp self
 	@in		MOAIProp child
 	@opt	number zOrder    Default is zOrder of child
 	@out	nil
