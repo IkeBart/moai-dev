@@ -33,6 +33,17 @@ void MOAIRootProp::Draw(int subPrimID){
 	UNUSED( subPrimID );
 }
 
+MOAIRootProp::MOAIRootProp(){
+	RTTI_BEGIN
+		RTTI_EXTEND ( MOAIProp )
+		RTTI_EXTEND ( MOAIClearableView )
+	RTTI_END
+}
+
+MOAIRootProp::~MOAIRootProp(){
+	this->mViewport.Set ( *this, 0 );
+}
+
 void MOAIRootProp::RegisterLuaClass( MOAILuaState &state ){
 	MOAIProp::RegisterLuaClass ( state );
 	MOAIClearableView::RegisterLuaClass ( state );

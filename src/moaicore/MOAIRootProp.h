@@ -39,6 +39,8 @@ public:
 
 	//----------------------------------------------------------------//
 	virtual void		Draw					( int subPrimID );
+						MOAIRootProp			();
+	virtual				~MOAIRootProp			();
 	void				RegisterLuaClass		( MOAILuaState& state );
 	void				RegisterLuaFuncs		( MOAILuaState& state );
 	
