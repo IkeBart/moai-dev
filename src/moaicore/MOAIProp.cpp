@@ -1243,6 +1243,13 @@ void MOAIProp::GatherSurfaces ( MOAISurfaceSampler2D& sampler ) {
 }
 
 //----------------------------------------------------------------//
+void MOAIProp::GetBillboardMatrix(USMatrix4x4 &billboard){
+	// TODO: add camera support
+	billboard.Ident();
+}
+
+
+//----------------------------------------------------------------//
 bool MOAIProp::GetCellRect ( USRect* cellRect, USRect* paddedRect ) {
 
 	if ( !( cellRect || paddedRect )) return false;
@@ -1320,6 +1327,18 @@ USAffine3D MOAIProp::GetLocalToWorldMatrix () {
 }
 
 //----------------------------------------------------------------//
+void MOAIProp::GetProjectionMatrix(USMatrix4x4 &proj){
+	// TODO: add camera support
+	
+	if (this->mViewport) {
+		proj.Init(this->mViewport->GetProjMtx());
+	}
+	else{
+		proj.Ident();
+	}
+}
+
+//----------------------------------------------------------------//
 u32 MOAIProp::GetPropBounds ( USBox& bounds ) {
 	
 	if ( this->mFlags & FLAGS_OVERRIDE_BOUNDS ) {
@@ -1350,6 +1369,12 @@ u32 MOAIProp::GetPropBounds ( USBox& bounds ) {
 MOAIPartition* MOAIProp::GetPartitionTrait () {
 
 	return this->mPartition;
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::GetViewMatrix(USMatrix4x4 &view){
+	// TODO: add camera support
+	view.Ident();
 }
 
 //----------------------------------------------------------------//

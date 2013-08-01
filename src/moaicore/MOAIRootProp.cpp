@@ -128,32 +128,6 @@ void MOAIRootProp::Draw(int subPrimID){
 	 */
 }
 
-//----------------------------------------------------------------//
-void MOAIRootProp::GetBillboardMatrix( USMatrix4x4 &billboard ){
-	// TODO: add camera support
-	billboard.Ident();
-}
-
-
-//----------------------------------------------------------------//
-void MOAIRootProp::GetProjectionMatrix(USMatrix4x4 &proj){
-	// TODO: add camera support
-	
-	//if (this->mViewport) {
-	//	proj.Init(this->mViewport->GetProjMtx());
-	//}
-	//else{
-		proj.Ident();
-	//}
-	
-}
-
-//----------------------------------------------------------------//
-void MOAIRootProp::GetViewMatrix(USMatrix4x4 &view){
-	// TODO: add camera support
-	view.Ident();
-}
-
 
 //----------------------------------------------------------------//
 MOAIRootProp::MOAIRootProp(){

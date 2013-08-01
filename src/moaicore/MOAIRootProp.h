@@ -41,9 +41,6 @@ private:
 	static int			_setViewport			( lua_State* L );
 	
 	//----------------------------------------------------------------//
-	void				GetBillboardMatrix		( USMatrix4x4& billboard );
-	void				GetProjectionMatrix		( USMatrix4x4& proj );
-	void				GetViewMatrix			( USMatrix4x4& view );
 	
 	
 public:
