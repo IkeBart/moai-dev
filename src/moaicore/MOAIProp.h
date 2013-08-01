@@ -143,6 +143,7 @@ private:
 	static int		_setShader			( lua_State* L );
 	static int		_setTexture			( lua_State* L );
 	static int		_setUVTransform		( lua_State* L );
+	static int		_setViewport			( lua_State* L );
 	static int		_setVisible			( lua_State* L );
 	static int		_setZOrder			( lua_State* L );
 

@@ -880,6 +880,24 @@ int MOAIProp::_setUVTransform ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/** @name	setViewport
+	@text	Set the prop's viewport.  This will make it behave like a MOAILayer in
+			terms of rendering.  Setting a viewport will make Draw() ignore the 
+			deck set to the prop.
+ 
+	@in		MOAIRootProp self
+	@in		MOAIViewport viewport
+	@out	nil
+ */
+int MOAIProp::_setViewport(lua_State *L){
+	MOAI_LUA_SETUP ( MOAIProp, "UU" )
+	
+	self->SetViewport ( state.GetLuaObject < MOAIViewport >( 2, true ));
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setVisible
 	@text	Sets or clears the prop's visibility.
 	
@@ -1569,6 +1587,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "setShader",			_setShader },
 		{ "setTexture",			_setTexture },
 		{ "setUVTransform",		_setUVTransform },
+		{ "setViewport",		_setViewport },
 		{ "setVisible",			_setVisible },
 		{ "setZOrder",			_setZOrder },
 		{ NULL, NULL }
