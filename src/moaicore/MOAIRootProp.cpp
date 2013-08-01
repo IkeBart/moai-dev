@@ -17,14 +17,14 @@
 /**	@name	insertProp
 	@text	Adds a prop the root prop's children.
  
-	@in		MOAILayer self
+	@in		MOAIRootProp self
 	@in		MOAIProp prop
 	@opt	number zOrder
 	@out	nil
  */
 int MOAIRootProp::_insertProp(lua_State *L){
 	
-	MOAI_LUA_SETUP( MOAIProp, "UU" )
+	MOAI_LUA_SETUP( MOAIRootProp, "UU" )
 	
 	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
 	int zOrder = state.GetValue <int > (3, child->GetZOrder());
@@ -33,20 +33,45 @@ int MOAIRootProp::_insertProp(lua_State *L){
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/** @name	removeProp
+	@text	Removes a prop from the root prop's children.
+ 
+	@in		MOAIRootProp self
+	@in		MOAIProp prop
+	@out	nil
+ */
 int MOAIRootProp::_removeProp( lua_State* L ){
-	UNUSED(L);
+	MOAI_LUA_SETUP( MOAIRootProp, "UU" )
+	
+	MOAIProp *child = state.GetLuaObject< MOAIProp >(2, true);
+	self->RemoveChild(child);
+	
 	return 0;
 }
+
+//----------------------------------------------------------------//
+/** @name	setViewport
+	@text	Set the root prop's viewport.
+ 
+	@in		MOAIRootProp self
+	@in		MOAIViewport viewport
+	@out	nil
+ */
 
 int MOAIRootProp::_setViewport( lua_State* L ){
-	UNUSED(L);
+	MOAI_LUA_SETUP ( MOAIRootProp, "UU" )
+	
+	self->mViewport.Set ( *self, state.GetLuaObject < MOAIViewport >( 2, true ));
 	return 0;
 }
 
+//----------------------------------------------------------------//
 void MOAIRootProp::Draw(int subPrimID){
 	UNUSED( subPrimID );
 }
 
+//----------------------------------------------------------------//
 MOAIRootProp::MOAIRootProp(){
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAIProp )
@@ -54,10 +79,12 @@ MOAIRootProp::MOAIRootProp(){
 	RTTI_END
 }
 
+//----------------------------------------------------------------//
 MOAIRootProp::~MOAIRootProp(){
 	this->mViewport.Set ( *this, 0 );
 }
 
+//----------------------------------------------------------------//
 void MOAIRootProp::RegisterLuaClass( MOAILuaState &state ){
 	MOAIProp::RegisterLuaClass ( state );
 	MOAIClearableView::RegisterLuaClass ( state );
@@ -65,6 +92,7 @@ void MOAIRootProp::RegisterLuaClass( MOAILuaState &state ){
 	
 }
 
+//----------------------------------------------------------------//
 void MOAIRootProp::RegisterLuaFuncs( MOAILuaState& state ){
 	MOAIProp::RegisterLuaFuncs ( state );
 	MOAIClearableView::RegisterLuaFuncs ( state );
