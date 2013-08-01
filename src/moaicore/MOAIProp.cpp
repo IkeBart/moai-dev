@@ -1430,6 +1430,7 @@ MOAIProp::~MOAIProp () {
 	this->mTexture.Set ( *this, 0 );
 	this->mUVTransform.Set ( *this, 0 );
 	this->mScissorRect.Set ( *this, 0 );
+	this->mViewport.Set ( *this, 0 );
 }
 
 //----------------------------------------------------------------//
@@ -1743,6 +1744,11 @@ void MOAIProp::SetPiv(float x, float y, float z, int pivotMode){
 		this->mPivotInitialized = true;
 	}
 }
+//----------------------------------------------------------------//
+void MOAIProp::SetViewport(MOAIViewport *viewport){
+	this->mViewport.Set(*this, viewport);
+}
+
 
 //----------------------------------------------------------------//
 void MOAIProp::SetVisible ( bool visible ) {

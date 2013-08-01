@@ -34,12 +34,12 @@ class MOAICpSpace;
 	@const	SORT_VECTOR_DESCENDING
 */
 class MOAILayer :
-	public virtual MOAIProp,
-	public MOAIClearableView {
+	public virtual MOAIProp/*,
+	public MOAIClearableView */{
 private:
 
 	MOAILuaSharedPtr < MOAICamera >			mCamera;
-	MOAILuaSharedPtr < MOAIViewport >		mViewport;
+	//MOAILuaSharedPtr < MOAIViewport >		mViewport;
 	MOAILuaSharedPtr < MOAIPartition >		mPartition;
 
 	#if USE_CHIPMUNK

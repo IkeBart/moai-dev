@@ -102,6 +102,8 @@ private:
 	u32				mMask;
 	USBox			mBounds;
 	s32				mPriority;
+		
+	MOAILuaSharedPtr < MOAIViewport >		mViewport;
 	
 	//----------------------------------------------------------------//
 	static int		_addChild			( lua_State* L );
@@ -256,6 +258,8 @@ public:
 	GET ( USVec3D, BoundsMin, mBounds.mMin )
 		
 	GET ( int, ZOrder, mZOrder )
+		
+	GET ( MOAIViewport*, Viewport, mViewport )
 
 	//----------------------------------------------------------------//
 	void				AddChild				( MOAIProp* child, int zOrder );
@@ -280,6 +284,7 @@ public:
 	void				SetOverrideBounds		( USBox bounds ) ;
 	void				SetPartition			( MOAIPartition* partition );
 	virtual void		SetPiv					( float x, float y, float z, int pivotMode );
+	void				SetViewport				( MOAIViewport* viewport );
 	void				SetVisible				( bool visible );
 	void				SetZOrder				( int zOrder );
 };

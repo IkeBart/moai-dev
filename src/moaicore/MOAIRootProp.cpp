@@ -62,14 +62,14 @@ int MOAIRootProp::_removeProp( lua_State* L ){
 int MOAIRootProp::_setViewport( lua_State* L ){
 	MOAI_LUA_SETUP ( MOAIRootProp, "UU" )
 	
-	self->mViewport.Set ( *self, state.GetLuaObject < MOAIViewport >( 2, true ));
+	//self->mViewport.Set ( *self, state.GetLuaObject < MOAIViewport >( 2, true ));
 	return 0;
 }
 
 //----------------------------------------------------------------//
 void MOAIRootProp::Draw(int subPrimID){
 	UNUSED( subPrimID );
-	
+	/*
 	if ( !( this->mFlags & FLAGS_VISIBLE )) return;
 	if ( !this->mViewport ) return;
 	
@@ -125,6 +125,7 @@ void MOAIRootProp::Draw(int subPrimID){
 	}
 	
 	gfxDevice.Flush ();
+	 */
 }
 
 //----------------------------------------------------------------//
@@ -137,12 +138,14 @@ void MOAIRootProp::GetBillboardMatrix( USMatrix4x4 &billboard ){
 //----------------------------------------------------------------//
 void MOAIRootProp::GetProjectionMatrix(USMatrix4x4 &proj){
 	// TODO: add camera support
-	if (this->mViewport) {
-		proj.Init(this->mViewport->GetProjMtx());
-	}
-	else{
+	
+	//if (this->mViewport) {
+	//	proj.Init(this->mViewport->GetProjMtx());
+	//}
+	//else{
 		proj.Ident();
-	}
+	//}
+	
 }
 
 //----------------------------------------------------------------//
@@ -162,7 +165,7 @@ MOAIRootProp::MOAIRootProp(){
 
 //----------------------------------------------------------------//
 MOAIRootProp::~MOAIRootProp(){
-	this->mViewport.Set ( *this, 0 );
+	//this->mViewport.Set ( *this, 0 );
 }
 
 //----------------------------------------------------------------//

@@ -33,7 +33,7 @@ class MOAIRootProp :
 	//public MOAIClearableView
 {
 private:
-	MOAILuaSharedPtr < MOAIViewport >		mViewport;
+	//MOAILuaSharedPtr < MOAIViewport >		mViewport;
 	
 	//----------------------------------------------------------------//
 	static int			_insertProp				( lua_State* L );

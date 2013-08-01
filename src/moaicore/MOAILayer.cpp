@@ -345,7 +345,7 @@ int	MOAILayer::_setSortScale ( lua_State* L ) {
 int MOAILayer::_setViewport ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAILayer, "UU" )
 
-	self->mViewport.Set ( *self, state.GetLuaObject < MOAIViewport >( 2, true ));
+	self->SetViewport ( state.GetLuaObject < MOAIViewport >( 2, true ));
 
 	return 0;
 }
@@ -473,9 +473,9 @@ void MOAILayer::Draw ( int subPrimID ) {
 	UNUSED ( subPrimID );
     
    	if ( !( this->mFlags & FLAGS_VISIBLE )) return;
-	if ( !this->mViewport ) return;
+	if ( !this->GetViewport() ) return;
 	
-	MOAIViewport& viewport = *this->mViewport;
+	MOAIViewport& viewport = *this->GetViewport();
 	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
 	
 	gfxDevice.ResetState ();
@@ -599,9 +599,9 @@ void MOAILayer::GetBillboardMtx ( USMatrix4x4& billboard ) {
 //----------------------------------------------------------------//
 float MOAILayer::GetFitting ( USRect& worldRect, float hPad, float vPad ) {
 
-	if ( !( this->mCamera && this->mViewport )) return 1.0f;
+	if ( !( this->mCamera && this->GetViewport() )) return 1.0f;
 
-	USRect viewRect = this->mViewport->GetRect ();
+	USRect viewRect = this->GetViewport()->GetRect ();
 	
 	float hFit = ( viewRect.Width () - ( hPad * 2 )) / worldRect.Width ();
 	float vFit = ( viewRect.Height () - ( vPad * 2 )) / worldRect.Height ();
@@ -613,18 +613,18 @@ float MOAILayer::GetFitting ( USRect& worldRect, float hPad, float vPad ) {
 void MOAILayer::GetProjectionMtx ( USMatrix4x4& proj ) {
 	
 	if ( this->mCamera ) {
-		proj.Init ( this->mCamera->GetProjMtx ( *this->mViewport ));
+		proj.Init ( this->mCamera->GetProjMtx ( *this->GetViewport() ));
 	}
 	else {
-		proj.Init ( this->mViewport->GetProjMtx ());
+		proj.Init ( this->GetViewport()->GetProjMtx ());
 	}
 }
 
 //----------------------------------------------------------------//
 u32 MOAILayer::GetPropBounds ( USBox& bounds ) {
 	
-	if ( this->mViewport ) {
-		USRect frame = this->mViewport->GetRect ();
+	if ( this->GetViewport() ) {
+		USRect frame = this->GetViewport()->GetRect ();
 		bounds.Init ( frame.mXMin, frame.mYMax, frame.mXMax, frame.mYMin, 0.0f, 0.0f );
 		return MOAIProp::BOUNDS_OK;
 	}
@@ -656,7 +656,7 @@ void MOAILayer::GetWndToWorldMtx ( USMatrix4x4& wndToWorld ) {
 //----------------------------------------------------------------//
 void MOAILayer::GetWorldToWndMtx ( USMatrix4x4& worldToWnd ) {
 
-	if ( this->mViewport ) {
+	if ( this->GetViewport() ) {
 		
 		USMatrix4x4 view;
 		this->GetViewMtx ( view );
@@ -665,7 +665,7 @@ void MOAILayer::GetWorldToWndMtx ( USMatrix4x4& worldToWnd ) {
 		this->GetProjectionMtx ( proj );
 		
 		USMatrix4x4 wnd;
-		this->mViewport->GetNormToWndMtx ( wnd );
+		this->GetViewport()->GetNormToWndMtx ( wnd );
 		
 		worldToWnd = view;
 		worldToWnd.Append ( proj );
@@ -700,7 +700,7 @@ MOAILayer::MOAILayer () :
 MOAILayer::~MOAILayer () {
 
 	this->mCamera.Set ( *this, 0 );
-	this->mViewport.Set ( *this, 0 );
+	//this->mViewport.Set ( *this, 0 );
 	this->mPartition.Set ( *this, 0 );
 
 	#if USE_CHIPMUNK
