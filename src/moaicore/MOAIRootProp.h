@@ -52,6 +52,7 @@ public:
 	virtual				~MOAIRootProp			();
 	void				RegisterLuaClass		( MOAILuaState& state );
 	void				RegisterLuaFuncs		( MOAILuaState& state );
+	void				Render					();
 	
 };
 

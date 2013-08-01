@@ -106,3 +106,9 @@ void MOAIRootProp::RegisterLuaFuncs( MOAILuaState& state ){
 	
 	luaL_register ( state, 0, regTable );
 }
+//----------------------------------------------------------------//
+
+void MOAIRootProp::Render () {
+	
+	this->Draw ( MOAIProp::NO_SUBPRIM_ID );
+}
