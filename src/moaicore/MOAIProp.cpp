@@ -1035,8 +1035,12 @@ bool MOAIProp::ApplyAttrOp ( u32 attrID, MOAIAttrOp& attrOp, u32 op ) {
 //----------------------------------------------------------------//
 void MOAIProp::Draw ( int subPrimID ) {
 	UNUSED ( subPrimID );
-
+	
 	if ( !( this->mFlags & FLAGS_VISIBLE )) return;
+	if (this->mViewport) {
+		this->DrawWithViewport( subPrimID );
+		return;
+	}
 	if ( !this->mDeck ) return;
 
 	if (this->mTotalChildren == 0 || this->mGrid) {
@@ -1216,6 +1220,62 @@ void MOAIProp::DrawItem () {
 	}
 	
 	this->mDeck->Draw ( this->mIndex, this->mRemapper );
+}
+
+//----------------------------------------------------------------//
+void MOAIProp::DrawWithViewport ( int subPrimID ) {
+	MOAIViewport& viewport = *this->mViewport;
+	MOAIGfxDevice& gfxDevice = MOAIGfxDevice::Get ();
+	
+	gfxDevice.ResetState ();
+	
+	USRect viewportRect = viewport;
+	
+	// compute matrices
+	USMatrix4x4 matrix;
+	matrix.Ident();
+	matrix.Transform( viewportRect );
+	
+	
+	gfxDevice.SetViewRect( viewportRect );
+	gfxDevice.SetScissorRect( viewportRect );
+	this->ClearSurface();
+	
+	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_WORLD_TRANSFORM );
+	
+	USMatrix4x4 view;
+	this->GetViewMatrix ( view );
+	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_VIEW_TRANSFORM, view );
+	
+	USMatrix4x4 proj;
+	this->GetProjectionMatrix ( proj );
+	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_PROJ_TRANSFORM, proj );
+	
+	USMatrix4x4 billboard;
+	this->GetBillboardMatrix ( billboard );
+	gfxDevice.SetBillboardMtx ( billboard );
+	
+	// recompute the frustum
+	gfxDevice.UpdateViewVolume ();
+	
+	// set background color
+	gfxDevice.SetAmbientColor( this->mColor );
+	
+	// render children of root
+	u32 numChildren = this->mTotalChildren;
+	u32 index = 0;
+	MOAIProp *child;
+	
+	if (numChildren > 0) {
+		for(;index < numChildren; index++ ){
+			child = this->mChildren.Elem(index);
+			if (child) {
+				child->Draw(subPrimID);
+			}
+		}
+	}
+	
+	gfxDevice.Flush ();
 }
 
 //----------------------------------------------------------------//
@@ -1450,6 +1510,7 @@ MOAIProp::MOAIProp () :
 		RTTI_EXTEND ( MOAITransform )
 		RTTI_EXTEND ( MOAIColor )
 		RTTI_EXTEND ( MOAIRenderable )
+		RTTI_EXTEND ( MOAIClearableView )
 	RTTI_END
 	
 	this->mLinkInCell.Data ( this );

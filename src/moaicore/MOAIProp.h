@@ -151,6 +151,7 @@ private:
 	void			DrawChildren		( int subPrimID );
 	void			DrawGrid			( int subPrimID );
 	void			DrawItem			();
+	void			DrawWithViewport	( int subPrimID );
 	void			GetBillboardMatrix	( USMatrix4x4& billboard );
 	void			GetProjectionMatrix	( USMatrix4x4& proj );
 	void			GetViewMatrix		( USMatrix4x4& view );
