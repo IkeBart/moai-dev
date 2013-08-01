@@ -92,9 +92,39 @@ void MOAIRootProp::Draw(int subPrimID){
 	
 	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_WORLD_TRANSFORM );
 	
+	USMatrix4x4 view;
+	this->GetViewMatrix ( view );
+	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_VIEW_TRANSFORM, view );
 	
-	// TODO: render children of root
+	USMatrix4x4 proj;
+	this->GetProjectionMatrix ( proj );
+	gfxDevice.SetVertexTransform ( MOAIGfxDevice::VTX_PROJ_TRANSFORM, proj );
 	
+	USMatrix4x4 billboard;
+	this->GetBillboardMatrix ( billboard );
+	gfxDevice.SetBillboardMtx ( billboard );
+	
+	// recompute the frustum
+	gfxDevice.UpdateViewVolume ();
+	
+	// set background color
+	gfxDevice.SetAmbientColor( this->mColor );
+	
+	// render children of root
+	u32 numChildren = this->mTotalChildren;
+	u32 index = 0;
+	MOAIProp *child;
+	
+	if (numChildren > 0) {
+		for(;index < numChildren; index++ ){
+			child = this->mChildren.Elem(index);
+			if (child) {
+				child->Draw(subPrimID);
+			}
+		}
+	}
+	
+	gfxDevice.Flush ();
 }
 
 //----------------------------------------------------------------//
