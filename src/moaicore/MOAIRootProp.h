@@ -29,8 +29,8 @@
 
 
 class MOAIRootProp :
-	public virtual MOAIProp,
-	public MOAIClearableView
+	public virtual MOAIProp//,
+	//public MOAIClearableView
 {
 private:
 	MOAILuaSharedPtr < MOAIViewport >		mViewport;

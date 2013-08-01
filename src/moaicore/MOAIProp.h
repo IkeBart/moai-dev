@@ -6,10 +6,12 @@
 
 #include <moaicore/MOAIBlendMode.h>
 #include <moaicore/MOAIColor.h>
+#include <moaicore/MOAIFrameBuffer.h>
 #include <moaicore/MOAILua.h>
 #include <moaicore/MOAIProp.h>
 #include <moaicore/MOAIRenderable.h>
 #include <moaicore/MOAITransform.h>
+#include <moaicore/MOAIViewport.h>
 
 class MOAICellCoord;
 class MOAICollisionShape;
@@ -78,7 +80,8 @@ class MOAITextureBase;
 class MOAIProp :
 	public MOAITransform,
 	public MOAIColor,
-	public MOAIRenderable {
+	public MOAIRenderable,
+	public MOAIClearableView {
 private:
 
 	friend class MOAIPartition;
