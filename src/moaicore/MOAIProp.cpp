@@ -933,6 +933,38 @@ int MOAIProp::_setZOrder( lua_State *L ){
 }
 
 //================================================================//
+// DOXYGEN
+//================================================================//
+
+#ifdef DOXYGEN
+
+	//----------------------------------------------------------------//
+	/**	@name	insertProp
+		@text	Alias for addChild().
+	 
+		@in		MOAIProp self
+		@in		MOAIProp prop
+		@opt	number zOrder
+		@out	nil
+	 */
+	int MOAIRootProp::_insertProp(lua_State *L){
+	}
+
+	//----------------------------------------------------------------//
+	/** @name	removeProp
+		@text	Alias for removeChild().
+	 
+		@in		MOAIProp self
+		@in		MOAIProp prop
+		@out	nil
+	 */
+	int MOAIRootProp::_removeProp( lua_State* L ){
+	}
+
+#endif
+
+
+//================================================================//
 // MOAIProp
 //================================================================//
 
@@ -1633,6 +1665,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 	
 	MOAITransform::RegisterLuaFuncs ( state );
 	MOAIColor::RegisterLuaFuncs ( state );
+	MOAIClearableView::RegisterLuaFuncs( state );
 
 	luaL_Reg regTable [] = {
 		{ "addChild",			_addChild },
@@ -1645,10 +1678,12 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getPriority",		_getPriority },
 		{ "getWorldBounds",		_getWorldBounds },
 		{ "getZOrder",			_getZOrder },
+		{ "insertProp",			_addChild },
 		{ "inside",				_inside },
 		{ "removeAllChildren",  _removeAllChildren },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent },
+		{ "removeProp",			_removeChild },
 		{ "reorderChild",		_reorderChild },
 		{ "setBillboard",		_setBillboard },
 		{ "setBlendEquation",		_setBlendEquation },
