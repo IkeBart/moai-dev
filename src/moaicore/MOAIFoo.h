@@ -22,6 +22,10 @@ private:
 	//----------------------------------------------------------------//
 	static int		_classHello			( lua_State* L );
 	static int		_instanceHello		( lua_State* L );
+	static int		_makeTable			( lua_State* L );
+		
+		
+	static void		MakeTable			(MOAILuaState state, u32 elements, float startValue);
 
 public:
 	

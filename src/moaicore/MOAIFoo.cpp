@@ -36,9 +36,64 @@ int MOAIFoo::_instanceHello ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/** @name	makeTable
+	@text	Creates a new table with integers for the values.
+ 
+	@in		integer elements		The first thing
+	@in		number	startValue
+ 
+	@out	table
+ */
+int MOAIFoo::_makeTable(lua_State *L){
+	MOAILuaState state(L);
+	
+	u32 elements = state.GetValue <u32> (1, 1);
+	float startValue = state.GetValue <float> (2, 0.0);
+	
+	MOAIFoo::MakeTable(state, elements, startValue);
+	
+	
+	return 1;
+}
+
+
 //================================================================//
 // MOAIFoo
 //================================================================//
+
+//----------------------------------------------------------------//
+void MOAIFoo::MakeTable(MOAILuaState state, u32 elements, float startValue){
+	u32 i;
+	
+	// create main table
+	lua_createtable(state, elements, 0);
+	float val = startValue;
+	
+	for (i = 1; i <= elements; i++) {
+		//state.Push(val);
+		
+		// create a sub-table with two elements for the value of the element
+		lua_createtable(state, 2, 0);
+		
+		{
+			// make the float val be the first element of the sub-table with index of integer 1
+			state.Push(val);
+			lua_rawseti(state, -2, 1);
+			
+			// make the square of val be the second element of the sub-table with the index of string "sqr"
+			state.Push(val * val);
+			//lua_rawseti(state, -2, 2);
+			cc8 *key = "sqr";
+			lua_setfield(state, -2, key);
+		}
+		
+		// set the index for sub-table value in main table to the integer i
+		val = val + 1.0;
+		lua_rawseti(state, -2, i);
+	}
+	
+}
 
 //----------------------------------------------------------------//
 MOAIFoo::MOAIFoo () {
@@ -69,6 +124,7 @@ void MOAIFoo::RegisterLuaClass ( MOAILuaState& state ) {
 	// here are the class methods:
 	luaL_Reg regTable [] = {
 		{ "classHello",		_classHello },
+		{ "makeTable",		_makeTable },
 		{ NULL, NULL }
 	};
 
