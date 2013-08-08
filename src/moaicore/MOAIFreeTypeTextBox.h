@@ -27,6 +27,12 @@ struct MOAIFreeTypeImageBuffer {
 	u8 *data;
 };
 
+struct MOAIFreeTypeTextBoxLine {
+	int lineWidth;
+	wchar_t *text;
+	
+};
+
 /** @name	MOAIFreeTypeTextBox
 	@text	An alternative to MOAITextBox that uses an instance of MOAIFreeTypeFont directly.
  */
@@ -38,13 +44,13 @@ private:
 	
 //----------------------------------------------------------------//
 
-	static int							ComputeLineStart		(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines);
+	static int							ComputeLineStart		(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextBoxLine> &lines);
 	static int							ComputeLineStartY		(FT_Face face, int textHeight, FT_Int imgHeight, int vAlign);
 
 	static MOAIFreeTypeImageBuffer		InitBitmapData			(u32 width, u32 height);
-	static vector<MOAIFreeTypeTextLine> GenerateLines			(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak);
-	static MOAIFreeTypeTextLine			BuildLine				(wchar_t* buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar);
-	static void							RenderLines				(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign);
+	static vector<MOAIFreeTypeTextBoxLine> GenerateLines			(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak);
+	static MOAIFreeTypeTextBoxLine		BuildLine				(wchar_t* buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar);
+	static void							RenderLines				(const vector<MOAIFreeTypeTextBoxLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign);
 	static void							DrawBitmap				(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight);
 	
 public:

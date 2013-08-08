@@ -89,7 +89,7 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 	MOAIFreeTypeImageBuffer imageBuffer = InitBitmapData(imgWidth, imgHeight);
 	
 	// create the lines of text
-	vector<MOAIFreeTypeTextLine> lines = GenerateLines(face, imgWidth, text, wordbreak);
+	vector<MOAIFreeTypeTextBoxLine> lines = GenerateLines(face, imgWidth, text, wordbreak);
 
 	// render the lines to the data buffer
 	RenderLines(lines, imageBuffer.data, imgWidth, imgHeight, imageBuffer.width, imageBuffer.height, face, alignment, vAlignment);
@@ -106,8 +106,8 @@ MOAITexture *MOAIFreeTypeTextBox::GenerateTexture( cc8 *text, MOAIFreeTypeFont *
 }
 
 // creates a line in m_vLines
-MOAIFreeTypeTextLine MOAIFreeTypeTextBox::BuildLine(wchar_t *buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar){
-	MOAIFreeTypeTextLine tempLine;
+MOAIFreeTypeTextBoxLine MOAIFreeTypeTextBox::BuildLine(wchar_t *buffer, size_t buf_len, FT_Face face, int pen_x, u32 lastChar){
+	MOAIFreeTypeTextBoxLine tempLine;
 
 	wchar_t* text = (wchar_t*)malloc(sizeof(wchar_t) * (buf_len+1));
 	memcpy(text, buffer, sizeof(wchar_t) * buf_len);
@@ -125,7 +125,7 @@ MOAIFreeTypeTextLine MOAIFreeTypeTextBox::BuildLine(wchar_t *buffer, size_t buf_
 	return tempLine;
 }
 
-int MOAIFreeTypeTextBox::ComputeLineStart(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextLine> &lines){
+int MOAIFreeTypeTextBox::ComputeLineStart(FT_Face face, FT_UInt unicode, int lineIndex, int alignment, FT_Int imgWidth, const vector<MOAIFreeTypeTextBoxLine> &lines){
 	int retValue = 0;
 	int adjustmentX = -((face->glyph->metrics.horiBearingX) >> 6);
 	
@@ -227,9 +227,9 @@ void MOAIFreeTypeTextBox::DrawBitmap(FT_Bitmap *bitmap, FT_Int x, FT_Int y, u8 *
 }
 
 // Before the rendering, the text gets broken up into lines either ending with a new-line or a space
-vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak) {
+vector<MOAIFreeTypeTextBoxLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT_Int maxWidth, cc8* text, int wordBreak) {
 
-	vector<MOAIFreeTypeTextLine> lines;
+	vector<MOAIFreeTypeTextBoxLine> lines;
 	
 	//FT_Int maxHeight = (FT_Int)this->mFrame.Height();
 	
@@ -273,7 +273,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 
 		if (unicode == '\n') {
 
-			MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+			MOAIFreeTypeTextBoxLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
 			lines.push_back(line);
 
 			text_len = 0;
@@ -313,7 +313,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 		if (isExceeding) {
 			if (wordBreak == MOAITextBox::WORD_BREAK_CHAR) {
 				
-				MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+				MOAIFreeTypeTextBoxLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
 				lines.push_back(line);
 				
 				text_len = 0;
@@ -324,7 +324,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 			} else { // the default where words don't get broken up
 				if (tokenIdx != lineIdx) {
 					
-					MOAIFreeTypeTextLine line = BuildLine(text_buffer, last_token_len, face, last_token_x, lastTokenCh);
+					MOAIFreeTypeTextBoxLine line = BuildLine(text_buffer, last_token_len, face, last_token_x, lastTokenCh);
 					lines.push_back(line);
 					
 					// set n back to token index
@@ -339,7 +339,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 					
 					pen_x = pen_x_reset;
 				} else { // put the rest of the token on the next line
-					MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+					MOAIFreeTypeTextBoxLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
 					lines.push_back(line);
 					text_len = 0;
 					
@@ -359,7 +359,7 @@ vector<MOAIFreeTypeTextLine> MOAIFreeTypeTextBox::GenerateLines(FT_Face face, FT
 		
 	}
 	
-	MOAIFreeTypeTextLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
+	MOAIFreeTypeTextBoxLine line = BuildLine(text_buffer, text_len, face, pen_x, lastCh);
 	lines.push_back(line);
 
 	free(text_buffer);
@@ -596,7 +596,7 @@ void MOAIFreeTypeTextBox::RegisterLuaClass( MOAILuaState &state ){
 
 
 // This is where the characters get rendered to mBitmapData.  Done line by line
-void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
+void MOAIFreeTypeTextBox::RenderLines(const vector<MOAIFreeTypeTextBoxLine> &lines, u8 *renderBitmap, FT_Int imgWidth, FT_Int imgHeight, int bitmapWidth, int bitmapHeight, FT_Face face, int hAlign, int vAlign) {
 	FT_Int pen_x, pen_y;
 	
 	FT_Int textHeight = (face->size->metrics.height >> 6) * lines.size();
