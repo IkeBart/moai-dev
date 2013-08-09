@@ -172,6 +172,29 @@ int MOAIProp::_getIndex ( lua_State* L ) {
 
 	return 1;
 }
+//----------------------------------------------------------------//
+/** @name	getParent
+	@text	Returns the prop above the receiver in the rendering tree 
+			or 'nil' if this node is on top.
+ 
+	@in		MOAIProp self
+	@out	MOAIProp parent		The prop's parent or nil.
+*/
+int MOAIProp::_getParent( lua_State *L ){
+	MOAI_LUA_SETUP( MOAIProp, "U" )
+	
+	MOAIProp *parent = self->GetParent();
+	
+	if (parent) {
+		parent->PushLuaUserdata(state);
+	}
+	else{
+		state.Push();
+	}
+	
+	
+	return 1;
+}
 
 //----------------------------------------------------------------//
 /**	@name	getPriority
@@ -1673,6 +1696,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getDims",			_getDims },
 		{ "getGrid",			_getGrid },
 		{ "getIndex",			_getIndex },
+		{ "getParent",			_getParent },
 		{ "getPivot",			_getPivot },
 		{ "getPivotAbsolute",	_getPiv },
 		{ "getPriority",		_getPriority },
