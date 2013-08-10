@@ -44,6 +44,7 @@ int MOAIProp::_addChild( lua_State *L ){
 	
 	self->AddChild(child, zOrder);
 	
+	self->ScheduleUpdate();
 	return 0;
 }
 
@@ -286,7 +287,7 @@ int	MOAIProp::_inside ( lua_State* L ) {
 int MOAIProp::_removeAllChildren(lua_State *L){
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
 	self->RemoveAllChildren();
-	
+	self->ScheduleUpdate();
 	return 0;
 }
 
@@ -303,7 +304,7 @@ int MOAIProp::_removeChild(lua_State *L){
 	
 	MOAIProp *child = state.GetLuaObject<MOAIProp>(2, true);
 	self->RemoveChild(child);
-	
+	self->ScheduleUpdate();
 	return 0;
 }
 
@@ -319,6 +320,7 @@ int MOAIProp::_removeFromParent(lua_State *L){
 	
 	if (self->mParent){
 		self->mParent->RemoveChild(self);
+		//self->mParent->ScheduleUpdate();
 	}
 	
 	return 0;
@@ -339,7 +341,7 @@ int MOAIProp::_reorderChild(lua_State *L){
 	int zOrder = state.GetValue < int > (3, 0);
 	
 	self->ReorderChild(child, zOrder);
-	
+	self->ScheduleUpdate();
 	return 0;
 }
 
