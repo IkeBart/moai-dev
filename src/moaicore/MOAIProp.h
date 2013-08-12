@@ -117,6 +117,7 @@ private:
 	static int		_getWorldBounds		( lua_State* L );
 	static int		_getZOrder			( lua_State* L );
 	static int		_inside				( lua_State* L );
+	static int		_propForPoint		( lua_State* L );
 	static int		_removeAllChildren	( lua_State* L );
 	static int		_removeChild		( lua_State* L );
 	static int		_removeFromParent	( lua_State* L );

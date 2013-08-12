@@ -278,6 +278,30 @@ int	MOAIProp::_inside ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/** @name	propForPoint
+	@text	Returns the child prop with the highest Z-Order that 
+			contains the given world space point.
+ 
+	@in		MOAIProp self
+	@in		number x
+	@in		number y
+	@in		number z
+	@out	MOAIProp prop		The prop under the point or nil if no prop found.
+ */
+
+int MOAIProp::_propForPoint( lua_State *L ){
+	MOAI_LUA_SETUP( MOAIProp, "UNN" )
+	
+	USVec3D vec;
+	vec.mX = state.GetValue < float >( 2, 0.0f );
+	vec.mY = state.GetValue < float >( 3, 0.0f );
+	vec.mZ = state.GetValue < float >( 4, 0.0f );
+	
+	return 0;
+}
+
+
+//----------------------------------------------------------------//
 /** @name	removeAllChildren
 	@text	Removes all props form the receiver's children.
 	
@@ -1706,6 +1730,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getZOrder",			_getZOrder },
 		{ "insertProp",			_addChild },
 		{ "inside",				_inside },
+		{ "propForPoint",		_propForPoint },
 		{ "removeAllChildren",  _removeAllChildren },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent },
