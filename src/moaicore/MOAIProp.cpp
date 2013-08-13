@@ -297,6 +297,11 @@ int MOAIProp::_propForPoint( lua_State *L ){
 	vec.mY = state.GetValue < float >( 3, 0.0f );
 	vec.mZ = state.GetValue < float >( 4, 0.0f );
 	
+	// function goes through children and finds all that contain the point.  Stores results in a buffer.
+	if (false) {
+		
+	}
+	
 	return 0;
 }
 

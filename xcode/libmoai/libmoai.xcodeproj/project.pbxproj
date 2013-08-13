@@ -1836,6 +1836,10 @@
 		66E62C4116AE312A009B9C29 /* MOAIMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66E62C3616AE312A009B9C29 /* MOAIMutex.cpp */; };
 		66E62C4216AE312A009B9C29 /* MOAIMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E62C3716AE312A009B9C29 /* MOAIMutex.h */; };
 		66E62C4316AE312A009B9C29 /* MOAIMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E62C3716AE312A009B9C29 /* MOAIMutex.h */; };
+		B4546B8217B9BD0100017093 /* MOAIPropResultBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4546B8017B9BD0100017093 /* MOAIPropResultBuffer.cpp */; };
+		B4546B8317B9BD0100017093 /* MOAIPropResultBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B4546B8117B9BD0100017093 /* MOAIPropResultBuffer.h */; };
+		B4546B8A17B9C41500017093 /* MOAIPropResultMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4546B8817B9C41500017093 /* MOAIPropResultMgr.cpp */; };
+		B4546B8B17B9C41500017093 /* MOAIPropResultMgr.h in Headers */ = {isa = PBXBuildFile; fileRef = B4546B8917B9C41500017093 /* MOAIPropResultMgr.h */; };
 		C359A149143A81BA005E7829 /* RAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = C359A148143A81BA005E7829 /* RAudioBuffer.h */; };
 		C37D422213B16930009600BB /* BufferedAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = C37D421E13B1692F009600BB /* BufferedAudioSource.h */; };
 		C37D422413B16930009600BB /* BufferedAudioSourceThread.h in Headers */ = {isa = PBXBuildFile; fileRef = C37D422013B16930009600BB /* BufferedAudioSourceThread.h */; };
@@ -4739,6 +4743,10 @@
 		66E62C3516AE312A009B9C29 /* MOAIMutex_win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIMutex_win32.h; sourceTree = "<group>"; };
 		66E62C3616AE312A009B9C29 /* MOAIMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIMutex.cpp; sourceTree = "<group>"; };
 		66E62C3716AE312A009B9C29 /* MOAIMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIMutex.h; sourceTree = "<group>"; };
+		B4546B8017B9BD0100017093 /* MOAIPropResultBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIPropResultBuffer.cpp; sourceTree = "<group>"; };
+		B4546B8117B9BD0100017093 /* MOAIPropResultBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIPropResultBuffer.h; sourceTree = "<group>"; };
+		B4546B8817B9C41500017093 /* MOAIPropResultMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIPropResultMgr.cpp; sourceTree = "<group>"; };
+		B4546B8917B9C41500017093 /* MOAIPropResultMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIPropResultMgr.h; sourceTree = "<group>"; };
 		C359A148143A81BA005E7829 /* RAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAudioBuffer.h; path = ../../3rdparty/untz/src/RAudioBuffer.h; sourceTree = "<group>"; };
 		C37D421D13B1692F009600BB /* BufferedAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BufferedAudioSource.cpp; path = ../../3rdparty/untz/src/BufferedAudioSource.cpp; sourceTree = "<group>"; };
 		C37D421E13B1692F009600BB /* BufferedAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BufferedAudioSource.h; path = ../../3rdparty/untz/src/BufferedAudioSource.h; sourceTree = "<group>"; };
@@ -7961,6 +7969,10 @@
 				0324E57B13564BC7000ADC60 /* MOAIProp.h */,
 				66C3B18A15587833005C1858 /* MOAIScissorRect.h */,
 				66C3B18715587827005C1858 /* MOAIScissorRect.cpp */,
+				B4546B8017B9BD0100017093 /* MOAIPropResultBuffer.cpp */,
+				B4546B8117B9BD0100017093 /* MOAIPropResultBuffer.h */,
+				B4546B8817B9C41500017093 /* MOAIPropResultMgr.cpp */,
+				B4546B8917B9C41500017093 /* MOAIPropResultMgr.h */,
 			);
 			name = prop;
 			sourceTree = "<group>";
@@ -11543,6 +11555,8 @@
 				0F32089E16EF5B0C00B33547 /* MOAIProfilerReportBox.h in Headers */,
 				0F3208A016EF5B0C00B33547 /* MOAIProfilerScope.h in Headers */,
 				0F3208B716EF5C8F00B33547 /* USHashedString.h in Headers */,
+				B4546B8317B9BD0100017093 /* MOAIPropResultBuffer.h in Headers */,
+				B4546B8B17B9C41500017093 /* MOAIPropResultMgr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14150,6 +14164,8 @@
 				0F32089D16EF5B0C00B33547 /* MOAIProfilerReportBox.cpp in Sources */,
 				0F32089F16EF5B0C00B33547 /* MOAIProfilerScope.cpp in Sources */,
 				0F3208B516EF5C8F00B33547 /* USHashedString.cpp in Sources */,
+				B4546B8217B9BD0100017093 /* MOAIPropResultBuffer.cpp in Sources */,
+				B4546B8A17B9C41500017093 /* MOAIPropResultMgr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

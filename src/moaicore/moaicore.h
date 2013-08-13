@@ -122,6 +122,8 @@
 #include <moaicore/MOAIProfilerReportBox.h>
 #include <moaicore/MOAIProfilerScope.h>
 #include <moaicore/MOAIProp.h>
+#include <moaicore/MOAIPropResultBuffer.h>
+#include <moaicore/MOAIPropResultMgr.h>
 #include <moaicore/MOAIPvrHeader.h>
 #include <moaicore/MOAIQuadBrush.h>
 #include <moaicore/MOAIRenderable.h>
