@@ -45,13 +45,40 @@ private:
 	u32							SortResults		();
 	
 public:
+	
+	static const u32 SORT_FLAG_DESCENDING		= 0x80000000;
+	static const u32 SORT_MODE_MASK				= 0x7fffffff;
+	
+	enum {
+		SORT_NONE,
+		
+		SORT_ISO,
+		
+		SORT_KEY_ASCENDING,
+		SORT_PRIORITY_ASCENDING,
+		SORT_X_ASCENDING,
+		SORT_Y_ASCENDING,
+		SORT_Z_ASCENDING,
+		SORT_VECTOR_ASCENDING,
+		
+		SORT_KEY_DESCENDING			= SORT_KEY_ASCENDING | SORT_FLAG_DESCENDING,
+		SORT_PRIORITY_DESCENDING	= SORT_PRIORITY_ASCENDING | SORT_FLAG_DESCENDING,
+		SORT_X_DESCENDING			= SORT_X_ASCENDING | SORT_FLAG_DESCENDING,
+		SORT_Y_DESCENDING			= SORT_Y_ASCENDING | SORT_FLAG_DESCENDING,
+		SORT_Z_DESCENDING			= SORT_Z_ASCENDING | SORT_FLAG_DESCENDING,
+		SORT_VECTOR_DESCENDING		= SORT_VECTOR_ASCENDING | SORT_FLAG_DESCENDING,
+	};
+	
+	
 	GET ( u32, TotalResults, mTotalResults )
 	
 	//----------------------------------------------------------------//
 	void						Clear					();
 	MOAIProp*					FindBest				();
+	void						GenerateKeys			(u32 mode, float xScale, float yScale, float zScale, float zOrder );
 								MOAIPropResultBuffer	();
 								~MOAIPropResultBuffer	();
+	void						PushProps				( lua_State* L );
 	void						PushResult				(  MOAIProp& prop, u32 key, int subPrimID, s32 zOrder, const USVec3D& loc, const USBox& bounds );
 	void						Reset					();
 	
