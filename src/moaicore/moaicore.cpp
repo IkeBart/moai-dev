@@ -82,6 +82,7 @@ void moaicore::InitGlobals ( MOAIGlobals* globals ) {
 	MOAIPartitionResultMgr::Affirm ();
 	MOAISim::Affirm ();
 	MOAIRenderMgr::Affirm ();
+	MOAIPropResultMgr::Affirm();
 	
 	// Start Lua
 	MOAILuaRuntime& luaRuntime = MOAILuaRuntime::Get ();
