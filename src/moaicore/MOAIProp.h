@@ -297,7 +297,7 @@ public:
 	virtual void		SetPiv					( float x, float y, float z, int pivotMode );
 	void				SetViewport				( MOAIViewport* viewport );
 	void				SetVisible				( bool visible );
-	void				SetZOrder				( int zOrder );
+	void				SetZOrder				( int zOrder, bool scheduleUpdate = false );
 };
 
 #endif

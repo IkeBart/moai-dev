@@ -289,7 +289,11 @@ int	MOAIProp::_inside ( lua_State* L ) {
 	@in		number y
 	@in		number z
 	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_PRIORITY_ASCENDING.
-	@out	MOAIProp prop		The prop under the point or nil if no prop found.
+	@opt	number xScale			X scale for vector sort. Default value is 0.
+	@opt	number yScale			Y scale for vector sort. Default value is 0.
+	@opt	number zScale			Z scale for vector sort. Default value is 0.
+	@opt	number zOrderScale		Z-Order scale for vector sort. Default value is 1
+	@out	MOAIProp prop			The prop under the point or nil if no prop found.
  */
 
 int MOAIProp::_propForPoint( lua_State *L ){
@@ -1001,7 +1005,7 @@ int MOAIProp::_setZOrder( lua_State *L ){
 	MOAI_LUA_SETUP ( MOAIProp, "U" )
 	
 	int zOrder = state.GetValue < int > ( 2, 0 );
-	self->SetZOrder(zOrder);
+	self->SetZOrder(zOrder, true);
 	return 0;
 }
 
@@ -2007,8 +2011,16 @@ void MOAIProp::SetVisible ( bool visible ) {
 }
 
 //----------------------------------------------------------------//
-void MOAIProp::SetZOrder( int zOrder ){
+void MOAIProp::SetZOrder( int zOrder, bool scheduleUpdate ){
 	this->mZOrder = zOrder;
+	
+	if (scheduleUpdate && this->mParent) {
+		this->mParent->mChildSortingNeeded = true;
+		this->mParent->ScheduleUpdate();
+	}
+	
+	//this->mChildSortingNeeded = true;
+	//this->ScheduleUpdate();
 }
 
 //----------------------------------------------------------------//
