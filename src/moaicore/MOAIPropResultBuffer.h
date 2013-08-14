@@ -16,12 +16,14 @@ class MOAIProp;
 //================================================================//
 // MOAIPropResult
 //================================================================//
-class MOAIPropResult {
+class MOAIPropResult :
+	public USRadixKey32Base {
+public:
 	MOAIProp*	mProp;
 	s32			mZOrder;
 	
 	USVec3D		mLoc;
-	USRect		mBounds;
+	USBox		mBounds;
 };
 
 
@@ -50,6 +52,9 @@ public:
 	MOAIProp*					FindBest				();
 								MOAIPropResultBuffer	();
 								~MOAIPropResultBuffer	();
+	void						PushResult				(  MOAIProp& prop, u32 key, int subPrimID, s32 zOrder, const USVec3D& loc, const USBox& bounds );
+	void						Reset					();
+	
 	
 	
 };

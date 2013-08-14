@@ -25,6 +25,7 @@ class MOAIPartition;
 class MOAIPartitionCell;
 class MOAIPartitionLevel;
 class MOAIPartitionResultBuffer;
+class MOAIPropResultBuffer;
 class MOAIScissorRect;
 class MOAIShader;
 class MOAISurfaceSampler2D;
@@ -276,6 +277,7 @@ public:
 	bool				ApplyAttrOp				( u32 attrID, MOAIAttrOp& attrOp, u32 op );
 	virtual void		Draw					( int subPrimID );
 	virtual void		DrawDebug				( int subPrimID );
+	u32					GatherChildren			( MOAIPropResultBuffer& results, MOAIProp* ignore, const USVec3D& point, u32 mask = 0xffffffff );
 	virtual void		GatherSurfaces			( MOAISurfaceSampler2D& sampler );
 	USAffine3D			GetLocalToWorldMatrix	();
 	MOAIPartition*		GetPartitionTrait		();

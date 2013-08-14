@@ -13,6 +13,7 @@
 #include <moaicore/MOAIPartition.h>
 #include <moaicore/MOAIPartitionResultBuffer.h>
 #include <moaicore/MOAIProp.h>
+#include <moaicore/MOAIPropResultBuffer.h>
 #include <moaicore/MOAIScissorRect.h>
 #include <moaicore/MOAIShader.h>
 #include <moaicore/MOAIShaderMgr.h>
@@ -1364,6 +1365,40 @@ void MOAIProp::DrawWithViewport ( int subPrimID ) {
 	gfxDevice.Flush ();
 }
 
+//----------------------------------------------------------------//
+u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, const USVec3D &point, u32 mask){
+	results.Reset ();
+	
+	// go through children
+	
+	u32 numChildren = this->mTotalChildren;
+	u32 index = 0;
+	MOAIProp *child = NULL;
+	
+	if (numChildren > 0) {
+		for (;index < numChildren; index++){
+			child = this->mChildren.Elem(index);
+			if ( child == ignore) {
+				continue;
+			}
+			
+			if ((mask == 0) || (child->mMask & mask)) {
+				if ( child->mBounds.Contains(point)) {
+					if ( child->Inside(point, 0.0f)) {
+						// add child to sort buffer
+						// child->AddToSortBuffer(results);
+						
+						results.PushResult ( *child, 0, NO_SUBPRIM_ID, this->mZOrder, this->GetWorldLoc (), this->GetBounds ());
+					}
+				}
+			}
+			
+		}
+	}
+	
+	
+	return 0;
+}
 //----------------------------------------------------------------//
 void MOAIProp::GatherSurfaces ( MOAISurfaceSampler2D& sampler ) {
 
