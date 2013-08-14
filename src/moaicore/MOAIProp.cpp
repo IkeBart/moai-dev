@@ -14,6 +14,7 @@
 #include <moaicore/MOAIPartitionResultBuffer.h>
 #include <moaicore/MOAIProp.h>
 #include <moaicore/MOAIPropResultBuffer.h>
+#include <moaicore/MOAIPropResultMgr.h>
 #include <moaicore/MOAIScissorRect.h>
 #include <moaicore/MOAIShader.h>
 #include <moaicore/MOAIShaderMgr.h>
@@ -287,6 +288,7 @@ int	MOAIProp::_inside ( lua_State* L ) {
 	@in		number x
 	@in		number y
 	@in		number z
+	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_PRIORITY_ASCENDING.
 	@out	MOAIProp prop		The prop under the point or nil if no prop found.
  */
 
@@ -298,11 +300,27 @@ int MOAIProp::_propForPoint( lua_State *L ){
 	vec.mY = state.GetValue < float >( 3, 0.0f );
 	vec.mZ = state.GetValue < float >( 4, 0.0f );
 	
-	// function goes through children and finds all that contain the point.  Stores results in a buffer.
-	if (false) {
-		
-	}
+	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
 	
+	// function goes through children and finds all that contain the point.  Stores results in a buffer.
+	u32 total = self->GatherChildren( buffer, 0, vec );
+	if (total) {
+		buffer.Sort(MOAIPropResultBuffer::SORT_NONE);
+		
+		u32 sortMode = state.GetValue < u32 > ( 5, MOAIPropResultBuffer::SORT_PRIORITY_ASCENDING);
+		float xScale = state.GetValue < float >( 6, 0.0f );
+		float yScale = state.GetValue < float >( 7, 0.0f );
+		float zScale = state.GetValue < float >( 8, 0.0f );
+		float zOrderScale = state.GetValue < float >( 9, 1.0f );
+		
+		buffer.GenerateKeys( sortMode, xScale, yScale, zScale, zOrderScale);
+		
+		MOAIProp *prop = buffer.FindBest();
+		if (prop) {
+			prop->PushLuaUserdata( state );
+			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -1397,7 +1415,7 @@ u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, co
 	}
 	
 	
-	return 0;
+	return results.mTotalResults;
 }
 //----------------------------------------------------------------//
 void MOAIProp::GatherSurfaces ( MOAISurfaceSampler2D& sampler ) {

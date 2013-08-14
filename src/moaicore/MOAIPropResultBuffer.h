@@ -81,7 +81,7 @@ public:
 	void						PushProps				( lua_State* L );
 	void						PushResult				(  MOAIProp& prop, u32 key, int subPrimID, s32 zOrder, const USVec3D& loc, const USBox& bounds );
 	void						Reset					();
-	
+	u32							Sort					( u32 mode );
 	
 	
 };

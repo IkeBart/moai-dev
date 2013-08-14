@@ -52,7 +52,7 @@ void MOAIPropResultBuffer::GenerateKeys(u32 mode, float xScale, float yScale, fl
 	UNUSED(zScale);
 	UNUSED(mZOrder);
 	
-	// TODO: implement the sort modes
+	// TODO: implement the other sort modes
 	float floatSign = mode & SORT_FLAG_DESCENDING ? -1.0f : 1.0f;
 	s32 intSign = ( int )floatSign;
 	
@@ -112,6 +112,19 @@ void MOAIPropResultBuffer::PushResult(MOAIProp &prop, u32 key, int subPrimID, s3
 void MOAIPropResultBuffer::Reset(){
 	this->mResults = 0;
 	this->mTotalResults = 0;
+}
+
+//----------------------------------------------------------------//
+
+u32 MOAIPropResultBuffer::Sort(u32 mode){
+	
+	this->mResults = this->mMainBuffer;
+	
+	if (mode == SORT_NONE) {
+		return this->mTotalResults;
+	}
+	
+	return this->SortResults();
 }
 
 //----------------------------------------------------------------//
