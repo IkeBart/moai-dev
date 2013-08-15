@@ -328,6 +328,50 @@ int MOAIProp::_propForPoint( lua_State *L ){
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/** @name	propListForPoint
+	@text	Returns a list of all child props that contain the given 
+			world point.
+ 
+	@in		MOAIProp self
+	@in		number x
+	@in		number y
+	@in		number z
+	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_PRIORITY_ASCENDING.
+	@opt	number xScale			X scale for vector sort. Default value is 0.
+	@opt	number yScale			Y scale for vector sort. Default value is 0.
+	@opt	number zScale			Z scale for vector sort. Default value is 0.
+	@opt	number zOrderScale		Z-Order scale for vector sort. Default value is 1.
+	@out	...						The props under the point, all pushed onto the stack.
+ */
+int MOAIProp::_propListForPoint( lua_State *L ){
+	MOAI_LUA_SETUP( MOAIProp, "UNN" )
+	
+	USVec3D vec;
+	vec.mX = state.GetValue < float >( 2, 0.0f );
+	vec.mY = state.GetValue < float >( 3, 0.0f );
+	vec.mZ = state.GetValue < float >( 4, 0.0f );
+	
+	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
+	
+	u32 total = self->GatherChildren(buffer, 0, vec);
+	if (total) {
+		
+		u32 sortMode = state.GetValue < u32 >( 5, MOAIPropResultBuffer::SORT_NONE );
+		float xScale = state.GetValue < float >( 6, 0.0f );
+		float yScale = state.GetValue < float >( 7, 0.0f );
+		float zScale = state.GetValue < float >( 8, 0.0f );
+		float zOrderScale = state.GetValue < float >( 9, 1.0f );
+		
+		buffer.GenerateKeys ( sortMode, xScale, yScale, zScale, zOrderScale );
+		buffer.Sort ( sortMode );
+		buffer.PushProps ( L );
+		
+		return total;
+	}
+	
+	return 0;
+}
 
 //----------------------------------------------------------------//
 /** @name	removeAllChildren
@@ -1793,6 +1837,7 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "insertProp",			_addChild },
 		{ "inside",				_inside },
 		{ "propForPoint",		_propForPoint },
+		{ "propListForPoint",	_propListForPoint },
 		{ "removeAllChildren",  _removeAllChildren },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent },
