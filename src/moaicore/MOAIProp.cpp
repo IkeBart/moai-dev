@@ -1410,7 +1410,7 @@ u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, co
 						// add child to sort buffer
 						// child->AddToSortBuffer(results);
 						
-						results.PushResult ( *child, 0, NO_SUBPRIM_ID, this->mZOrder, this->GetWorldLoc (), this->GetBounds ());
+						results.PushResult ( *child, 0, NO_SUBPRIM_ID, child->mZOrder, child->GetWorldLoc (), child->GetBounds ());
 					}
 				}
 			}
