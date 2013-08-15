@@ -288,7 +288,7 @@ int	MOAIProp::_inside ( lua_State* L ) {
 	@in		number x
 	@in		number y
 	@in		number z
-	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_PRIORITY_ASCENDING.
+	@opt	number sortMode			One of the MOAIProp sort modes. Default value is SORT_PRIORITY_ASCENDING.
 	@opt	number xScale			X scale for vector sort. Default value is 0.
 	@opt	number yScale			Y scale for vector sort. Default value is 0.
 	@opt	number zScale			Z scale for vector sort. Default value is 0.
@@ -337,7 +337,7 @@ int MOAIProp::_propForPoint( lua_State *L ){
 	@in		number x
 	@in		number y
 	@in		number z
-	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_PRIORITY_ASCENDING.
+	@opt	number sortMode			One of the MOAIProp sort modes. Default value is SORT_PRIORITY_ASCENDING.
 	@opt	number xScale			X scale for vector sort. Default value is 0.
 	@opt	number yScale			Y scale for vector sort. Default value is 0.
 	@opt	number zScale			Z scale for vector sort. Default value is 0.
@@ -1813,6 +1813,19 @@ void MOAIProp::RegisterLuaClass ( MOAILuaState& state ) {
 	state.SetField ( -1, "CULL_ALL", ( u32 )GL_FRONT_AND_BACK );
 	state.SetField ( -1, "CULL_BACK", ( u32 )GL_BACK );
 	state.SetField ( -1, "CULL_FRONT", ( u32 )GL_FRONT );
+	
+	state.SetField ( -1, "SORT_NONE",					( u32 )MOAIPropResultBuffer::SORT_NONE );
+	state.SetField ( -1, "SORT_ISO",					( u32 )MOAIPropResultBuffer::SORT_ISO );
+	state.SetField ( -1, "SORT_PRIORITY_ASCENDING",		( u32 )MOAIPropResultBuffer::SORT_PRIORITY_ASCENDING );
+	state.SetField ( -1, "SORT_PRIORITY_DESCENDING",	( u32 )MOAIPropResultBuffer::SORT_PRIORITY_DESCENDING );
+	state.SetField ( -1, "SORT_X_ASCENDING",			( u32 )MOAIPropResultBuffer::SORT_X_ASCENDING );
+	state.SetField ( -1, "SORT_X_DESCENDING",			( u32 )MOAIPropResultBuffer::SORT_X_DESCENDING );
+	state.SetField ( -1, "SORT_Y_ASCENDING",			( u32 )MOAIPropResultBuffer::SORT_Y_ASCENDING );
+	state.SetField ( -1, "SORT_Y_DESCENDING",			( u32 )MOAIPropResultBuffer::SORT_Y_DESCENDING );
+	state.SetField ( -1, "SORT_Z_ASCENDING",			( u32 )MOAIPropResultBuffer::SORT_Z_ASCENDING );
+	state.SetField ( -1, "SORT_Z_DESCENDING",			( u32 )MOAIPropResultBuffer::SORT_Z_DESCENDING );
+	state.SetField ( -1, "SORT_VECTOR_ASCENDING",		( u32 )MOAIPropResultBuffer::SORT_VECTOR_ASCENDING );
+	state.SetField ( -1, "SORT_VECTOR_DESCENDING",		( u32 )MOAIPropResultBuffer::SORT_VECTOR_DESCENDING );
 }
 
 //----------------------------------------------------------------//
