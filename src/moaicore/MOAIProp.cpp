@@ -329,6 +329,41 @@ int MOAIProp::_propForPoint( lua_State *L ){
 }
 
 //----------------------------------------------------------------//
+/** @name propForRay
+	@text	Returns the prop closest to the camera that intersects the given ray
+ 
+	@in		MOAIProp self
+	@in		number x
+	@in		number y
+	@in		number z
+	@in		number xdirection
+	@in		number ydirection
+	@in		number zdirection
+	@out	MOAIProp prop		The prop under the point in order of depth or nil if no prop found.
+ */
+int MOAIProp::_propForRay( lua_State *L ){
+	MOAI_LUA_SETUP ( MOAIPartition, "UNN" )
+	
+	USVec3D vec;
+	vec.mX = state.GetValue < float >( 2, 0.0f );
+	vec.mY = state.GetValue < float >( 3, 0.0f );
+	vec.mZ = state.GetValue < float >( 4, 0.0f );
+	
+	USVec3D direction;
+	direction.mX = state.GetValue < float >( 5, 0.0f );
+	direction.mY = state.GetValue < float >( 6, 0.0f );
+	direction.mZ = state.GetValue < float >( 7, 0.0f );
+	
+	direction.Norm();
+	
+	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get ().GetBuffer ();
+	
+	//u32 total = self->GatherProps ( buffer, 0, vec, direction );
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /** @name	propListForPoint
 	@text	Returns a list of all child props that contain the given 
 			world point.
@@ -370,6 +405,80 @@ int MOAIProp::_propListForPoint( lua_State *L ){
 		return total;
 	}
 	
+	return 0;
+}
+//----------------------------------------------------------------//
+/**	@name	propListForRay
+	@text	Returns all props under a given world space point.
+ 
+	@in		MOAIProp self
+	@in		number x
+	@in		number y
+	@in		number z
+	@in		number xdirection
+	@in		number ydirection
+	@in		number zdirection
+	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_KEY_ASCENDING.
+	@opt	number xScale			X scale for vector sort. Default value is 0.
+	@opt	number yScale			Y scale for vector sort. Default value is 0.
+	@opt	number zScale			Z scale for vector sort. Default value is 0.
+	@opt	number priorityScale	Priority scale for vector sort. Default value is 1.
+	@out	...						The props under the point in order of depth, all pushed onto the stack.
+ */
+int MOAIProp::_propListForRay(lua_State *L){
+	MOAI_LUA_SETUP ( MOAIPartition, "UNN" )
+	
+	USVec3D vec;
+	vec.mX = state.GetValue < float >( 2, 0.0f );
+	vec.mY = state.GetValue < float >( 3, 0.0f );
+	vec.mZ = state.GetValue < float >( 4, 0.0f );
+	
+	USVec3D direction;
+	direction.mX = state.GetValue < float >( 5, 0.0f );
+	direction.mY = state.GetValue < float >( 6, 0.0f );
+	direction.mZ = state.GetValue < float >( 7, 0.0f );
+	
+	direction.Norm();
+	
+	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
+	
+	//u32 total = self->GatherProps ( buffer, 0, vec, direction );
+	
+	
+	return 0;
+}
+//----------------------------------------------------------------//
+/**	@name	propListForRect
+	@text	Returns all props under a given world space rect.
+ 
+	@in		MOAIPartition self
+	@in		number xMin
+	@in		number yMin
+	@in		number xMax
+	@in		number yMax
+	@opt	number sortMode			One of the MOAILayer sort modes. Default value is SORT_NONE.
+	@opt	number xScale			X scale for vector sort. Default value is 0.
+	@opt	number yScale			Y scale for vector sort. Default value is 0.
+	@opt	number zScale			Z scale for vector sort. Default value is 0.
+	@opt	number priorityScale	Priority scale for vector sort. Default value is 1.
+	@out	...						The props under the rect, all pushed onto the stack.
+ */
+int MOAIProp::_propListForRect(lua_State *L){
+	MOAI_LUA_SETUP ( MOAIPartition, "UNNNN" )
+	
+	USBox box;
+	
+	box.mMin.mX = state.GetValue < float >( 2, 0.0f );
+	box.mMin.mY = state.GetValue < float >( 3, 0.0f );
+	box.mMin.mZ = 0.0f;
+	
+	box.mMax.mX = state.GetValue < float >( 4, 0.0f );
+	box.mMax.mY = state.GetValue < float >( 5, 0.0f );
+	box.mMax.mZ = 0.0f;
+	
+	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
+	
+	//u32 total = self->GatherProps ( buffer, 0, box );
 	return 0;
 }
 
@@ -1850,7 +1959,10 @@ void MOAIProp::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "insertProp",			_addChild },
 		{ "inside",				_inside },
 		{ "propForPoint",		_propForPoint },
+		{ "propForRay",			_propForRay },
 		{ "propListForPoint",	_propListForPoint },
+		{ "propListForRay",		_propListForRay },
+		{ "propListForRect",	_propListForRect },
 		{ "removeAllChildren",  _removeAllChildren },
 		{ "removeChild",		_removeChild },
 		{ "removeFromParent",	_removeFromParent },

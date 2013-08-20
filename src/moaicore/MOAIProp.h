@@ -119,7 +119,10 @@ private:
 	static int		_getZOrder			( lua_State* L );
 	static int		_inside				( lua_State* L );
 	static int		_propForPoint		( lua_State* L );
+	static int		_propForRay			( lua_State* L );
 	static int		_propListForPoint	( lua_State* L );
+	static int		_propListForRay		( lua_State* L );
+	static int		_propListForRect	( lua_State* L );
 	static int		_removeAllChildren	( lua_State* L );
 	static int		_removeChild		( lua_State* L );
 	static int		_removeFromParent	( lua_State* L );
