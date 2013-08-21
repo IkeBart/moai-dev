@@ -1665,7 +1665,7 @@ u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, US
 		}
 	}
 	
-	return 0;
+	return results.mTotalResults;
 }
 
 //----------------------------------------------------------------//
