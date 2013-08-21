@@ -281,7 +281,9 @@ public:
 	bool				ApplyAttrOp				( u32 attrID, MOAIAttrOp& attrOp, u32 op );
 	virtual void		Draw					( int subPrimID );
 	virtual void		DrawDebug				( int subPrimID );
+	u32					GatherChildren			( MOAIPropResultBuffer& results, MOAIProp* ignore, const USVec3D& point, const USVec3D& orientation, u32 mask = 0xffffffff );
 	u32					GatherChildren			( MOAIPropResultBuffer& results, MOAIProp* ignore, const USVec3D& point, u32 mask = 0xffffffff );
+	u32					GatherChildren			( MOAIPropResultBuffer& results, MOAIProp* ignore, USBox box, u32 mask = 0xffffffff );
 	virtual void		GatherSurfaces			( MOAISurfaceSampler2D& sampler );
 	USAffine3D			GetLocalToWorldMatrix	();
 	MOAIPartition*		GetPartitionTrait		();

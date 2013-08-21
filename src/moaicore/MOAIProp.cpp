@@ -1539,6 +1539,36 @@ void MOAIProp::DrawWithViewport ( int subPrimID ) {
 	
 	gfxDevice.Flush ();
 }
+//----------------------------------------------------------------//
+u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, const USVec3D &point, const USVec3D& orientation, u32 mask){
+	results.Reset ();
+	// go through children
+	
+	u32 numChildren = this->mTotalChildren;
+	u32 index = 0;
+	MOAIProp *child = NULL;
+	
+	if (numChildren > 0) {
+		for (;index < numChildren; index++){
+			child = this->mChildren.Elem(index);
+			if ( child == ignore) {
+				continue;
+			}
+			
+			float t;
+			if ((mask == 0) || (child->mMask & mask)) {
+				if (!USSect::RayToBox(child->mBounds, point, orientation, t )) {
+					results.PushResult ( *child, USFloat::FloatToIntKey ( t ), NO_SUBPRIM_ID, child->mZOrder, child->GetWorldLoc (), child->GetBounds ());
+				}
+			}
+			
+		}
+	}
+	
+	
+	return results.mTotalResults;
+
+}
 
 //----------------------------------------------------------------//
 u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, const USVec3D &point, u32 mask){
@@ -1574,6 +1604,34 @@ u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, co
 	
 	return results.mTotalResults;
 }
+
+//----------------------------------------------------------------//
+u32 MOAIProp::GatherChildren(MOAIPropResultBuffer &results, MOAIProp *ignore, USBox box, u32 mask){
+	results.Reset ();
+	
+	u32 numChildren = this->mTotalChildren;
+	u32 index = 0;
+	MOAIProp *child = NULL;
+	
+	if (numChildren > 0) {
+		for (;index < numChildren; index++){
+			child = this->mChildren.Elem(index);
+			if ( child == ignore) {
+				continue;
+			}
+			
+			if ((mask == 0) || (child->mMask & mask)) {
+				if (child->mBounds.Overlap( box )) {
+					results.PushResult ( *child, 0, NO_SUBPRIM_ID, child->mZOrder, child->GetWorldLoc (), child->GetBounds ());
+				}
+			}
+			
+		}
+	}
+	
+	return 0;
+}
+
 //----------------------------------------------------------------//
 void MOAIProp::GatherSurfaces ( MOAISurfaceSampler2D& sampler ) {
 
