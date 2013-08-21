@@ -342,7 +342,7 @@ int MOAIProp::_propForPoint( lua_State *L ){
 	@out	MOAIProp prop		The prop under the point in order of depth or nil if no prop found.
  */
 int MOAIProp::_propForRay( lua_State *L ){
-	MOAI_LUA_SETUP ( MOAIPartition, "UNN" )
+	MOAI_LUA_SETUP ( MOAIProp, "UNN" )
 	
 	USVec3D vec;
 	vec.mX = state.GetValue < float >( 2, 0.0f );
@@ -358,7 +358,16 @@ int MOAIProp::_propForRay( lua_State *L ){
 	
 	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get ().GetBuffer ();
 	
-	//u32 total = self->GatherProps ( buffer, 0, vec, direction );
+	u32 total = self->GatherChildren ( buffer, 0, vec, direction );
+	
+	if (total) {
+		
+		MOAIProp* prop = buffer.FindBest();
+		if (prop) {
+			prop->PushLuaUserdata( state );
+			return 1;
+		}
+	}
 	
 	return 0;
 }
@@ -426,7 +435,7 @@ int MOAIProp::_propListForPoint( lua_State *L ){
 	@out	...						The props under the point in order of depth, all pushed onto the stack.
  */
 int MOAIProp::_propListForRay(lua_State *L){
-	MOAI_LUA_SETUP ( MOAIPartition, "UNN" )
+	MOAI_LUA_SETUP ( MOAIProp, "UNN" )
 	
 	USVec3D vec;
 	vec.mX = state.GetValue < float >( 2, 0.0f );
@@ -442,7 +451,20 @@ int MOAIProp::_propListForRay(lua_State *L){
 	
 	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
 	
-	//u32 total = self->GatherProps ( buffer, 0, vec, direction );
+	u32 total = self->GatherChildren ( buffer, 0, vec, direction );
+	
+	if ( total ) {
+		u32 sortMode = state.GetValue < u32 >( 8, MOAIPartitionResultBuffer::SORT_KEY_ASCENDING );
+		float xScale = state.GetValue < float >( 9, 0.0f );
+		float yScale = state.GetValue < float >( 10, 0.0f );
+		float zScale = state.GetValue < float >( 11, 0.0f );
+		float priorityScale = state.GetValue < float >( 12, 1.0f );
+		
+		buffer.GenerateKeys ( sortMode, xScale, yScale, zScale, priorityScale );
+		buffer.Sort ( sortMode );
+		buffer.PushProps ( L );
+		return total;
+	}
 	
 	
 	return 0;
@@ -464,7 +486,7 @@ int MOAIProp::_propListForRay(lua_State *L){
 	@out	...						The props under the rect, all pushed onto the stack.
  */
 int MOAIProp::_propListForRect(lua_State *L){
-	MOAI_LUA_SETUP ( MOAIPartition, "UNNNN" )
+	MOAI_LUA_SETUP ( MOAIProp, "UNNNN" )
 	
 	USBox box;
 	
@@ -478,7 +500,21 @@ int MOAIProp::_propListForRect(lua_State *L){
 	
 	MOAIPropResultBuffer& buffer = MOAIPropResultMgr::Get().GetBuffer();
 	
-	//u32 total = self->GatherProps ( buffer, 0, box );
+	u32 total = self->GatherChildren ( buffer, 0, box );
+	if ( total ) {
+		
+		u32 sortMode = state.GetValue < u32 >( 6, MOAIPartitionResultBuffer::SORT_NONE );
+		float xScale = state.GetValue < float >( 7, 0.0f );
+		float yScale = state.GetValue < float >( 8, 0.0f );
+		float zScale = state.GetValue < float >( 9, 0.0f );
+		float priorityScale = state.GetValue < float >( 10, 1.0f );
+		
+		buffer.GenerateKeys ( sortMode, xScale, yScale, zScale, priorityScale );
+		buffer.Sort ( sortMode );
+		buffer.PushProps ( L );
+		return total;
+	}
+	
 	return 0;
 }
 
