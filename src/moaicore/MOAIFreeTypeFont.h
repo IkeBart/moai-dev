@@ -71,6 +71,7 @@ protected:
 	static int			_getFlags				( lua_State* L );
 	static int			_load					( lua_State* L );
 	static int			_newMultiLineFitted		( lua_State* L );
+	static int			_newSingleLineFitted	( lua_State* L );
 	static int			_optimalSize			( lua_State* L );
 	static int			_renderTexture			( lua_State* L );
 	static int			_renderTextureSingleLine( lua_State* L );
@@ -93,6 +94,7 @@ protected:
 												 FT_Int imgHeight);
 	void				GenerateLines			( FT_Int imgWidth, cc8* text, int wordBreak);
 	void				InitBitmapData			( u32 width, u32 height );
+	static int			NewPropFromFittedTexture( MOAILuaState& state, bool singleLine);
 	int					NumberOfLinesToDisplayText(cc8* text, FT_Int imageWidth, int wordBreakMode, bool generateLines);
 	void				RenderLines				( FT_Int imgWidth, FT_Int imgHeight, int hAlign,
 												 int vAlign, bool returnGlyphBounds,
