@@ -22,6 +22,8 @@
 @private
 	
 	AKUContextID					mAku;
+    AKUContextID                    mAkuFirstContext;
+    AKUContextID                    mAkuSecondContext;
 	NSTimeInterval					mAnimInterval;
     RefPtr < CADisplayLink >		mDisplayLink;
 	RefPtr < LocationObserver >		mLocationObserver;
@@ -32,6 +34,7 @@
 	-( void )	moaiInit        :( UIApplication* )application;
 	-( void )	pause           :( BOOL )paused;
 	-( void )	run             :( NSString* )filename;
+    -( void )   secondContextInit:( UIApplication* )application;
 
 
     PROPERTY_READONLY ( GLint, width );

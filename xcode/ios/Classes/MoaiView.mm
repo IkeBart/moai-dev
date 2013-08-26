@@ -136,6 +136,7 @@ namespace MoaiInputDeviceSensorID {
 	-( id )init {
 		
         mAku = 0;
+        mAkuSecondContext = 0;
 		self = [ super init ];
 		if ( self ) {
 		}
@@ -146,6 +147,7 @@ namespace MoaiInputDeviceSensorID {
 	-( id ) initWithCoder:( NSCoder* )encoder {
 
         mAku = 0;
+        mAkuSecondContext = 0;
 		self = [ super initWithCoder:encoder ];
 		if ( self ) {
 		}
@@ -165,7 +167,7 @@ namespace MoaiInputDeviceSensorID {
 	//----------------------------------------------------------------//
 	-( void ) moaiInit :( UIApplication* )application {
 	
-		mAku = AKUCreateContext ();
+		mAku = mAkuFirstContext = AKUCreateContext ();
 		AKUSetUserdata ( self );
 		
 		AKUExtLoadLuasql ();
@@ -311,12 +313,20 @@ namespace MoaiInputDeviceSensorID {
 			mDisplayLink = aDisplayLink;
 		}
 	}
+    //----------------------------------------------------------------//
+    -( void ) secondContextInit:(UIApplication *)application {
+        
+        mAku = mAkuSecondContext = AKUCreateContext ();
+		AKUSetUserdata ( self );
+        // TODO: finish this
+    }
 
 	//----------------------------------------------------------------//
 	-( void ) stopAnimation {
 		
         [ mDisplayLink invalidate ];
         mDisplayLink = nil;
+        
 	}
 	
 	//----------------------------------------------------------------//
