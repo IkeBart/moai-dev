@@ -82,8 +82,12 @@
 		// return
 		return true;
 	}
+    //----------------------------------------------------------------//
+    -( void ) application:( UIApplication* )application didReceiveLocalNotification:(UILocalNotification *)notification{
+        
+        AKUNotifyLocalNotificationReceived( notification );
+    }
 
-		
 	//----------------------------------------------------------------//
 	-( void ) application:( UIApplication* )application didReceiveRemoteNotification:( NSDictionary* )pushBundle {
 		
