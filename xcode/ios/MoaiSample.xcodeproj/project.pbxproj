@@ -53,6 +53,7 @@
 		B452BA4917C565870038B1A5 /* start.lua in Resources */ = {isa = PBXBuildFile; fileRef = B452BA4817C565870038B1A5 /* start.lua */; };
 		B452BA4B17C565A20038B1A5 /* demo.lua in Resources */ = {isa = PBXBuildFile; fileRef = B452BA4A17C565A20038B1A5 /* demo.lua */; };
 		B4EFD5CC17CCE78700857926 /* main.lua in Resources */ = {isa = PBXBuildFile; fileRef = B4EFD5CB17CCE78700857926 /* main.lua */; };
+		B4EFD5D817CD293000857926 /* second.lua in Resources */ = {isa = PBXBuildFile; fileRef = B4EFD5D717CD293000857926 /* second.lua */; };
 		CD464CE0147259EA00501E4E /* libmoai-ios-zlcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD04AF1214725736009C20E5 /* libmoai-ios-zlcore.a */; };
 		CD508A1A155E3AF90002FC3B /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 03CC904F13B3C1B700B2724C /* Icon-72.png */; };
 		CD508A1B155E3AF90002FC3B /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 03CC905013B3C1B700B2724C /* Icon-Small-50.png */; };
@@ -515,6 +516,7 @@
 		B452BA4817C565870038B1A5 /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = start.lua; path = "lua/scene-switch/start.lua"; sourceTree = "<group>"; };
 		B452BA4A17C565A20038B1A5 /* demo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.lua; path = "lua/scene-switch/demo.lua"; sourceTree = "<group>"; };
 		B4EFD5CB17CCE78700857926 /* main.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.lua; path = "lua/context-switch/main.lua"; sourceTree = "<group>"; };
+		B4EFD5D717CD293000857926 /* second.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = second.lua; path = "lua/context-switch/second.lua"; sourceTree = "<group>"; };
 		CD508AA2155E3AF90002FC3B /* moai-fmod-ex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "moai-fmod-ex.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7C73AC13B95516006CFA19 /* ParticlePresets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticlePresets.cpp; path = ../../src/hosts/ParticlePresets.cpp; sourceTree = SOURCE_ROOT; };
 		CD7C73AD13B95516006CFA19 /* ParticlePresets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticlePresets.h; path = ../../src/hosts/ParticlePresets.h; sourceTree = SOURCE_ROOT; };
@@ -704,6 +706,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				B4EFD5D717CD293000857926 /* second.lua */,
 				B4EFD5CB17CCE78700857926 /* main.lua */,
 				B452BA4A17C565A20038B1A5 /* demo.lua */,
 				B452BA4817C565870038B1A5 /* start.lua */,
@@ -1095,6 +1098,7 @@
 				B452BA4917C565870038B1A5 /* start.lua in Resources */,
 				B452BA4B17C565A20038B1A5 /* demo.lua in Resources */,
 				B4EFD5CC17CCE78700857926 /* main.lua in Resources */,
+				B4EFD5D817CD293000857926 /* second.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

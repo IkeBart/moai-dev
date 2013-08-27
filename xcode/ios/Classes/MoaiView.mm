@@ -316,9 +316,10 @@ namespace MoaiInputDeviceSensorID {
     //----------------------------------------------------------------//
     -( void ) secondContextInit:(UIApplication *)application {
         
-        mAku = mAkuSecondContext = AKUCreateContext ();
-		AKUSetUserdata ( self );
+        mAkuSecondContext = AKUCreateContext ();
+		//AKUSetUserdata ( self );
         // TODO: finish this
+        //[application ]
     }
 
 	//----------------------------------------------------------------//
@@ -328,7 +329,47 @@ namespace MoaiInputDeviceSensorID {
         mDisplayLink = nil;
         
 	}
-	
+
+    //----------------------------------------------------------------//
+    -(void) switchContext:(NSString *)context application:(UIApplication *)application{
+        if (context ) {
+            NSLog(@"MoaiView switchContext: %@", context);
+            if ([context caseInsensitiveCompare:@"second"] == NSOrderedSame){
+                // check to see if not already in second context
+                if (mAku != mAkuSecondContext) {
+                    NSLog(@"Loading second context.");
+                    
+                    [self secondContextInit:application];
+                    AKUSetContext(mAkuSecondContext);
+                    mAku = mAkuSecondContext;
+                    
+                    // TODO: change to address passed in parameter
+                    [self run:@"context-switch/second.lua"];
+                }
+                else{
+                    NSLog(@"Second context already loaded");
+                }
+            }
+            
+            else if ([context caseInsensitiveCompare:@"first"] == NSOrderedSame){
+                if (mAku != mAkuFirstContext) {
+                    NSLog(@"Loading first context.");
+                    // load first context
+                    AKUSetContext(mAkuFirstContext);
+                    mAku = mAkuFirstContext;
+                    
+                    // close down second context
+                    AKUDeleteContext(mAkuSecondContext);
+                }
+                else{
+                    NSLog(@"First context already loaded.");
+                }
+            }
+            else {
+                NSLog(@"Context not recognized.  Use 'first' or 'second' as values for context key.");
+            }
+        }
+    }
 	//----------------------------------------------------------------//
 	-( void )touchesBegan:( NSSet* )touches withEvent:( UIEvent* )event {
 		( void )event;

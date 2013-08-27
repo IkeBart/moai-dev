@@ -21,7 +21,7 @@
 @interface MoaiView : OpenGLView < UIAccelerometerDelegate > {
 @private
 	
-	AKUContextID					mAku;
+	AKUContextID					mAku;  // current running context
     AKUContextID                    mAkuFirstContext;
     AKUContextID                    mAkuSecondContext;
 	NSTimeInterval					mAnimInterval;
@@ -35,7 +35,7 @@
 	-( void )	pause           :( BOOL )paused;
 	-( void )	run             :( NSString* )filename;
     -( void )   secondContextInit:( UIApplication* )application;
-
+    -( void )   switchContext   :(NSString *)context application:(UIApplication *)application;
 
     PROPERTY_READONLY ( GLint, width );
     PROPERTY_READONLY ( GLint, height );

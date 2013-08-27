@@ -86,6 +86,21 @@
     -( void ) application:( UIApplication* )application didReceiveLocalNotification:(UILocalNotification *)notification{
         
         AKUNotifyLocalNotificationReceived( notification );
+        
+        
+        NSDictionary* userInfo = notification.userInfo;
+ 		if ( userInfo ){
+            NSString *name = [userInfo objectForKey:@"name"];
+            if (name) {
+                NSLog(@"userInfo.name == %@", name);
+            }
+            
+            NSString *context = [userInfo objectForKey:@"context"];
+            if (context) {
+                [ mMoaiView switchContext:context application:application ];
+            }
+            
+        }
     }
 
 	//----------------------------------------------------------------//
