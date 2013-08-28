@@ -317,9 +317,12 @@ namespace MoaiInputDeviceSensorID {
     -( void ) secondContextInit:(UIApplication *)application {
         
         mAkuSecondContext = AKUCreateContext ();
-		//AKUSetUserdata ( self );
+		AKUSetUserdata ( self );
         // TODO: finish this
-        //[application ]
+        
+        // init aku
+        AKUIphoneInit ( application );
+        AKURunBytecode ( moai_lua, moai_lua_SIZE );
     }
 
 	//----------------------------------------------------------------//
