@@ -269,8 +269,16 @@ void MOAIGfxDevice::DetectContext () {
 	#endif
 
 	const GLubyte* driverVersion = glGetString ( GL_VERSION );
-	
-	STLString version = ( cc8* )driverVersion;
+	// report return value of driverVersion
+	MOAIPrint("In MOAIGfxDevice::DetectContext(), driverVersion == %s\n", (cc8* ) driverVersion);
+	STLString version;
+	if (!driverVersion){
+		// Hack to force loading of driver if glGetString ( GL_VERSION ) returns nil.
+		version = "OpenGL ES 2.0 APPLE"; 
+	}
+	else{
+		version = ( cc8* )driverVersion;
+	}
 	version.to_lower ();
 	
 	STLString gles = "opengl es";

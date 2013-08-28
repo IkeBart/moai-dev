@@ -320,6 +320,58 @@ namespace MoaiInputDeviceSensorID {
 		AKUSetUserdata ( self );
         // TODO: finish this
         
+        
+        AKUExtLoadLuasql ();
+		AKUExtLoadLuacurl ();
+		AKUExtLoadLuacrypto ();
+		AKUExtLoadLuasocket ();
+		
+#ifdef USE_UNTZ
+        AKUUntzInit ();
+#endif
+        
+#ifdef USE_FMOD_EX
+        AKUFmodExInit ();
+#endif
+        
+		AKUAudioSamplerInit ();
+        
+		AKUSetInputConfigurationName ( "iPhone" );
+        
+		AKUReserveInputDevices			( MoaiInputDeviceID::TOTAL );
+		AKUSetInputDevice				( MoaiInputDeviceID::DEVICE, "device" );
+		
+		AKUReserveInputDeviceSensors	( MoaiInputDeviceID::DEVICE, MoaiInputDeviceSensorID::TOTAL );
+		AKUSetInputDeviceCompass		( MoaiInputDeviceID::DEVICE, MoaiInputDeviceSensorID::COMPASS,		"compass" );
+		AKUSetInputDeviceLevel			( MoaiInputDeviceID::DEVICE, MoaiInputDeviceSensorID::LEVEL,		"level" );
+		AKUSetInputDeviceLocation		( MoaiInputDeviceID::DEVICE, MoaiInputDeviceSensorID::LOCATION,		"location" );
+		AKUSetInputDeviceTouch			( MoaiInputDeviceID::DEVICE, MoaiInputDeviceSensorID::TOUCH,		"touch" );
+		
+		CGRect screenRect = [[ UIScreen mainScreen ] bounds ];
+		CGFloat scale = [[ UIScreen mainScreen ] scale ];
+		CGFloat screenWidth = screenRect.size.width * scale;
+		CGFloat screenHeight = screenRect.size.height * scale;
+		
+		AKUSetScreenSize ( screenWidth, screenHeight );
+		AKUSetScreenDpi([ self guessScreenDpi ]);
+		AKUSetViewSize ( mWidth, mHeight );
+		
+        AKUSetFrameBuffer ( mFramebuffer );
+		AKUDetectGfxContext ();
+		/*
+		mAnimInterval = 1; // 1 for 60fps, 2 for 30fps
+        */
+		/*
+		mLocationObserver = [[[ LocationObserver alloc ] init ] autorelease ];
+		
+		[ mLocationObserver setHeadingDelegate:self :@selector ( onUpdateHeading: )];
+		[ mLocationObserver setLocationDelegate:self :@selector ( onUpdateLocation: )];
+		
+		UIAccelerometer* accel = [ UIAccelerometer sharedAccelerometer ];
+		accel.delegate = self;
+		accel.updateInterval = mAnimInterval / 60;
+        */
+        
         // init aku
         AKUIphoneInit ( application );
         AKURunBytecode ( moai_lua, moai_lua_SIZE );
