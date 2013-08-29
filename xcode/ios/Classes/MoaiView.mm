@@ -387,6 +387,11 @@ namespace MoaiInputDeviceSensorID {
 
     //----------------------------------------------------------------//
     -(void) switchContext:(NSString *)context application:(UIApplication *)application{
+        [self switchContext:context application:application scriptFile:@"context-switch/second.lua"];
+    }
+
+    //----------------------------------------------------------------//
+    -(void) switchContext:(NSString *)context application:(UIApplication *)application scriptFile:(NSString *)script {
         if (context ) {
             NSLog(@"MoaiView switchContext: %@", context);
             if ([context caseInsensitiveCompare:@"second"] == NSOrderedSame){
@@ -398,8 +403,18 @@ namespace MoaiInputDeviceSensorID {
                     AKUSetContext(mAkuSecondContext);
                     mAku = mAkuSecondContext;
                     
-                    // TODO: change to address passed in parameter
-                    [self run:@"context-switch/second.lua"];
+                    if (!script) {
+                        NSLog(@"scriptFile parameter was nil.  setting to context-switch/second.lua");
+                        script = @"context-switch/second.lua";
+                    }
+                    // add .lua to end if there is no .lua extension
+                    NSRange luaRange = [script rangeOfString:@".lua"];
+                    if (luaRange.location == NSNotFound ) {
+                        script = [script stringByAppendingPathExtension:@"lua"];
+                        NSLog(@"Added .lua extention to script file path: %@", script);
+                    }
+                    
+                    [self run:script];
                 }
                 else{
                     NSLog(@"Second context already loaded");

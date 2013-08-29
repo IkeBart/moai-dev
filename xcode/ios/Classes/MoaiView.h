@@ -36,6 +36,7 @@
 	-( void )	run             :( NSString* )filename;
     -( void )   secondContextInit:( UIApplication* )application;
     -( void )   switchContext   :(NSString *)context application:(UIApplication *)application;
+    -( void )   switchContext   :(NSString *)context application:(UIApplication *)application scriptFile:(NSString *)script;
 
     PROPERTY_READONLY ( GLint, width );
     PROPERTY_READONLY ( GLint, height );

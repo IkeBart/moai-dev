@@ -97,7 +97,9 @@
             
             NSString *context = [userInfo objectForKey:@"context"];
             if (context) {
-                [ mMoaiView switchContext:context application:application ];
+                NSString *script = [userInfo objectForKey: @"script"];
+                
+                [ mMoaiView switchContext:context application:application scriptFile:script];
             }
             
         }
