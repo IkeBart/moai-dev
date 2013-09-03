@@ -1344,6 +1344,129 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayText(cc8 *text, FT_Int imageWidth,
 }
 
 
+int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imageWidth){
+	FT_Error error = 0;
+	FT_Face face = this->mFreeTypeFace;
+	
+	bool useKerning = FT_HAS_KERNING(face);
+	
+	int numberOfLines = 1;
+	
+	u32 unicode; // the current unicode character
+	u32 lastCh = 0; // the previous unicode character
+	u32 lastTokenCh = 0; // the character before a word break
+	u32 wordBreakCharacter = 0; // the character used in the word break
+	
+	FT_UInt previousGlyphIndex = 0;
+	FT_UInt glyphIndex = 0;
+	
+	FT_Int penXReset = 0; // the value to which to reset the x-location of the cursor on a new line
+	FT_Int penX = penXReset; // the current x-location of the cursor
+	FT_Int lastTokenX = 0; // the x-location of the cursor at the most recent word break
+	
+	int lineIndex = 0; // the index of the beginning of the current line
+	int tokenIndex = 0; // the index of the beginning of the current token
+	
+	u32 startIndex = 0; // the value for the final parameter of BuildLine()
+	
+	size_t textLength = 0;
+	size_t lastTokenLength = 0;
+	
+	//u32* textBuffer = NULL;
+	
+	int n = 0;
+	while ( (unicode = u8_nextchar(text, &n) ) ) {
+		
+		startIndex = (u32) lineIndex;
+		
+		// handle new line
+		if (unicode == '\n'){
+			numberOfLines++;
+			penX = penXReset;
+			lineIndex = tokenIndex = n;
+			textLength = lastTokenLength = 0;
+			
+			
+			continue;
+		}
+		// handle word breaking characters
+		else if ( unicode == ' ' ){ //MOAIFreeTypeFont::IsWordBreak(unicode, wordBreakMode) ){
+			tokenIndex = n;
+			lastTokenLength = textLength;
+			lastTokenCh = lastCh;
+			lastTokenX = penX;
+			wordBreakCharacter = unicode;
+		}
+		
+		error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
+		
+		CHECK_ERROR(error);
+		
+		glyphIndex = FT_Get_Char_Index(face, unicode);
+		
+		// take kerning into account
+		if (useKerning && previousGlyphIndex && glyphIndex) {
+			FT_Vector delta;
+			FT_Get_Kerning(face, previousGlyphIndex, glyphIndex, FT_KERNING_DEFAULT, &delta);
+			penX += delta.x;
+		}
+		
+		// test for first character of line to adjust penX
+		if (textLength == 0) {
+			penX += -((face->glyph->metrics.horiBearingX) >> 6);
+		}
+		
+		// determine if penX is outside the bounds of the box
+		FT_Int glyphWidth = ((face->glyph->metrics.width) >> 6);
+		FT_Int nextPenX = penX + glyphWidth;
+		bool isExceeding = (nextPenX > imageWidth);
+		if (isExceeding) { //( (penX + ((face->glyph->metrics.width) >> 6) ) > imageWidth ){ //(isExceeding) {
+			// WORD_BREAK_NONE and other modes
+			if (tokenIndex != lineIndex) {
+				
+				
+				// set n back to the last index
+				n = tokenIndex;
+				// get the character after token index and update n
+				unicode = u8_nextchar(text, &n);
+				
+				// load the character after token index to get its width aka horiAdvance
+				error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
+				
+				CHECK_ERROR(error);
+				
+				//advance to next line
+				numberOfLines++;
+				penX = penXReset;
+				lineIndex = tokenIndex = n;
+				
+				// reset text length and last token length
+				textLength = lastTokenLength = 0;
+			}
+			else{
+				
+				// we don't words broken up when calculating optimal size
+				// return a failure code that is less than zero
+				return -1;
+				
+			}
+			
+		}
+		
+		lastCh = unicode;
+		previousGlyphIndex = glyphIndex;
+		
+
+		++textLength;
+		
+		// advance cursor
+		penX += ((face->glyph->metrics.horiAdvance) >> 6);
+		
+	}
+	
+	return numberOfLines;
+}
+
 float MOAIFreeTypeFont::OptimalSize(cc8 *text, float width, float height, float maxFontSize,
 									float minFontSize, int wordbreak, bool forceSingleLine){
 	
@@ -1402,8 +1525,12 @@ float MOAIFreeTypeFont::OptimalSize(cc8 *text, float width, float height, float 
 		FT_Int lineHeight = (face->size->metrics.height >> 6);
 		int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
 		
-		numLines = this->NumberOfLinesToDisplayText(text, imgWidth, wordbreak, false);
-		
+		if (wordbreak == MOAITextBox::WORD_BREAK_NONE) {
+			numLines = this->NumberOfLinesToDisplayTextOptimized(text, imgWidth);
+		}
+		else{
+			numLines = this->NumberOfLinesToDisplayText(text, imgWidth, wordbreak, false);
+		}
 		if (numLines > maxLines || numLines < 0){ // failure case
 			// adjust upper bound downward
 			upperBoundSize = testSize;

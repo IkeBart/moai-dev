@@ -101,6 +101,7 @@ protected:
 	void				InitBitmapData			( u32 width, u32 height );
 	static int			NewPropFromFittedTexture( MOAILuaState& state, bool singleLine);
 	int					NumberOfLinesToDisplayText(cc8* text, FT_Int imageWidth, int wordBreakMode, bool generateLines);
+	int					NumberOfLinesToDisplayTextOptimized(cc8* text, FT_Int imageWidth);
 	void				RenderLines				( FT_Int imgWidth, FT_Int imgHeight, int hAlign,
 												 int vAlign, bool returnGlyphBounds,
 												 MOAILuaState& state);
