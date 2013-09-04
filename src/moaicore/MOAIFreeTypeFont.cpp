@@ -1509,41 +1509,74 @@ float MOAIFreeTypeFont::OptimalSize(cc8 *text, float width, float height, float 
 	
 	// the minimum difference between upper and lower bound sizes before the binary search stops.
 	const float GRANULARITY_THRESHOLD = 1.0f;
-	do{
-		
-		// set character size to test size
-		error = FT_Set_Char_Size(face,
-								 0,
-								 (FT_F26Dot6)(64 * testSize),
-								 DPI,
-								 0);
-		CHECK_ERROR(error);
-		
-		
-		// compute maximum number of lines allowed at font size.
-		// forceSingleLine sets this value to one if true.
-		FT_Int lineHeight = (face->size->metrics.height >> 6);
-		int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
-		
-		if (wordbreak == MOAITextBox::WORD_BREAK_NONE) {
+	if (wordbreak == MOAITextBox::WORD_BREAK_NONE) {
+		do{
+			
+			// set character size to test size
+			error = FT_Set_Char_Size(face,
+									 0,
+									 (FT_F26Dot6)(64 * testSize),
+									 DPI,
+									 0);
+			CHECK_ERROR(error);
+			
+			
+			// compute maximum number of lines allowed at font size.
+			// forceSingleLine sets this value to one if true.
+			FT_Int lineHeight = (face->size->metrics.height >> 6);
+			int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
+			
 			numLines = this->NumberOfLinesToDisplayTextOptimized(text, imgWidth);
-		}
-		else{
+			
+			if (numLines > maxLines || numLines < 0){ // failure case
+				// adjust upper bound downward
+				upperBoundSize = testSize;
+			}
+			else{ // success
+				// adjust lower bound upward
+				lowerBoundSize = testSize;
+			}
+			// recalculate test size
+			testSize = (lowerBoundSize + upperBoundSize) / 2.0f;
+			
+			
+		}while(upperBoundSize - lowerBoundSize >= GRANULARITY_THRESHOLD);
+	}
+	
+	else{
+		do{
+			
+			// set character size to test size
+			error = FT_Set_Char_Size(face,
+									 0,
+									 (FT_F26Dot6)(64 * testSize),
+									 DPI,
+									 0);
+			CHECK_ERROR(error);
+			
+			
+			// compute maximum number of lines allowed at font size.
+			// forceSingleLine sets this value to one if true.
+			FT_Int lineHeight = (face->size->metrics.height >> 6);
+			int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
+			
 			numLines = this->NumberOfLinesToDisplayText(text, imgWidth, wordbreak, false);
-		}
-		if (numLines > maxLines || numLines < 0){ // failure case
-			// adjust upper bound downward
-			upperBoundSize = testSize;
-		}
-		else{ // success
-			// adjust lower bound upward
-			lowerBoundSize = testSize;
-		}
-		// recalculate test size
-		testSize = (lowerBoundSize + upperBoundSize) / 2.0f;
 		
+			if (numLines > maxLines || numLines < 0){ // failure case
+				// adjust upper bound downward
+				upperBoundSize = testSize;
+			}
+			else{ // success
+				// adjust lower bound upward
+				lowerBoundSize = testSize;
+			}
+			// recalculate test size
+			testSize = (lowerBoundSize + upperBoundSize) / 2.0f;
+			
+			
+		}while(upperBoundSize - lowerBoundSize >= GRANULARITY_THRESHOLD);
 		
-	}while(upperBoundSize - lowerBoundSize >= GRANULARITY_THRESHOLD);
+	}
 	
 	// test the proposed return value for a failure case
 	testSize = floorf(lowerBoundSize);
