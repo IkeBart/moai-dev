@@ -1353,16 +1353,16 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 	int numberOfLines = 1;
 	
 	u32 unicode; // the current unicode character
-	u32 lastCh = 0; // the previous unicode character
-	u32 lastTokenCh = 0; // the character before a word break
-	u32 wordBreakCharacter = 0; // the character used in the word break
+	//u32 lastCh = 0; // the previous unicode character
+	//u32 lastTokenCh = 0; // the character before a word break
+	//u32 wordBreakCharacter = 0; // the character used in the word break
 	
 	FT_UInt previousGlyphIndex = 0;
 	FT_UInt glyphIndex = 0;
 	
 	FT_Int penXReset = 0; // the value to which to reset the x-location of the cursor on a new line
 	FT_Int penX = penXReset; // the current x-location of the cursor
-	FT_Int lastTokenX = 0; // the x-location of the cursor at the most recent word break
+	//FT_Int lastTokenX = 0; // the x-location of the cursor at the most recent word break
 	
 	int lineIndex = 0; // the index of the beginning of the current line
 	int tokenIndex = 0; // the index of the beginning of the current token
@@ -1370,7 +1370,7 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 	u32 startIndex = 0; // the value for the final parameter of BuildLine()
 	
 	size_t textLength = 0;
-	size_t lastTokenLength = 0;
+	//size_t lastTokenLength = 0;
 	
 	//u32* textBuffer = NULL;
 	
@@ -1381,10 +1381,10 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 		
 		// handle new line
 		if (unicode == '\n'){
-			numberOfLines++;
+			++numberOfLines;
 			penX = penXReset;
 			lineIndex = tokenIndex = n;
-			textLength = lastTokenLength = 0;
+			textLength = 0;
 			
 			
 			continue;
@@ -1392,10 +1392,10 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 		// handle word breaking characters
 		else if ( unicode == ' ' ){ //MOAIFreeTypeFont::IsWordBreak(unicode, wordBreakMode) ){
 			tokenIndex = n;
-			lastTokenLength = textLength;
-			lastTokenCh = lastCh;
-			lastTokenX = penX;
-			wordBreakCharacter = unicode;
+			//lastTokenLength = textLength;
+			//lastTokenCh = lastCh;
+			//lastTokenX = penX;
+			//wordBreakCharacter = unicode;
 		}
 		
 		error = FT_Load_Char(face, unicode, FT_LOAD_DEFAULT);
@@ -1436,12 +1436,12 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 				CHECK_ERROR(error);
 				
 				//advance to next line
-				numberOfLines++;
+				++numberOfLines;
 				penX = penXReset;
 				lineIndex = tokenIndex = n;
 				
 				// reset text length and last token length
-				textLength = lastTokenLength = 0;
+				textLength = 0;
 			}
 			else{
 				
@@ -1453,7 +1453,7 @@ int MOAIFreeTypeFont::NumberOfLinesToDisplayTextOptimized(cc8 *text, FT_Int imag
 			
 		}
 		
-		lastCh = unicode;
+		//lastCh = unicode;
 		previousGlyphIndex = glyphIndex;
 		
 
@@ -1524,7 +1524,8 @@ float MOAIFreeTypeFont::OptimalSize(cc8 *text, float width, float height, float 
 			// compute maximum number of lines allowed at font size.
 			// forceSingleLine sets this value to one if true.
 			FT_Int lineHeight = (face->size->metrics.height >> 6);
-			int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
+			int linesThatFit = height / lineHeight;
+			int maxLines = (forceSingleLine && linesThatFit > 1)? 1 : linesThatFit;
 			
 			numLines = this->NumberOfLinesToDisplayTextOptimized(text, imgWidth);
 			
