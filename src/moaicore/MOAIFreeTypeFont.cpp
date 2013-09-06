@@ -1559,7 +1559,8 @@ float MOAIFreeTypeFont::OptimalSize(cc8 *text, float width, float height, float 
 			// compute maximum number of lines allowed at font size.
 			// forceSingleLine sets this value to one if true.
 			FT_Int lineHeight = (face->size->metrics.height >> 6);
-			int maxLines = (forceSingleLine && (height / lineHeight) > 1)? 1 : (height / lineHeight);
+			int linesThatFit = height / lineHeight;
+			int maxLines = (forceSingleLine && linesThatFit > 1)? 1 : linesThatFit;
 			
 			numLines = this->NumberOfLinesToDisplayText(text, imgWidth, wordbreak, false);
 		
