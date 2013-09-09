@@ -45,7 +45,7 @@ namespace MOAIImageTransform {
 */
 class MOAIImage :
 	public virtual MOAILuaObject {
-private:
+protected:
 
 	USPixel::Format		mPixelFormat;
 	USColor::Format		mColorFormat;
@@ -56,7 +56,7 @@ private:
 	void*	mData;
 	void*	mPalette;
 	void*	mBitmap;
-
+private:
 	//----------------------------------------------------------------//
 	static int		_bleedRect			( lua_State* L );
 	static int		_compare			( lua_State* L );
@@ -82,7 +82,6 @@ private:
 
 	//----------------------------------------------------------------//
 	void			Alloc				();
-	static u32		GetMinPowerOfTwo	( u32 size ); // gets the smallest power of two greater than size
 	void			Init				( void* bitmap, u32 width, u32 height, USColor::Format colorFmt, bool copy );
 	static bool		IsJpg				( USStream& stream );
 	static bool		IsPng				( USStream& stream );
@@ -91,6 +90,8 @@ private:
 	void			LoadPng				( USStream& stream, u32 transform );
 	void			LoadPng				( void* pngParam, void* pngInfoParam, u32 transform );
 
+protected:
+	static u32		GetMinPowerOfTwo	( u32 size ); // gets the smallest power of two greater than size
 public:
 	
 	DECL_LUA_FACTORY ( MOAIImage )
