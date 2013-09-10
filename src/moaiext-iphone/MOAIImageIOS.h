@@ -19,9 +19,6 @@ public MOAIImage {
 private:
 	
 	void				LoadCGImage				( CGImageRef cgImage, u32 transform );
-	void				LoadJpg					( USStream& stream, u32 transform );
-	void				LoadPng					( USStream& stream, u32 transform );
-	
 	
 public:
 	
