@@ -87,7 +87,7 @@ private:
 	static bool		IsPng				( USStream& stream );
 	void			LoadJpg				( USStream& stream, u32 transform );
 	void			LoadJpg				( void* jpgInfoParam, u32 transform );
-	void			LoadPng				( USStream& stream, u32 transform );
+	virtual void	LoadPng				( USStream& stream, u32 transform );
 	void			LoadPng				( void* pngParam, void* pngInfoParam, u32 transform );
 
 protected:

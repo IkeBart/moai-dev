@@ -15,8 +15,6 @@ void MOAIImageIOS::LoadJpg(USStream &stream, u32 transform){
 }
 
 void MOAIImageIOS::LoadPng(USStream &stream, u32 transform){
-	UNUSED(stream);
-	UNUSED(transform);
 	
 	// get data from the stream
 	size_t size = stream.GetLength();
@@ -54,7 +52,7 @@ void MOAIImageIOS::LoadPng(USStream &stream, u32 transform){
 	// get pixel format and color format
 	
 	USPixel::Format pngPixelFormat = USPixel::TRUECOLOR;
-	USColor::Format pngColorFormat;
+	USColor::Format pngColorFormat ;
 	
 	CGImageAlphaInfo info = CGImageGetAlphaInfo(cgImage);
 	bool hasAlpha = (info == kCGImageAlphaPremultipliedLast)
@@ -71,7 +69,7 @@ void MOAIImageIOS::LoadPng(USStream &stream, u32 transform){
 		}
 		else{
 			info = kCGImageAlphaNoneSkipLast;
-			pngColorFormat = USColor::RGB_888;
+			pngColorFormat = USColor::RGBA_8888; //USColor::RGB_888;
 		}
 	}
 	else{
