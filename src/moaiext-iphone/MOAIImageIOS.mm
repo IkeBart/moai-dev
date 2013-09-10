@@ -100,3 +100,11 @@ void MOAIImageIOS::LoadPng(USStream &stream, u32 transform){
 	CGContextRelease(context);
     CFRelease(colorSpace);
 }
+
+void MOAIImageIOS::RegisterLuaClass(MOAILuaState &state){
+	MOAIImage::RegisterLuaClass(state);
+}
+
+void MOAIImageIOS::RegisterLuaFuncs(MOAILuaState &state){
+	MOAIImage::RegisterLuaFuncs(state);
+}

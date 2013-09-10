@@ -16,8 +16,13 @@
 
 class MOAIImageIOS :
 public MOAIImage {
+private:
 	void LoadJpg ( USStream& stream, u32 transform );
 	void LoadPng ( USStream& stream, u32 transform );
+	
+public:
+	void				RegisterLuaClass		( MOAILuaState& state );
+	void				RegisterLuaFuncs		( MOAILuaState& state );
 };
 
 #endif /* defined(__libmoai__MOAIImageIOS__) */
