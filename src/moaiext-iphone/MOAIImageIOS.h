@@ -17,15 +17,17 @@
 class MOAIImageIOS :
 public MOAIImage {
 private:
-	void LoadCGImage ( CGImageRef cgImage, u32 transform );
-	void LoadJpg ( USStream& stream, u32 transform );
-	void LoadPng ( USStream& stream, u32 transform );
+	
+	void				LoadCGImage				( CGImageRef cgImage, u32 transform );
+	void				LoadJpg					( USStream& stream, u32 transform );
+	void				LoadPng					( USStream& stream, u32 transform );
 	
 	
 public:
 	
 	DECL_LUA_FACTORY (MOAIImageIOS);
 	
+	void				Load					( USStream& stream, u32 transform );
 	void				RegisterLuaClass		( MOAILuaState& state );
 	void				RegisterLuaFuncs		( MOAILuaState& state );
 };

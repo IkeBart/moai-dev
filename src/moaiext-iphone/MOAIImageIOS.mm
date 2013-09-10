@@ -8,6 +8,23 @@
 
 #include "MOAIImageIOS.h"
 
+void MOAIImageIOS::Load(USStream &stream, u32 transform){
+	// get data from the stream
+	size_t size = stream.GetLength();
+	if (!size || size == 0) {
+		// print warning
+		return;
+	}
+	void *buffer = malloc(size);
+	stream.ReadBytes(buffer, size);
+	
+	// load PNG with the data using iOS library.
+	NSData *data = [NSData dataWithBytes:buffer length:size];
+	CGImageRef cgImage = [[UIImage imageWithData:data] CGImage];
+	
+	this->LoadCGImage(cgImage, transform);
+}
+
 void MOAIImageIOS::LoadCGImage(CGImageRef cgImage, u32 transform){
 	if (cgImage == NULL){
 		// print warning

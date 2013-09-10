@@ -87,7 +87,7 @@ private:
 	static bool		IsPng				( USStream& stream );
 	void			LoadJpg				( USStream& stream, u32 transform );
 	void			LoadJpg				( void* jpgInfoParam, u32 transform );
-	virtual void	LoadPng				( USStream& stream, u32 transform );
+	void			LoadPng				( USStream& stream, u32 transform );
 	void			LoadPng				( void* pngParam, void* pngInfoParam, u32 transform );
 
 protected:
@@ -145,7 +145,7 @@ public:
 	bool				IsPow2					();
 	static bool			IsPow2					( u32 n );
 	void				Load					( cc8* filename, u32 transform = 0 );
-	void				Load					( USStream& stream, u32 transform = 0 );
+	virtual void		Load					( USStream& stream, u32 transform = 0 );
 	bool				IsOK					();
 	bool				MipReduce				();
 						MOAIImage				();
