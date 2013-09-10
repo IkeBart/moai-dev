@@ -21,6 +21,9 @@ private:
 	void LoadPng ( USStream& stream, u32 transform );
 	
 public:
+	
+	DECL_LUA_FACTORY (MOAIImageIOS);
+	
 	void				RegisterLuaClass		( MOAILuaState& state );
 	void				RegisterLuaFuncs		( MOAILuaState& state );
 };
