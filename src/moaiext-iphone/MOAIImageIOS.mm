@@ -51,5 +51,52 @@ void MOAIImageIOS::LoadPng(USStream &stream, u32 transform){
 		this->mHeight = height;
 	}
 	
+	// get pixel format and color format
 	
+	USPixel::Format pngPixelFormat = USPixel::TRUECOLOR;
+	USColor::Format pngColorFormat;
+	
+	CGImageAlphaInfo info = CGImageGetAlphaInfo(cgImage);
+	bool hasAlpha = (info == kCGImageAlphaPremultipliedLast)
+					|| (info == kCGImageAlphaPremultipliedFirst)
+					|| (info == kCGImageAlphaLast)
+					|| (info == kCGImageAlphaFirst);
+	
+	CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
+	if (colorSpace) {
+		if (hasAlpha) {
+			info = kCGImageAlphaPremultipliedLast;
+			pngColorFormat = USColor::RGBA_8888;
+			
+		}
+		else{
+			info = kCGImageAlphaNoneSkipLast;
+			pngColorFormat = USColor::RGB_888;
+		}
+	}
+	else{
+		// print warning
+		return;
+	}
+	this->mPixelFormat = pngPixelFormat;
+	this->mColorFormat = pngColorFormat;
+	
+	this->Alloc();
+	
+	int bitsPerComponent = 8;
+	
+	colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGContextRef context = CGBitmapContextCreate(this->mData,
+												 this->mWidth,
+												 this->mHeight,
+												 bitsPerComponent,
+												 4 * this->mWidth,
+												 colorSpace,
+												 info | kCGBitmapByteOrder32Big
+												 );
+	CGContextClearRect(context, CGRectMake(0, 0, this->mWidth, this->mHeight));
+	CGContextDrawImage(context, CGRectMake(0, 0, this->mWidth, this->mHeight), cgImage);
+	
+	CGContextRelease(context);
+    CFRelease(colorSpace);
 }

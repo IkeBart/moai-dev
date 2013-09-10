@@ -81,7 +81,7 @@ private:
 	static int		_writePNG			( lua_State* L );
 
 	//----------------------------------------------------------------//
-	void			Alloc				();
+	
 	void			Init				( void* bitmap, u32 width, u32 height, USColor::Format colorFmt, bool copy );
 	static bool		IsJpg				( USStream& stream );
 	static bool		IsPng				( USStream& stream );
@@ -91,6 +91,7 @@ private:
 	void			LoadPng				( void* pngParam, void* pngInfoParam, u32 transform );
 
 protected:
+	void			Alloc				();
 	static u32		GetMinPowerOfTwo	( u32 size ); // gets the smallest power of two greater than size
 public:
 	
