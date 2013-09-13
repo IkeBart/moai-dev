@@ -463,5 +463,6 @@ MOAIBilling = MOAIBillingAndroid or MOAIBillingIOS
 MOAIChartBoost = MOAIChartBoostAndroid or MOAIChartBoostIOS
 MOAICrittercism = MOAICrittercismAndroid or MOAICrittercismIOS
 MOAIFacebook = MOAIFacebookAndroid or MOAIFacebookIOS
+MOAIImage = MOAIImageIOS or MOAIImage
 MOAINotifications = MOAINotificationsAndroid or MOAINotificationsIOS
 MOAITapjoy = MOAITapjoyAndroid or MOAITapjoyIOS
