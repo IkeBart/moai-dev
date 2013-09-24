@@ -14,8 +14,10 @@
 class MOAISprite : public MOAIGlobalClass <MOAISprite, MOAILuaObject>  {
 	
 private:
-	int					_newWithFileName	( lua_State* L );
-	int					_newWithName		( lua_State* L );
+	static int				_getAssetSuffix		( lua_State* L );
+	static int				_newWithFileName	( lua_State* L );
+	static int				_newWithName		( lua_State* L );
+	static int				_setAssetSuffix		( lua_State* L );
 	
 	//----------------------------------------------------------------//
 	
