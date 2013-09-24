@@ -7,7 +7,11 @@
 //
 
 #include "pch.h"
-#include "MOAISprite.h"
+#include <moaicore/MOAISprite.h>
+#include <moaicore/MOAIProp.h>
+#include <moaicore/MOAITexture.h>
+#include <moaicore/MOAIGfxQuad2D.h>
+
 
 //----------------------------------------------------------------//
 /** @name	getAssetSuffix
@@ -28,14 +32,23 @@ int MOAISprite::_getAssetSuffix	( lua_State* L ){
 
 
 //----------------------------------------------------------------//
-/**	@name	newWithFileName
+/**	@name	newWithFilename
 	@text	
  
 	@in		string name
 	@out	MOAIProp sprite
  */
 int MOAISprite::_newWithFileName(lua_State *L){
-	UNUSED(L);
+	MOAILuaState state ( L );
+	
+	cc8 *name = state.GetValue < cc8* >(1, NULL);
+	
+	
+	MOAITexture  *texture = MOAISprite::Get().CreateTextureWithFilename( name );
+	MOAIProp *sprite = MOAISprite::Get().NewWithTexture( texture );
+	
+	
+	sprite->PushLuaUserdata(state);
 	return 0;
 }
 
@@ -63,12 +76,23 @@ int MOAISprite::_newWithName(lua_State *L){
 int MOAISprite::_setAssetSuffix(lua_State *L){
 	MOAILuaState state ( L );
 	
-	cc8 *suffix = state.GetValue < cc8 * >(1, 0);
+	cc8 *suffix = state.GetValue < cc8 * >(1, NULL);
 	MOAISprite::Get().SetAssetSuffix(suffix);
 	return 0;
 }
 
 //----------------------------------------------------------------//
+
+MOAITexture* MOAISprite::CreateTextureWithFilename(cc8 *name){
+	MOAITexture *texture = new MOAITexture();
+	STLString fullName = name;
+	fullName.append(this->mAssetSuffix);
+	
+	texture->Init(fullName, MOAITexture::DEFAULT_TRANSFORM);
+	
+	return texture;
+}
+
 
 MOAISprite::MOAISprite():
 mAssetSuffix(""){
@@ -82,10 +106,21 @@ MOAISprite::~MOAISprite(){
 	
 }
 
+MOAIProp* MOAISprite::NewWithTexture(MOAITexture *texture){
+	MOAIProp *sprite = new MOAIProp();
+	
+	MOAIGfxQuad2D *gfxQuad = new MOAIGfxQuad2D();
+	gfxQuad->mTexture.Set (*gfxQuad, texture);
+	
+	sprite->mDeck.Set(*sprite, gfxQuad);
+	
+	return sprite;
+}
+
 void MOAISprite::RegisterLuaClass(MOAILuaState &state){
 	luaL_Reg regTable [] = {
 		{ "getAssetSuffix",		_getAssetSuffix },
-		{ "newWithFileName",	_newWithFileName },
+		{ "newWithFilename",	_newWithFileName },
 		{ "newWithName",		_newWithName },
 		{ "setAssetSuffix",		_setAssetSuffix },
 		{ NULL, NULL }

@@ -84,6 +84,7 @@ private:
 	friend class MOAIPartition;
 	friend class MOAIPartitionCell;
 	friend class MOAIPartitionLevel;
+	friend class MOAISprite;
 
 	MOAIPartition*				mPartition;
 	MOAIPartitionCell*			mCell;

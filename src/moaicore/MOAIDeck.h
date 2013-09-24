@@ -45,6 +45,8 @@ class MOAIDeck :
 	public virtual MOAILuaObject {
 protected:
 
+	friend class MOAISprite;
+		
 	enum {
 		NO_CONTENT = 0xffffffff,
 	};

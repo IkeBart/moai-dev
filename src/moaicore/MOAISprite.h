@@ -11,6 +11,9 @@
 
 #include <moaicore/MOAILua.h>
 
+class MOAIProp;
+class MOAITexture;
+
 class MOAISprite : public MOAIGlobalClass <MOAISprite, MOAILuaObject>  {
 	
 private:
@@ -30,8 +33,10 @@ public:
 	
 	
 	//----------------------------------------------------------------//
-	MOAISprite			();
-	~MOAISprite			();
+	MOAITexture*		CreateTextureWithFilename( cc8* name );
+						MOAISprite			();
+						~MOAISprite			();
+	MOAIProp*			NewWithTexture		( MOAITexture* texture );
 	void				RegisterLuaClass	( MOAILuaState& state );
 	void				SetAssetSuffix		(cc8 *suffix);
 };
