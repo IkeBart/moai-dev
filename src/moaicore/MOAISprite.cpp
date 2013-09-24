@@ -18,8 +18,12 @@
  
  */
 int MOAISprite::_getAssetSuffix	( lua_State* L ){
-	UNUSED(L);
-	return 0;
+	MOAILuaState state ( L );
+	
+	cc8 *suffix = MOAISprite::Get().GetAssetSuffix().str();
+	
+	state.Push(suffix);
+	return 1;
 }
 
 
@@ -57,13 +61,17 @@ int MOAISprite::_newWithName(lua_State *L){
 	@out	nil
  */
 int MOAISprite::_setAssetSuffix(lua_State *L){
-	UNUSED(L);
+	MOAILuaState state ( L );
+	
+	cc8 *suffix = state.GetValue < cc8 * >(1, 0);
+	MOAISprite::Get().SetAssetSuffix(suffix);
 	return 0;
 }
 
 //----------------------------------------------------------------//
 
-MOAISprite::MOAISprite(){
+MOAISprite::MOAISprite():
+mAssetSuffix(""){
 	
 	RTTI_BEGIN
 		RTTI_EXTEND ( MOAILuaObject )
@@ -84,4 +92,12 @@ void MOAISprite::RegisterLuaClass(MOAILuaState &state){
 	};
 	
 	luaL_register(state, 0, regTable );
+}
+
+
+void MOAISprite::SetAssetSuffix(cc8 *suffix){
+	if (!suffix) {
+		suffix = "";
+	}
+	mAssetSuffix = suffix;
 }

@@ -21,14 +21,19 @@ private:
 	
 	//----------------------------------------------------------------//
 	
+	STLString mAssetSuffix;
 	
 public:
 	DECL_LUA_SINGLETON ( MOAISprite )
+	
+	GET(STLString, AssetSuffix, mAssetSuffix);
+	
 	
 	//----------------------------------------------------------------//
 	MOAISprite			();
 	~MOAISprite			();
 	void				RegisterLuaClass	( MOAILuaState& state );
+	void				SetAssetSuffix		(cc8 *suffix);
 };
 
 #endif /* defined(MOAISPRITE_H) */
