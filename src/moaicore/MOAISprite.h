@@ -20,6 +20,7 @@ private:
 	static int				_getAssetSuffix		( lua_State* L );
 	static int				_newWithFileName	( lua_State* L );
 	static int				_newWithName		( lua_State* L );
+	static int				_newWithTexture		( lua_State* L );
 	static int				_setAssetSuffix		( lua_State* L );
 	
 	//----------------------------------------------------------------//

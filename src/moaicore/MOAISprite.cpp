@@ -49,7 +49,7 @@ int MOAISprite::_newWithFileName(lua_State *L){
 	
 	
 	sprite->PushLuaUserdata(state);
-	return 0;
+	return 1;
 }
 
 //----------------------------------------------------------------//
@@ -63,6 +63,25 @@ int MOAISprite::_newWithName(lua_State *L){
 	UNUSED(L);
 	
 	return 0;
+}
+
+//----------------------------------------------------------------//
+/** @name	newWithTexture
+	@text
+	
+	@in		MOAITexture texture
+	@out	MOAIProp sprite
+ */
+int MOAISprite::_newWithTexture(lua_State *L){
+	MOAILuaState state ( L );
+	
+	MOAITexture *texture = state.GetLuaObject < MOAITexture >(1, NULL);
+	
+	MOAIProp *sprite = MOAISprite::Get().NewWithTexture(texture);
+	
+	sprite->PushLuaUserdata(state);
+	
+	return 1;
 }
 
 //----------------------------------------------------------------//
