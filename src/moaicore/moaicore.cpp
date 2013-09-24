@@ -82,6 +82,7 @@ void moaicore::InitGlobals ( MOAIGlobals* globals ) {
 	MOAIPartitionResultMgr::Affirm ();
 	MOAISim::Affirm ();
 	MOAIRenderMgr::Affirm ();
+	MOAISprite::Affirm();
 	
 	// Start Lua
 	MOAILuaRuntime& luaRuntime = MOAILuaRuntime::Get ();
@@ -174,6 +175,7 @@ void moaicore::InitGlobals ( MOAIGlobals* globals ) {
 	REGISTER_LUA_CLASS ( MOAIShader )
 	REGISTER_LUA_CLASS ( MOAIShaderMgr )
 	REGISTER_LUA_CLASS ( MOAISim )
+	REGISTER_LUA_CLASS ( MOAISprite )
 	REGISTER_LUA_CLASS ( MOAIStaticGlyphCache )
 	REGISTER_LUA_CLASS ( MOAIStreamReader )
 	REGISTER_LUA_CLASS ( MOAIStreamWriter )

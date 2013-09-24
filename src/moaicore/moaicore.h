@@ -138,6 +138,7 @@
 #include <moaicore/MOAISharedPtr.h>
 #include <moaicore/MOAISim.h>
 #include <moaicore/MOAISpanList.h>
+#include <moaicore/MOAISprite.h>
 #include <moaicore/MOAIStaticGlyphCache.h>
 #include <moaicore/MOAIStream.h>
 #include <moaicore/MOAIStreamReader.h>
