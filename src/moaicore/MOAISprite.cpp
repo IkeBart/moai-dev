@@ -141,6 +141,7 @@ void MOAISprite::RegisterLuaClass(MOAILuaState &state){
 		{ "getAssetSuffix",		_getAssetSuffix },
 		{ "newWithFilename",	_newWithFileName },
 		{ "newWithName",		_newWithName },
+		{ "newWithTexture", _newWithTexture },
 		{ "setAssetSuffix",		_setAssetSuffix },
 		{ NULL, NULL }
 	};
