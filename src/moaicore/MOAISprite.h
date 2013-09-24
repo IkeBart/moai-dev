@@ -13,11 +13,13 @@
 
 class MOAIProp;
 class MOAITexture;
+class MOAIDeck;
 
 class MOAISprite : public MOAIGlobalClass <MOAISprite, MOAILuaObject>  {
 	
 private:
 	static int				_getAssetSuffix		( lua_State* L );
+	static int				_newWithDeck		( lua_State* L );
 	static int				_newWithFileName	( lua_State* L );
 	static int				_newWithName		( lua_State* L );
 	static int				_newWithTexture		( lua_State* L );
@@ -37,6 +39,7 @@ public:
 	MOAITexture*		CreateTextureWithFilename( cc8* name );
 						MOAISprite			();
 						~MOAISprite			();
+	static MOAIProp*	NewWithDeck			( MOAIDeck* deck, u32 index );
 	MOAIProp*			NewWithTexture		( MOAITexture* texture );
 	void				RegisterLuaClass	( MOAILuaState& state );
 	void				SetAssetSuffix		(cc8 *suffix);

@@ -30,6 +30,28 @@ int MOAISprite::_getAssetSuffix	( lua_State* L ){
 	return 1;
 }
 
+//----------------------------------------------------------------//
+/** @name	newWithDeck
+	@text
+ 
+	@in		MOAIDeck deck
+	@opt	number index
+	@out	MOAIProp sprite
+ */
+int MOAISprite::_newWithDeck(lua_State *L){
+	MOAILuaState state ( L );
+	MOAIDeck *deck = state.GetLuaObject<MOAIDeck >(1, true);
+	u32 index = state.GetValue < u32 > (1, 1);
+	
+	MOAIProp *sprite = MOAISprite::NewWithDeck(deck, index);
+	if (sprite) {
+		sprite->PushLuaUserdata(state);
+		return 1;
+	}
+	
+	
+	return 0;
+}
 
 //----------------------------------------------------------------//
 /**	@name	newWithFilename
@@ -48,8 +70,11 @@ int MOAISprite::_newWithFileName(lua_State *L){
 	MOAIProp *sprite = MOAISprite::Get().NewWithTexture( texture );
 	
 	
-	sprite->PushLuaUserdata(state);
-	return 1;
+	if (sprite) {
+		sprite->PushLuaUserdata(state);
+		return 1;
+	}
+	return 0;
 }
 
 //----------------------------------------------------------------//
@@ -75,7 +100,7 @@ int MOAISprite::_newWithName(lua_State *L){
 int MOAISprite::_newWithTexture(lua_State *L){
 	MOAILuaState state ( L );
 	
-	MOAITexture *texture = state.GetLuaObject < MOAITexture >(1, NULL);
+	MOAITexture *texture = state.GetLuaObject < MOAITexture >(1, true);
 	
 	MOAIProp *sprite = MOAISprite::Get().NewWithTexture(texture);
 	
@@ -125,6 +150,20 @@ MOAISprite::~MOAISprite(){
 	
 }
 
+MOAIProp* MOAISprite::NewWithDeck(MOAIDeck *deck, u32 index){
+	if (!deck) {
+		return NULL;
+	}
+	
+	MOAIProp *sprite = new MOAIProp();
+	
+	sprite->mDeck.Set(*sprite, deck);
+	sprite->mIndex = index;
+	
+	
+	return sprite;
+}
+
 MOAIProp* MOAISprite::NewWithTexture(MOAITexture *texture){
 	MOAIProp *sprite = new MOAIProp();
 	
@@ -139,9 +178,10 @@ MOAIProp* MOAISprite::NewWithTexture(MOAITexture *texture){
 void MOAISprite::RegisterLuaClass(MOAILuaState &state){
 	luaL_Reg regTable [] = {
 		{ "getAssetSuffix",		_getAssetSuffix },
+		{ "newWithDeck",		_newWithDeck },
 		{ "newWithFilename",	_newWithFileName },
 		{ "newWithName",		_newWithName },
-		{ "newWithTexture", _newWithTexture },
+		{ "newWithTexture",		_newWithTexture },
 		{ "setAssetSuffix",		_setAssetSuffix },
 		{ NULL, NULL }
 	};
