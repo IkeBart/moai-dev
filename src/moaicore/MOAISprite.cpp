@@ -129,7 +129,7 @@ int MOAISprite::_setAssetSuffix(lua_State *L){
 
 MOAITexture* MOAISprite::CreateTextureWithFilename(cc8 *name){
 	MOAITexture *texture = new MOAITexture();
-	STLString fullName = name;
+	STLString fullName (name);
 	fullName.append(this->mAssetSuffix);
 	
 	texture->Init(fullName, MOAITexture::DEFAULT_TRANSFORM);

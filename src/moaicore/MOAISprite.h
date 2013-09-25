@@ -40,7 +40,7 @@ public:
 						MOAISprite			();
 						~MOAISprite			();
 	static MOAIProp*	NewWithDeck			( MOAIDeck* deck, u32 index );
-	MOAIProp*			NewWithTexture		( MOAITexture* texture );
+	static MOAIProp*	NewWithTexture		( MOAITexture* texture );
 	void				RegisterLuaClass	( MOAILuaState& state );
 	void				SetAssetSuffix		(cc8 *suffix);
 };

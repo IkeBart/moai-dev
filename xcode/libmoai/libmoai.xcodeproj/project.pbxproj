@@ -1838,6 +1838,8 @@
 		66E62C4316AE312A009B9C29 /* MOAIMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 66E62C3716AE312A009B9C29 /* MOAIMutex.h */; };
 		B46C1C1D17F0ED1000DEB9F5 /* MOAISprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B46C1C1B17F0ED1000DEB9F5 /* MOAISprite.cpp */; };
 		B46C1C1E17F0ED1000DEB9F5 /* MOAISprite.h in Headers */ = {isa = PBXBuildFile; fileRef = B46C1C1C17F0ED1000DEB9F5 /* MOAISprite.h */; };
+		B4E485A717F286FD009DA161 /* MOAISpriteCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4E485A517F286FD009DA161 /* MOAISpriteCache.cpp */; };
+		B4E485A817F286FD009DA161 /* MOAISpriteCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B4E485A617F286FD009DA161 /* MOAISpriteCache.h */; };
 		C359A149143A81BA005E7829 /* RAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = C359A148143A81BA005E7829 /* RAudioBuffer.h */; };
 		C37D422213B16930009600BB /* BufferedAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = C37D421E13B1692F009600BB /* BufferedAudioSource.h */; };
 		C37D422413B16930009600BB /* BufferedAudioSourceThread.h in Headers */ = {isa = PBXBuildFile; fileRef = C37D422013B16930009600BB /* BufferedAudioSourceThread.h */; };
@@ -4743,6 +4745,8 @@
 		66E62C3716AE312A009B9C29 /* MOAIMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIMutex.h; sourceTree = "<group>"; };
 		B46C1C1B17F0ED1000DEB9F5 /* MOAISprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAISprite.cpp; sourceTree = "<group>"; };
 		B46C1C1C17F0ED1000DEB9F5 /* MOAISprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAISprite.h; sourceTree = "<group>"; };
+		B4E485A517F286FD009DA161 /* MOAISpriteCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAISpriteCache.cpp; sourceTree = "<group>"; };
+		B4E485A617F286FD009DA161 /* MOAISpriteCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAISpriteCache.h; sourceTree = "<group>"; };
 		C359A148143A81BA005E7829 /* RAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAudioBuffer.h; path = ../../3rdparty/untz/src/RAudioBuffer.h; sourceTree = "<group>"; };
 		C37D421D13B1692F009600BB /* BufferedAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BufferedAudioSource.cpp; path = ../../3rdparty/untz/src/BufferedAudioSource.cpp; sourceTree = "<group>"; };
 		C37D421E13B1692F009600BB /* BufferedAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BufferedAudioSource.h; path = ../../3rdparty/untz/src/BufferedAudioSource.h; sourceTree = "<group>"; };
@@ -7967,6 +7971,8 @@
 				66C3B18715587827005C1858 /* MOAIScissorRect.cpp */,
 				B46C1C1C17F0ED1000DEB9F5 /* MOAISprite.h */,
 				B46C1C1B17F0ED1000DEB9F5 /* MOAISprite.cpp */,
+				B4E485A617F286FD009DA161 /* MOAISpriteCache.h */,
+				B4E485A517F286FD009DA161 /* MOAISpriteCache.cpp */,
 			);
 			name = prop;
 			sourceTree = "<group>";
@@ -11550,6 +11556,7 @@
 				0F3208A016EF5B0C00B33547 /* MOAIProfilerScope.h in Headers */,
 				0F3208B716EF5C8F00B33547 /* USHashedString.h in Headers */,
 				B46C1C1E17F0ED1000DEB9F5 /* MOAISprite.h in Headers */,
+				B4E485A817F286FD009DA161 /* MOAISpriteCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14158,6 +14165,7 @@
 				0F32089F16EF5B0C00B33547 /* MOAIProfilerScope.cpp in Sources */,
 				0F3208B516EF5C8F00B33547 /* USHashedString.cpp in Sources */,
 				B46C1C1D17F0ED1000DEB9F5 /* MOAISprite.cpp in Sources */,
+				B4E485A717F286FD009DA161 /* MOAISpriteCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
