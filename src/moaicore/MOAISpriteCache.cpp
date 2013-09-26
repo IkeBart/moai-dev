@@ -8,6 +8,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAISpriteCache.h>
+#include <moaicore/MOAIDeck.h>
 
 //----------------------------------------------------------------//
 /** @name	loadSpritesheetWithName
@@ -73,9 +74,21 @@ MOAIDeck* MOAISpriteCache::CachedSpriteDeckForName(STLString name){
 }
 
 u32	MOAISpriteCache::CachedSpriteIndexForName(STLString name){
-	UNUSED(name);
-	// TODO: implement the cache for the index associated with the deck
-	return 1;
+	std::map<STLString, u32>::iterator it;
+	it = this->mCachedSpriteIndices.find(name);
+	
+	if (it != this->mCachedSpriteIndices.end() ) {
+		return it->second;
+	}
+	
+	return INDEX_NOT_FOUND;
+}
+
+void MOAISpriteCache::InsertDeckAndIndexInCache( STLString key, MOAIDeck *deck, u32 index){
+	
+	this->mCachedSpriteDefinitons.insert(std::pair<STLString, MOAIDeck*>(key, deck) );
+	this->mCachedSpriteIndices.insert(std::pair<STLString, u32>(key, index));
+	
 }
 
 MOAISpriteCache::MOAISpriteCache(){

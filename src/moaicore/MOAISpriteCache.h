@@ -28,13 +28,16 @@ private:
 //----------------------------------------------------------------//
 	
 	STLMap <STLString, MOAIDeck * > mCachedSpriteDefinitons;
-	//STLMap <STLString, u32 > mCachedSpriteIndices;
+	std::map <STLString, u32 > mCachedSpriteIndices;
 	
 public:
+	
+	static const u32 INDEX_NOT_FOUND = 0xffffffff;
 	
 //----------------------------------------------------------------//
 	MOAIDeck *			CachedSpriteDeckForName		( STLString name );
 	u32					CachedSpriteIndexForName	( STLString name );
+	void				InsertDeckAndIndexInCache	( STLString key, MOAIDeck *deck, u32 index );
 						MOAISpriteCache				();
 						~MOAISpriteCache			();
 	void				RegisterLuaClass			( MOAILuaState& state );
