@@ -11,6 +11,47 @@
 #include <moaicore/MOAIDeck.h>
 
 //----------------------------------------------------------------//
+/** @name	getDeckOfSpriteWithName
+	@text
+ 
+	@in		string name
+	@out	MOAIDeck deck
+ */
+int MOAISpriteCache::_getDeckOfSpriteWithName(lua_State *L){
+	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
+	cc8 *name = state.GetValue < cc8* > (1, "");
+	
+	MOAIDeck *deck = MOAISpriteCache::Get().CachedSpriteDeckForName(name);
+	
+	if (deck) {
+		deck->PushLuaUserdata(state);
+		return 1;
+	}
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/** @name	getIndexOfSpriteWithName
+	@text
+ 
+	@in		string name
+	@out	number index
+ */
+int MOAISpriteCache::_getIndexOfSpriteWithName(lua_State *L){
+	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
+	
+	cc8 *name = state.GetValue < cc8* > (1, "");
+	u32 index = MOAISpriteCache::Get().CachedSpriteIndexForName(name);
+	
+	state.Push(index);
+	
+	return 1;
+}
+
+//----------------------------------------------------------------//
 /** @name	loadSpritesheetWithName
 	@text
 	
@@ -19,6 +60,7 @@
  */
 int MOAISpriteCache::_loadSpritesheetWithName(lua_State *L){
 	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
 	cc8 *name = state.GetValue < cc8* > (1, "");
 	
 	return 0;
@@ -29,13 +71,14 @@ int MOAISpriteCache::_loadSpritesheetWithName(lua_State *L){
 	@text
  
 	@in		string filename
-	@opt	number index
+	@opt	number index  default to 1
 	@out	nil
  */
 int MOAISpriteCache::_loadTextureWithFilename(lua_State *L){
 	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
 	cc8 *name = state.GetValue < cc8* > (1, "");
-	
+	u32 index = state.GetValue < u32 > (2, 1);
 	
 	return 0;
 }
@@ -49,6 +92,9 @@ int MOAISpriteCache::_loadTextureWithFilename(lua_State *L){
  */
 int MOAISpriteCache::_uncacheSpritesheetWithName(lua_State *L){
 	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
+	
+	
 	return 0;
 }
 
@@ -61,6 +107,7 @@ int MOAISpriteCache::_uncacheSpritesheetWithName(lua_State *L){
  */
 int MOAISpriteCache::_uncacheTextureWithFilename(lua_State *L){
 	MOAILuaState state( L );
+	if ( !state.CheckParams ( 1, "S" )) return 0;
 	return 0;
 }
 
@@ -105,6 +152,8 @@ MOAISpriteCache::~MOAISpriteCache(){
 
 void MOAISpriteCache::RegisterLuaClass(MOAILuaState &state){
 	luaL_Reg regTable [] = {
+		{ "getDeckOfSpriteWithName", _getDeckOfSpriteWithName },
+		{ "getIndexOfSpriteWithName", _getIndexOfSpriteWithName },
 		{ "loadSpritesheeetWithName", _loadSpritesheetWithName },
 		{ "loadTextureWithFilename", _loadTextureWithFilename },
 		{ "uncacheSpritesheetWithName", _uncacheSpritesheetWithName },

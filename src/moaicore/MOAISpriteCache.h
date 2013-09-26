@@ -17,6 +17,8 @@ class MOAIDeck;
 class MOAISpriteCache : public MOAIGlobalClass <MOAISpriteCache, MOAILuaObject> {
 	
 private:
+	static int _getDeckOfSpriteWithName ( lua_State *L );
+	static int _getIndexOfSpriteWithName ( lua_State *L );
 	
 	static int _loadSpritesheetWithName ( lua_State *L );
 	static int _loadTextureWithFilename ( lua_State *L );
