@@ -39,6 +39,7 @@ public:
 	MOAITexture*		CreateTextureWithFilename( cc8* name );
 						MOAISprite			();
 						~MOAISprite			();
+	static MOAIProp*	NewWithFilename		( cc8* name );
 	static MOAIProp*	NewWithDeck			( MOAIDeck* deck, u32 index );
 	static MOAIProp*	NewWithTexture		( MOAITexture* texture );
 	void				RegisterLuaClass	( MOAILuaState& state );

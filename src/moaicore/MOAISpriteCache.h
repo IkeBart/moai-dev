@@ -27,14 +27,17 @@ private:
 	
 //----------------------------------------------------------------//
 	
-	STLMap <STLString, MOAIDeck > mCachedSpriteDefinitons;
+	STLMap <STLString, MOAIDeck * > mCachedSpriteDefinitons;
+	//STLMap <STLString, u32 > mCachedSpriteIndices;
 	
 public:
 	
 //----------------------------------------------------------------//
-						MOAISpriteCache		();
-						~MOAISpriteCache	();
-	void				RegisterLuaClass	( MOAILuaState& state );
+	MOAIDeck *			CachedSpriteDeckForName		( STLString name );
+	u32					CachedSpriteIndexForName	( STLString name );
+						MOAISpriteCache				();
+						~MOAISpriteCache			();
+	void				RegisterLuaClass			( MOAILuaState& state );
 	
 };
 

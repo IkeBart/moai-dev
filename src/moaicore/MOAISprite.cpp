@@ -8,6 +8,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAISprite.h>
+#include <moaicore/MOAISpriteCache.h>
 #include <moaicore/MOAIProp.h>
 #include <moaicore/MOAITexture.h>
 #include <moaicore/MOAIGfxQuad2D.h>
@@ -65,9 +66,7 @@ int MOAISprite::_newWithFileName(lua_State *L){
 	
 	cc8 *name = state.GetValue < cc8* >(1, NULL);
 	
-	
-	MOAITexture  *texture = MOAISprite::Get().CreateTextureWithFilename( name );
-	MOAIProp *sprite = MOAISprite::Get().NewWithTexture( texture );
+	MOAIProp *sprite = MOAISprite::NewWithFilename(name);
 	
 	
 	if (sprite) {
@@ -85,7 +84,24 @@ int MOAISprite::_newWithFileName(lua_State *L){
 	@out	MOAIProp sprite
  */
 int MOAISprite::_newWithName(lua_State *L){
-	UNUSED(L);
+	MOAILuaState state ( L );
+	
+	cc8 *name = state.GetValue < cc8* >(1, NULL);
+	
+	MOAIDeck *deck = MOAISpriteCache::Get().CachedSpriteDeckForName(name);
+	
+	MOAIProp *sprite;
+	if (!deck) {
+		sprite = MOAISprite::NewWithFilename(name);
+	}
+	u32 index = MOAISpriteCache::Get().CachedSpriteIndexForName(name);
+	
+	sprite = MOAISprite::NewWithDeck(deck, index);
+	
+	if (sprite) {
+		sprite->PushLuaUserdata(state);
+		return 1;
+	}
 	
 	return 0;
 }
@@ -162,6 +178,11 @@ MOAIProp* MOAISprite::NewWithDeck(MOAIDeck *deck, u32 index){
 	
 	
 	return sprite;
+}
+
+MOAIProp* MOAISprite::NewWithFilename(cc8 *name){
+	MOAITexture  *texture = MOAISprite::Get().CreateTextureWithFilename( name );
+	return MOAISprite::NewWithTexture( texture );
 }
 
 MOAIProp* MOAISprite::NewWithTexture(MOAITexture *texture){

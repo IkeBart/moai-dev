@@ -28,10 +28,14 @@ int MOAISpriteCache::_loadSpritesheetWithName(lua_State *L){
 	@text
  
 	@in		string filename
+	@opt	number index
 	@out	nil
  */
 int MOAISpriteCache::_loadTextureWithFilename(lua_State *L){
 	MOAILuaState state( L );
+	cc8 *name = state.GetValue < cc8* > (1, "");
+	
+	
 	return 0;
 }
 
@@ -61,6 +65,18 @@ int MOAISpriteCache::_uncacheTextureWithFilename(lua_State *L){
 
 //----------------------------------------------------------------//
 
+MOAIDeck* MOAISpriteCache::CachedSpriteDeckForName(STLString name){
+	
+	MOAIDeck* deck = this->mCachedSpriteDefinitons.value_for_key(name);
+	
+	return deck;
+}
+
+u32	MOAISpriteCache::CachedSpriteIndexForName(STLString name){
+	UNUSED(name);
+	// TODO: implement the cache for the index associated with the deck
+	return 1;
+}
 
 MOAISpriteCache::MOAISpriteCache(){
 	RTTI_BEGIN
