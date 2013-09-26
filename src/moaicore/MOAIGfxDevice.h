@@ -104,7 +104,9 @@ private:
 
 	bool			mIsFramebufferSupported;
 	bool			mIsOpenGLES;
-	bool			mIsProgrammable;	
+	bool			mIsProgrammable;
+		
+	bool			mLineSmoothEnabled;
 
 	u32				mMajorVersion;
 	u32				mMaxPrims;

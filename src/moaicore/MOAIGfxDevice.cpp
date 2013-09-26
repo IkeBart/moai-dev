@@ -641,6 +641,7 @@ MOAIGfxDevice::MOAIGfxDevice () :
 	mIsFramebufferSupported ( 0 ),
 	mIsOpenGLES ( false ),
 	mIsProgrammable ( false ),
+	mLineSmoothEnabled( false ),
 	mMajorVersion ( 0 ),
 	mMaxPrims ( 0 ),
 	mMinorVersion ( 0 ),
