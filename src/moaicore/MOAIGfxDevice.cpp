@@ -147,6 +147,21 @@ int MOAIGfxDevice::_setDefaultTexture ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/** @name	setLineSmooth
+ 
+	@opt	bool smooth	 Default value is true.
+	@out	nil
+ */
+int MOAIGfxDevice::_setLineSmooth( lua_State *L ){
+	MOAILuaState state ( L );
+	
+	bool smooth = state.GetValue < bool >(1, true);
+	
+	UNUSED(smooth);
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	setPenColor
 
 	@in		number r
@@ -726,6 +741,7 @@ void MOAIGfxDevice::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "getViewSize",				_getViewSize },
 		{ "isProgrammable",				_isProgrammable },
 		{ "setDefaultTexture",			_setDefaultTexture },
+		{ "setLineSmooth",				_setLineSmooth },
 		{ "setListener",				&MOAIGlobalEventSource::_setListener < MOAIGfxDevice > },
 		{ "setPenColor",				_setPenColor },
 		{ "setPenWidth",				_setPenWidth },
