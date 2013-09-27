@@ -157,7 +157,8 @@ int MOAIGfxDevice::_setLineSmooth( lua_State *L ){
 	
 	bool smooth = state.GetValue < bool >(1, true);
 	
-	UNUSED(smooth);
+	MOAIGfxDevice::Get().SetLineSmooth( smooth );
+	
 	return 0;
 }
 
@@ -1061,6 +1062,22 @@ bool MOAIGfxDevice::SetGfxState ( MOAIGfxState* gfxState ) {
 		return gfxState->LoadGfxState ();
 	}
 	return false;
+}
+
+//----------------------------------------------------------------//
+void MOAIGfxDevice::SetLineSmooth( bool smooth ){
+	if (this->mLineSmoothEnabled != smooth) {
+		
+		//this->Flush();
+		
+		if (smooth) {
+			glEnable(GL_LINE_SMOOTH);
+		}
+		else {
+			glDisable(GL_LINE_SMOOTH);
+		}
+		this->mLineSmoothEnabled = smooth;
+	}
 }
 
 //----------------------------------------------------------------//

@@ -287,6 +287,7 @@ public:
 	void					SetDepthMask			( bool depthMask );
 	void					SetFrameBuffer			( MOAIFrameBuffer* frameBuffer );
 	bool					SetGfxState				( MOAIGfxState* gfxState );
+	void					SetLineSmooth			( bool smooth );
 	void					SetPenColor				( u32 color );
 	void					SetPenColor				( const USColorVec& colorVec );
 	void					SetPenColor				( float r, float g, float b, float a );
