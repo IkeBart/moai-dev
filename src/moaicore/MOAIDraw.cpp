@@ -262,6 +262,35 @@ int MOAIDraw::_drawAxisGrid ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/** @name	drawAntialiasedLineSegment
+	@text	Draw an anti-aliased line segment between two points with a series of triangles.  Eight vertices total.  
+ 
+	@in		number x0
+	@in		number y0
+	@in		number x1
+	@in		number y1
+	@opt	number solidWidth default 1.0
+	@opt	number blurMargin default 1.0
+	@out	nil
+ */
+int MOAIDraw::_drawAntialiasedLineSegment( lua_State *L ){
+	MOAILuaState state(L);
+	if (!state.CheckParams(1, "NNNN") ) {
+		return 0;
+	}
+	float x0 = state.GetValue < float > (1, 0.0f);
+	float y0 = state.GetValue < float > (2, 0.0f);
+	float x1 = state.GetValue < float > (3, 0.0f);
+	float y1 = state.GetValue < float > (4, 0.0f);
+	float solidWidth = state.GetValue < float > (5, 1.0f);
+	float blurMargin = state.GetValue < float > (6, 1.0f);
+	
+	MOAIDraw::DrawAntiAliasedLineSegment(x0, y0, x1, y1, solidWidth, blurMargin);
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
 /**	@name	drawBoxOutline
 	@text	Draw a box outline.
 	
@@ -601,6 +630,109 @@ void MOAIDraw::Bind () {
 void MOAIDraw::DrawAnimCurve ( const MOAIAnimCurve& curve, u32 resolution ) {
 
 	curve.Draw ( resolution );
+}
+
+void MOAIDraw::DrawAntiAliasedLineSegment( float x0, float y0, float x1, float y1, float lineWidth, float blurMargin){
+	// find the normalized vector
+	
+	MOAIGfxDevice &gfxDevice = MOAIGfxDevice::Get();
+	
+	USVec2D vec;
+	vec.Init(x1 - x0, y1 - y0);
+	
+	// don't draw lines with zero length
+	if (vec.LengthSquared() == 0.0) {
+		return;
+	}
+	
+	// normalize the vector
+	vec.Norm();
+	
+	// rotate vector anti-clockwise 90 degrees
+	vec.Rotate90Anticlockwise();
+	
+	// half line width to multiply with vec for determining point locations
+	float lw = lineWidth / 2;
+	
+	// half line width plus blur margin
+	float bw = lw + blurMargin;
+	
+	// declare points
+	USVec2D p1;// "north" of (x0, y0), opacity of 0
+	p1.Init(x0 + bw * vec.mX, y0 + bw * vec.mY);
+	
+	USVec2D p2; // "north" of (x1, y1), opacity of 0
+	p2.Init(x1 + bw * vec.mX, y1 + bw * vec.mY);
+	
+	USVec2D p3; // "north" of (x0, y0), opacity of 1
+	p3.Init(x0 + lw * vec.mX, y0 + lw * vec.mY);
+	
+	USVec2D p4; // "north" of (x1, y1), opacity of 1
+	p4.Init(x1 + lw * vec.mX, y1 + lw * vec.mY);
+	
+	USVec2D p5; // "south" of (x0, y0), opacity of 1
+	p5.Init(x0 - lw * vec.mX, y0 - lw * vec.mY);
+	
+	USVec2D p6; // "south" of (x1, y1), opacity of 1
+	p6.Init(x1 - lw * vec.mX, y1 - lw * vec.mY);
+	
+	USVec2D p7; // "south" of (x0, y0), opacity of 0
+	p7.Init(x0 - bw * vec.mX, y0 - bw * vec.mY);
+	
+	USVec2D p8; // "south" of (x1, y1), opacity of 0
+	p8.Init(x1 - bw * vec.mX, y1 - bw * vec.mY);
+	
+	// get pen color
+	USColorVec penColor = gfxDevice.GetPenColor();
+	// make transparent color
+	USColorVec transColor(penColor);
+	transColor.mA = 0.0f;
+	
+	// draw triangle strip
+	gfxDevice.BeginPrim(GL_TRIANGLE_STRIP);
+	
+		gfxDevice.SetPenColor(transColor);
+		
+		// write p1
+		gfxDevice.WriteVtx ( p1.mX, p1.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+	
+		// write p2
+		gfxDevice.WriteVtx ( p2.mX, p2.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+	
+		gfxDevice.SetPenColor(penColor);
+		
+		// write p3
+		gfxDevice.WriteVtx ( p3.mX, p3.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+	
+		// write p4
+		gfxDevice.WriteVtx ( p4.mX, p4.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+		
+		// write p5
+		gfxDevice.WriteVtx ( p5.mX, p5.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+		
+		// write p6
+		gfxDevice.WriteVtx ( p6.mX, p6.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+
+		gfxDevice.SetPenColor(transColor);
+		
+		// write p7
+		gfxDevice.WriteVtx ( p7.mX, p7.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+		
+		// write p8
+		gfxDevice.WriteVtx ( p8.mX, p8.mY, 0.0f );
+		gfxDevice.WriteFinalColor4b ();
+	
+	gfxDevice.EndPrim();
+	
+	// restore original pen color
+	gfxDevice.SetPenColor(penColor);
 }
 
 //----------------------------------------------------------------//
@@ -1165,6 +1297,7 @@ void MOAIDraw::RegisterLuaClass ( MOAILuaState& state ) {
 
 	luaL_Reg regTable [] = {
 		{ "drawAnimCurve",			_drawAnimCurve },
+		{ "drawAntialiasedLineSegment", _drawAntialiasedLineSegment }
 		//{ "drawAxisGrid",			_drawAxisGrid }, // TODO
 		{ "drawBoxOutline",			_drawBoxOutline },
 		{ "drawCircle",				_drawCircle },

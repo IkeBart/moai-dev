@@ -25,6 +25,7 @@ private:
 
 	//----------------------------------------------------------------//
 	static int				_drawAnimCurve		( lua_State* L );
+	static int				_drawAntialiasedLineSegment ( lua_State* L );
 	static int				_drawAxisGrid		( lua_State* L );
 	static int				_drawBoxOutline		( lua_State* L );
 	static int				_drawCircle			( lua_State* L );
@@ -52,6 +53,7 @@ public:
 	//----------------------------------------------------------------//
 	static void			BeginDrawString			( float scale, MOAIFont& font, float fontSize, float shadowOffsetX, float shadowOffsetY );
 	static void			Bind					();
+	static void			DrawAntiAliasedLineSegment( float x0, float y0, float x1, float y1, float lineWidth, float blurMargin);
 	static void			DrawAnimCurve			( const MOAIAnimCurve& curve, u32 resolution );
 	static void			DrawAxisGrid			( USVec2D loc, USVec2D vec, float size );
 	static void			DrawBoxOutline			( const USBox& box );
