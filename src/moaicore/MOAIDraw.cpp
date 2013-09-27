@@ -1297,7 +1297,7 @@ void MOAIDraw::RegisterLuaClass ( MOAILuaState& state ) {
 
 	luaL_Reg regTable [] = {
 		{ "drawAnimCurve",			_drawAnimCurve },
-		{ "drawAntialiasedLineSegment", _drawAntialiasedLineSegment }
+		{ "drawAntialiasedLineSegment", _drawAntialiasedLineSegment },
 		//{ "drawAxisGrid",			_drawAxisGrid }, // TODO
 		{ "drawBoxOutline",			_drawBoxOutline },
 		{ "drawCircle",				_drawCircle },
