@@ -107,6 +107,7 @@ private:
 	bool			mIsProgrammable;
 		
 	bool			mLineSmoothEnabled;
+	bool			mColorPremultiply;
 
 	u32				mMajorVersion;
 	u32				mMaxPrims;
@@ -166,6 +167,7 @@ private:
 	static int				_getMaxTextureUnits		( lua_State* L );
 	static int				_getViewSize			( lua_State* L );
 	static int				_isProgrammable			( lua_State* L );
+	static int				_setColorPremultiply	( lua_State* L );
 	static int				_setDefaultTexture		( lua_State* L );
 	static int				_setLineSmooth			( lua_State* L );
 	static int				_setPenColor			( lua_State* L );
@@ -209,6 +211,8 @@ public:
 	GET ( USColorVec, PenColor, mPenColor )
 	
 	GET ( MOAIFrameBuffer*, DefaultBuffer, mDefaultBuffer )
+		
+	GET ( bool, ColorPremultiply, mColorPremultiply )
 	
 	//----------------------------------------------------------------//
 	void					BeginLayer				();
@@ -279,6 +283,7 @@ public:
 	void					SetBufferScale			( float scale );
 	void					SetBufferSize			( u32 width, u32 height );
 	
+	void					SetColorPremultiply		( bool premultiply);
 	void					SetCullFunc				();
 	void					SetCullFunc				( int cullFunc );
 
