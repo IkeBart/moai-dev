@@ -111,6 +111,7 @@ public:
 	static void			DrawRectOutline			( const USRect& rect );
 	static void			DrawRectOutline			( float left, float top, float right, float bottom );
 	static void			DrawRectVerticalGradientFill ( float left, float top, float right, float bottom, const USColorVec &topColor, const USColorVec &bottomColor );
+	static void			DrawRoundBeveledLine	( lua_State* L, float lineWidth, float blurMargin, u32 steps );
 	static void			DrawString				( cc8* text, float x, float y, float width, float height );
 	static void			DrawString				( cc8* text, float x, float y, float scale, MOAIFont& font, float fontSize, float shadowOffsetX, float shadowOffsetY, float width, float height );
 	static void			DrawTexture				( float left, float top, float right, float bottom, MOAITexture* texture );
