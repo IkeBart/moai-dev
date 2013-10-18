@@ -12,6 +12,43 @@
 //================================================================//
 
 //----------------------------------------------------------------//
+/**	@name	getColor
+	@text	Returns the current color.
+	 
+	@in		MOAIColor self
+	@out	number r
+	@out	number g
+	@out	number b
+	@out	number opacity
+ */
+int	MOAIColor::_getColor ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIColor, "U" )
+	
+	lua_pushnumber ( state, self->mR );
+	lua_pushnumber ( state, self->mG );
+	lua_pushnumber ( state, self->mB );
+	lua_pushnumber ( state, self->mA );
+	
+	return 4;
+}
+
+//----------------------------------------------------------------//
+/**	@name	getOpacity
+	@text	Returns the current opacity.
+ 
+	@in		MOAIColor self
+	@out	number opacity
+ */
+int MOAIColor::_getOpacity( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIColor, "U" )
+	
+	lua_pushnumber ( state, self->mA );
+	
+	return 1;
+}
+
+
+//----------------------------------------------------------------//
 /**	@name	moveColor
 	@text	Animate the color by applying a delta. Creates and returns
 			a MOAIEaseDriver initialized to apply the delta.
@@ -139,6 +176,26 @@ int MOAIColor::_setColor ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	setOpacity
+	@text	Set the opacity.
+ 
+	@in		MOAIColor self
+	@in		number o	Default value is 0.
+	@out	nil
+ */
+int MOAIColor::_setOpacity ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIColor, "UN" )
+	
+	float o = state.GetValue < float >( 2, 1.0f );
+	
+	self->Set (self->mR, self->mG, self->mB, o);
+	self->ScheduleUpdate ();
+	
+	return 0;
+}
+
+
+//----------------------------------------------------------------//
 /**	@name	setParent
 	@text	This method has been deprecated. Use MOAINode setAttrLink instead.
 	
@@ -241,6 +298,12 @@ void MOAIColor::OnDepNodeUpdate () {
 		this->mColor.Modulate ( *color );
 	}
 	
+	color = this->GetLinkedValue < USColorVec* >( MOAIColorAttr::Pack ( INHERIT_COLOR_RAW ), 0 );
+	if ( color ) {
+		this->Set(color->mR, color->mG, color->mB, color->mA);
+		this->mColor = *color;
+	}
+	
 	color = this->GetLinkedValue < USColorVec* >( MOAIColorAttr::Pack ( ADD_COLOR ), 0 );
 	if ( color ) {
 		this->mColor.Add ( *color );
@@ -260,8 +323,10 @@ void MOAIColor::RegisterLuaClass ( MOAILuaState& state ) {
 	state.SetField ( -1, "ATTR_G_COL", MOAIColorAttr::Pack ( ATTR_G_COL ));
 	state.SetField ( -1, "ATTR_B_COL", MOAIColorAttr::Pack ( ATTR_B_COL ));
 	state.SetField ( -1, "ATTR_A_COL", MOAIColorAttr::Pack ( ATTR_A_COL ));
+	state.SetField ( -1, "ATTR_OPACITY", MOAIColorAttr::Pack ( ATTR_OPACITY ));
 	
 	state.SetField ( -1, "ADD_COLOR", MOAIColorAttr::Pack ( ADD_COLOR ));
+	state.SetField ( -1, "INHERIT_COLOR_RAW", MOAIColorAttr::Pack ( INHERIT_COLOR_RAW ));
 	state.SetField ( -1, "INHERIT_COLOR", MOAIColorAttr::Pack ( INHERIT_COLOR ));
 	state.SetField ( -1, "COLOR_TRAIT", MOAIColorAttr::Pack ( COLOR_TRAIT ));
 }
@@ -272,9 +337,12 @@ void MOAIColor::RegisterLuaFuncs ( MOAILuaState& state ) {
 	MOAINode::RegisterLuaFuncs ( state );
 	
 	luaL_Reg regTable [] = {
+		{ "getColor",				_getColor },
+		{ "getOpacity",				_getOpacity},
 		{ "moveColor",				_moveColor },
 		{ "seekColor",				_seekColor },
 		{ "setColor",				_setColor },
+		{ "setOpacity",				_setOpacity },
 		{ "setParent",				_setParent },
 		{ "setPremultiply",			_setPremultiply },
 		{ NULL, NULL }
