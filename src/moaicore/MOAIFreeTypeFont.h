@@ -55,9 +55,9 @@ protected:
 	friend class MOAIFreeTypeTextBox;
 
 	STLString mFilename;
-	u32 mFlags;
+	//u32 mFlags;
 		
-	MOAILuaSharedPtr < MOAIFontReader > mReader;
+	//MOAILuaSharedPtr < MOAIFontReader > mReader;
 		
 	float mDefaultSize;
 		
@@ -81,7 +81,7 @@ protected:
 	static int			_dimensionsWithMaxWidth	( lua_State* L );
 	static int			_getDefaultSize         ( lua_State* L );
 	static int			_getFilename			( lua_State* L );
-	static int			_getFlags				( lua_State* L );
+	//static int			_getFlags				( lua_State* L );
 	static int			_load					( lua_State* L );
 	static int			_newMultiLine			( lua_State* L );
 	static int			_newMultiLineFitted		( lua_State* L );
@@ -91,8 +91,8 @@ protected:
 	static int			_renderTexture			( lua_State* L );
 	static int			_renderTextureSingleLine( lua_State* L );
 	static int			_setDefaultSize			( lua_State* L );
-	static int			_setFlags				( lua_State* L );
-	static int			_setReader				( lua_State* L );
+	//static int			_setFlags				( lua_State* L );
+	//static int			_setReader				( lua_State* L );
 	
 		
 	//----------------------------------------------------------------//
