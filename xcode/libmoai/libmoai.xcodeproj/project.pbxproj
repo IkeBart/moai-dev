@@ -1820,6 +1820,8 @@
 		B4A26AFD1757B678009312A1 /* MOAIFreeTypeTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B4A26AFB1757B678009312A1 /* MOAIFreeTypeTextBox.h */; };
 		B4E64EB5182C762E00B2D112 /* MOAIMultiTextureDeck2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4E64EB3182C762D00B2D112 /* MOAIMultiTextureDeck2D.cpp */; };
 		B4E64EB6182C762E00B2D112 /* MOAIMultiTextureDeck2D.h in Headers */ = {isa = PBXBuildFile; fileRef = B4E64EB4182C762D00B2D112 /* MOAIMultiTextureDeck2D.h */; };
+		B4F02F8718440A4E00B46471 /* AKU-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4F02F8518440A4E00B46471 /* AKU-test.cpp */; };
+		B4F02F8818440A4E00B46471 /* AKU-test.h in Headers */ = {isa = PBXBuildFile; fileRef = B4F02F8618440A4E00B46471 /* AKU-test.h */; };
 		B4F2BDE11840435C00D1FF75 /* MOAITest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4F2BDDA1840435C00D1FF75 /* MOAITest.cpp */; };
 		B4F2BDE21840435C00D1FF75 /* MOAITest.h in Headers */ = {isa = PBXBuildFile; fileRef = B4F2BDDB1840435C00D1FF75 /* MOAITest.h */; };
 		B4F2BDE31840435C00D1FF75 /* MOAITest_sample.h in Headers */ = {isa = PBXBuildFile; fileRef = B4F2BDDC1840435C00D1FF75 /* MOAITest_sample.h */; };
@@ -4746,6 +4748,8 @@
 		B4A26AFB1757B678009312A1 /* MOAIFreeTypeTextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIFreeTypeTextBox.h; sourceTree = "<group>"; };
 		B4E64EB3182C762D00B2D112 /* MOAIMultiTextureDeck2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIMultiTextureDeck2D.cpp; sourceTree = "<group>"; };
 		B4E64EB4182C762D00B2D112 /* MOAIMultiTextureDeck2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIMultiTextureDeck2D.h; sourceTree = "<group>"; };
+		B4F02F8518440A4E00B46471 /* AKU-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "AKU-test.cpp"; path = "../aku/AKU-test.cpp"; sourceTree = "<group>"; };
+		B4F02F8618440A4E00B46471 /* AKU-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AKU-test.h"; path = "../aku/AKU-test.h"; sourceTree = "<group>"; };
 		B4F2BDDA1840435C00D1FF75 /* MOAITest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAITest.cpp; sourceTree = "<group>"; };
 		B4F2BDDB1840435C00D1FF75 /* MOAITest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAITest.h; sourceTree = "<group>"; };
 		B4F2BDDC1840435C00D1FF75 /* MOAITest_sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAITest_sample.h; sourceTree = "<group>"; };
@@ -7608,6 +7612,8 @@
 		B4F2BDD91840435C00D1FF75 /* moaiext-test */ = {
 			isa = PBXGroup;
 			children = (
+				B4F02F8518440A4E00B46471 /* AKU-test.cpp */,
+				B4F02F8618440A4E00B46471 /* AKU-test.h */,
 				B4F2BDDA1840435C00D1FF75 /* MOAITest.cpp */,
 				B4F2BDDB1840435C00D1FF75 /* MOAITest.h */,
 				B4F2BDDC1840435C00D1FF75 /* MOAITest_sample.h */,
@@ -11603,6 +11609,7 @@
 				B4F2BDE41840435C00D1FF75 /* MOAITest_USQuaternion.h in Headers */,
 				B4F2BDE51840435C00D1FF75 /* MOAITestKeywords.h in Headers */,
 				B4F2BDE71840435C00D1FF75 /* MOAITestMgr.h in Headers */,
+				B4F02F8818440A4E00B46471 /* AKU-test.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14199,6 +14206,7 @@
 				B4E64EB5182C762E00B2D112 /* MOAIMultiTextureDeck2D.cpp in Sources */,
 				B4F2BDE11840435C00D1FF75 /* MOAITest.cpp in Sources */,
 				B4F2BDE61840435C00D1FF75 /* MOAITestMgr.cpp in Sources */,
+				B4F02F8718440A4E00B46471 /* AKU-test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
