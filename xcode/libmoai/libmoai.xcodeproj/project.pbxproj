@@ -1818,6 +1818,8 @@
 		B489B07A1756A43400C114DA /* MOAIFreeTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = B489B0781756A43400C114DA /* MOAIFreeTypeFont.h */; };
 		B4A26AFC1757B678009312A1 /* MOAIFreeTypeTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A26AFA1757B678009312A1 /* MOAIFreeTypeTextBox.cpp */; };
 		B4A26AFD1757B678009312A1 /* MOAIFreeTypeTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B4A26AFB1757B678009312A1 /* MOAIFreeTypeTextBox.h */; };
+		B4D9693A18454FFA00D1EC88 /* MOAIXmlWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4D9693818454FFA00D1EC88 /* MOAIXmlWriter.cpp */; };
+		B4D9693B18454FFA00D1EC88 /* MOAIXmlWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B4D9693918454FFA00D1EC88 /* MOAIXmlWriter.h */; };
 		B4E64EB5182C762E00B2D112 /* MOAIMultiTextureDeck2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4E64EB3182C762D00B2D112 /* MOAIMultiTextureDeck2D.cpp */; };
 		B4E64EB6182C762E00B2D112 /* MOAIMultiTextureDeck2D.h in Headers */ = {isa = PBXBuildFile; fileRef = B4E64EB4182C762D00B2D112 /* MOAIMultiTextureDeck2D.h */; };
 		B4F02F8718440A4E00B46471 /* AKU-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4F02F8518440A4E00B46471 /* AKU-test.cpp */; };
@@ -4747,6 +4749,8 @@
 		B489B0781756A43400C114DA /* MOAIFreeTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIFreeTypeFont.h; sourceTree = "<group>"; };
 		B4A26AFA1757B678009312A1 /* MOAIFreeTypeTextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIFreeTypeTextBox.cpp; sourceTree = "<group>"; };
 		B4A26AFB1757B678009312A1 /* MOAIFreeTypeTextBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIFreeTypeTextBox.h; sourceTree = "<group>"; };
+		B4D9693818454FFA00D1EC88 /* MOAIXmlWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIXmlWriter.cpp; sourceTree = "<group>"; };
+		B4D9693918454FFA00D1EC88 /* MOAIXmlWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIXmlWriter.h; sourceTree = "<group>"; };
 		B4E64EB3182C762D00B2D112 /* MOAIMultiTextureDeck2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MOAIMultiTextureDeck2D.cpp; sourceTree = "<group>"; };
 		B4E64EB4182C762D00B2D112 /* MOAIMultiTextureDeck2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAIMultiTextureDeck2D.h; sourceTree = "<group>"; };
 		B4F02F8518440A4E00B46471 /* AKU-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "AKU-test.cpp"; path = "../aku/AKU-test.cpp"; sourceTree = "<group>"; };
@@ -7923,6 +7927,8 @@
 		CD148EE81395AE2600A3F501 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				B4D9693818454FFA00D1EC88 /* MOAIXmlWriter.cpp */,
+				B4D9693918454FFA00D1EC88 /* MOAIXmlWriter.h */,
 				DD80D64816D8021D00C172D2 /* MOAIMath.cpp */,
 				DD80D64916D8021D00C172D2 /* MOAIMath.h */,
 				66E62C0116AE2E12009B9C29 /* MOAIDataIOTask.cpp */,
@@ -11614,6 +11620,7 @@
 				B4F2BDE71840435C00D1FF75 /* MOAITestMgr.h in Headers */,
 				B4F02F8818440A4E00B46471 /* AKU-test.h in Headers */,
 				B4F02F8A1844438E00B46471 /* moaicore-config.h in Headers */,
+				B4D9693B18454FFA00D1EC88 /* MOAIXmlWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14211,6 +14218,7 @@
 				B4F2BDE11840435C00D1FF75 /* MOAITest.cpp in Sources */,
 				B4F2BDE61840435C00D1FF75 /* MOAITestMgr.cpp in Sources */,
 				B4F02F8718440A4E00B46471 /* AKU-test.cpp in Sources */,
+				B4D9693A18454FFA00D1EC88 /* MOAIXmlWriter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
