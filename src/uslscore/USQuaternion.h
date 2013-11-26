@@ -7,11 +7,15 @@
 #include <uslscore/USAffine3D.h>
 #include <uslscore/USMatrix4x4.h>
 
+class MOAITest_USQuaternion;
+
 //================================================================//
 // USQuaternion
 //================================================================//
 class USQuaternion {
 private:
+	
+	friend class MOAITest_USQuaternion;
 
 	float		mS;
 	USVec3D		mV;
