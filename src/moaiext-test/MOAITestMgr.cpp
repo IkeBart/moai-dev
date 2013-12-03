@@ -122,6 +122,19 @@ int MOAITestMgr::_setResultsFile ( lua_State *L ) {
 	MOAITestMgr::Get ().SetResultsFile( state.GetValue < cc8* >( 1, "" ));
 	return 0;
 }
+//----------------------------------------------------------------//
+/** @name	setStaging
+	@text	Set the staging flag.
+ 
+	@in		boolean staging
+	@out	nil
+ */
+int MOAITestMgr::_setStaging ( lua_State* L ) {
+	MOAILuaState state ( L );
+	bool staging = state.GetValue < bool >( 1, true );
+	MOAITestMgr::Get ().SetStaging( staging );
+	return 0;
+}
 
 
 //----------------------------------------------------------------//
@@ -368,6 +381,7 @@ void MOAITestMgr::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "runTest",				_runTest },
 		{ "setFilter",				_setFilter },
 		{ "setResultsFile",			_setResultsFile },
+		{ "setStaging",				_setStaging },
 		{ "setStagingFunc",			_setStagingFunc },
 		{ "setXmlResultsFile",		_setXmlResultsFile },
 		{ "setTestFunc",			_setTestFunc },
@@ -485,9 +499,9 @@ void MOAITestMgr::SetXmlResultsFile ( cc8* filename ) {
 }
 
 //----------------------------------------------------------------//
-void MOAITestMgr::SetStaging () {
+void MOAITestMgr::SetStaging ( bool staging ) {
 
-	this->mStaging = true;
+	this->mStaging = staging;
 }
 
 //----------------------------------------------------------------//
